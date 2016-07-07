@@ -1,0 +1,3 @@
+message DboSetting{
+    //repeated string homepage_pics = 1;
+    }

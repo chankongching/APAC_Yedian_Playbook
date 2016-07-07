@@ -1,0 +1,16 @@
+message UserDeliverInformationCollection{
+    message UserInfo{
+        required int32 addr_id = 1;
+        required bool is_default_item = 2;
+        required string name = 3;
+        required string phone = 4;
+        optional string country = 5;
+        optional string province = 6;
+        optional string city = 7;
+        optional string area = 8;
+
+        required string address = 9;
+        }
+    repeated UserInfo user_info_collection = 1;
+}
+

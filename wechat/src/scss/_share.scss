@@ -1,0 +1,45 @@
+@import "../scss/variables";
+
+.page-share {
+    background: $main url(../img/share-bg.jpg) no-repeat 50% 0;
+    background-size: 100% auto;
+    text-align: center;
+    min-height: 100vh;
+    overflow: hidden;
+
+    .qrcode-box {
+        position: relative;
+        width: 250px;
+        margin: 70px auto 50px;
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 87px;
+            left: 87px;
+            width: 70px;
+            height: 70px;
+            border: 3px solid #fff;
+            background: #fff url(../img/logo.png) no-repeat 50%;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        .qrcode {
+            background: #fff;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .tip {
+            font-size: 16px;
+        }
+    }
+
+    .desc {
+        margin: 0;
+        color: #fff;
+        line-height: 2;
+    }
+}

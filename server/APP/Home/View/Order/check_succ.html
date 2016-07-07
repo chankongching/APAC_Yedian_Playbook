@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>夜点管家——核对信息</title>
+    <!-- Bootstrap -->
+    <link href="__PUBLIC__/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container main-box">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+            <div class="panel panel-default">
+                <div class="panel-heading">订单信息</div>
+                <div class="panel-body">
+                    <p>
+                        姓名:{$orderinfo.name}<br>
+                        电话:{$orderinfo.tel}<br>
+                        时间:{$orderinfo.time}<br>
+                        房型:{$orderinfo.roomtype}<br>
+                        人数:{$orderinfo.num}<br>
+                        验证码: <span id="yzm" data-value="{$orderinfo.yzm}">{$orderinfo.yzm}</span> <br>
+                    </p>
+
+                    <if condition="$timeup eq 1">
+                        <button type="button" class="btn btn-danger btn-block submitbtn" data-toggle="modal" data-target="#check_yzm_box">确认信息</button>
+                        <else />
+                        <p>您好，此订单的到店核销时间与预定时间不符合，无法进行到店核销。有问题请致电：4006507351</p>
+                        <button type="button" class="btn btn-danger btn-block btn-close" >关闭</button>
+                    </if>
+                    <button type="button" class="btn btn-danger btn-block btn-close" style="display: none;">关闭</button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="check_yzm_box" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">确认提示</h4>
+                    </div>
+                    <div class="modal-body">
+                        是否确认
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary checkbtn">确定</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="__PUBLIC__/js/bootstrap.min.js"></script>
+<script>
+    $('.btn-close').on('click',function(){
+        WeixinJSBridge.call('closeWindow');
+    });
+    $('.checkbtn').on('click',function () {
+        var data = {'yzm':$('#yzm').data('value')};
+        $.ajax({
+            'url':'/wechatshangjia/Home/Order/yzm_check',
+            'type':'POST',
+            'data':data,
+            'success':function(msg){
+                var res = JSON.parse(msg);
+                if(res.result == 0){
+                    alert(res.msg);
+                    $('.modal').modal('hide');
+                    $('.submitbtn').hide();
+                    $('.btn-close').show();
+                }else if(res.result == 400){
+                    alert(res.msg);
+                    $('.modal').modal('hide');
+                }else if(res.result == 401){
+                    alert(res.msg);
+                    $('.modal').modal('hide');
+                }else if(res.result == 402){
+                    alert(res.msg);
+                    $('.modal').modal('hide');
+                }else if(res.result == 403){
+                    alert(res.msg);
+                    $('.modal').modal('hide');
+                }else{
+                    alert(res.msg);
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

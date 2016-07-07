@@ -1,0 +1,180 @@
+.icon {
+    display: inline-block;
+}
+
+.icon-spinner {
+    animation: spinner linear 2s infinite;
+}
+
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.masthead {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    background-image: linear-gradient(90deg, $main 0%, $mainDark 100%);
+    z-index: 3;
+}
+
+.segmented-control {
+    display: table;
+    height: 22px;
+    margin: 0 auto;
+    border: 1px solid $text;
+    border-radius: 4px;
+    font-size: 12px;
+
+    a {
+        display: table-cell;
+        box-sizing: border-box;
+        width: 1%;
+        border-left: 1px solid $text;
+        line-height: 1;
+        vertical-align: middle;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &.active {
+            color: $main;
+            background: $text;
+        }
+
+        &:first-child {
+            border-left-width: 0;
+        }
+    }
+}
+
+.ktv-list {
+    li {
+        background: $main no-repeat 50%;
+        background-size: cover;
+        animation: fadeIn .3s;
+
+        &:not([style]) {
+            background-image: url(../img/icon-xktv@2x.png);
+            background-size: 70px 70px;
+        }
+    }
+
+    a {
+        position: relative;
+        display: block;
+        height: 200px;
+        color: $main;
+        background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 100%);
+    }
+
+    .content {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+    }
+
+    .title {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .stamp {
+        position: absolute;
+        top: 40px;
+        right: 30px;
+        width: 110px;
+        height: 47px;
+        @extend %sprite;
+    }
+    .stamp-djq { @include rsprite($stamp-djq-group, true, false); }
+    .stamp-goldpkg {
+        top: 0;
+        left: 0;
+        @include rsprite($stamp-goldpkg-corner-group, true, false);
+    }
+
+    .rating {
+        position: relative;
+        display: inline-block;
+        width: 80px;
+        height: 12px;
+        margin-bottom: 10px;
+
+        .full,
+        .stars {
+            @include rsprite($icon-stars-red-group, false);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .full {
+            opacity: .5;
+        }
+    }
+
+    .address {
+        margin: 0 90px 0 0;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #ABABAB;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .distance {
+        position: absolute;
+        bottom: -3px;
+        right: 0;
+        padding: 0 8px;
+        border: 1px solid #3E3E3E;
+        border-radius: 11px;
+        font-size: 12px;
+        line-height: 22px;
+        color: #ABABAB;
+    }
+}
+
+.btn-float {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 100%;
+    height: 54px;
+    line-height: 54px;
+    font-size: 18px;
+    text-align: center;
+    background: $darkBg;
+    box-shadow: 0px -5px 11px 0px rgba(0,0,0,0.3);
+
+    span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    &:disabled {
+        color: rgba(255,255,255,0.3);
+        background: $main;
+
+         span {
+             opacity: 0.5;
+         }
+    }
+}
+
+.penone {
+    pointer-events: none;
+}

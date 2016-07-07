@@ -1,0 +1,19 @@
+//items property
+message ItemDetailInformation{
+    required string id = 1;
+    optional uint32 size = 2;
+    required string unit = 3;
+    //required string size = 2;
+
+    required float item_each_price = 4; //remember rount 2 to save 2 decima same like mysql database include
+    required bool item_is_available = 5;
+
+    repeated string pic = 7;
+    optional string comment = 8;
+    optional uint32 item_live_count =9;
+    }
+
+//items property
+message ItemsDetailInformationCollection{
+    repeated ItemDetailInformation itemdet = 1;
+}

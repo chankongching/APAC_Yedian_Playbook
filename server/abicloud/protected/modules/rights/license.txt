@@ -1,0 +1,140 @@
+Copyright (c) 2010, Christoffer Niska
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the Christoffer Niska nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------------------------------------------------------------------------------------------------------------------------
+Install:
+
+下载rights的扩展http://www.yiiframework.com/extension/rights/，解压到application下的modules目录，然后按照一下步骤进行安装：
+
+1. 安装rights之前，需要先打开gii，对应自己的用户表，生成User模型，修改相应modules里面的配置字段；也就是说，你需要自己先有用户表；我测试的用户表是id，usrname，password。
+2. 需要修改protected，components下面的UserIdentify.php里面的认证过程，需要返回id：
+    //必须返回id，不能返回usrName
+    public function getId()
+    {
+        return $this->_id;
+    }
+3. 修改config main.php
+'import'=>array(
+        'application.models.*',
+        'application.components.*',
+        'application.modules.rights.*',
+        'application.modules.rights.components.*',//这一行，在官方文档里面没有，不写的话，会导致RWebUser找不到
+    ),
+
+
+'modules'=>array(
+
+        'rights'=>array(
+            'superuserName'=>'admin',//自己用户表里面的用户，这个作为超级用户
+            'userClass'=>'User',//自己用户表对应的用户模型类
+            'authenticatedName'=>'Authenticated',//自己起个喜欢的名字
+            'userIdColumn'=>'id',//自己用户表对应的id栏
+            'userNameColumn'=>'usrname',//自己用户表对应的栏
+            'enableBizRule'=>true,
+            'enableBizRuleData'=>false,
+            'displayDescription'=>true,
+            'flashSuccessKey'=>'RightsSuccess',
+            'flashErrorKey'=>'RightsError',
+            'baseUrl'=>'/rights',
+            'layout'=>'rights.views.layouts.main',
+            'appLayout'=>'application.views.layouts.main',
+            'cssFile'=>'rights.css',
+            'install'=>true,//第一次安装需要为true，安装成功以后记得改成false
+            'debug'=>false,
+        ),
+
+
+'components'=>array(
+        'user'=>array(
+            // enable cookie-based authentication
+            'allowAutoLogin'=>true,
+            'class'=>'RWebUser',
+        ),
+
+        'authManager' => array(
+            'class' => 'RDbAuthManager',
+            'assignmentTable' => 'authassignment',
+            'itemTable' => 'authitem',
+            'itemChildTable' => 'authitemchild',
+            'rightsTable' => 'rights',
+            'defaultRoles'=>array('Guest'),// 不能随便设置
+        ),
+
+4. controller需要继承rights的控制器RController
+5. 用rights之前，需要用superUser权限的账号登陆。rights里面的sql不需要手工执行，rights会自己安装；如果提示sql不对，先手工导入，然后刷新页面，然后再删除手工导入的表试试。
+6. 安装： http:///index.php?r=rights/install
+7. 控制权限：如果我们在rights管理平台设置了role为Authenticated，可以在控制器里面这样写：
+public function actionIndex()
+{
+    if( Yii::app()->user->checkAccess('Authenticated') )
+    {
+        $this->render('index');
+    }
+    else
+    {
+        echo "not allowed";
+    }
+}
+这里的Authenticated为通过rights赋值给用户的role，task，或者operation
+
+8. 或者设置filter，自动启用对controller的权限控制，继承的controller要继承这个设定
+    public function filters() {
+        //parent::filters();
+        return array(
+            'rights',
+        );
+    }
+
+    public function allowedActions() {
+        // Format： ControllerName.*, ControllerName.ActionName, ActionName
+        //parent::allowedActions();
+        return 'Site.*';
+    }
+
+bizRule for role:
+return Yii::app()->user->id==$params["post"]->authID;
+
+Check:
+Yii::app()->user->checkAccess('role', $params);
+
+return(Yii::app()->user->checkAccess('permitUserAdmin') || Yii::app()->user->checkAccess('permitUserView') || Yii::app()->user->id==$params["userId"]);
+
+-------------------------------------
+使用缺省角色（Default Roles）
+注意: 缺省角色的功能是在1.0.3版本引入的。
+
+很多Web应用需要一些很特殊的角色，它们通常需要被分配给几乎每一个用户。例如，我们可能需要为所有注册用户分配一些特殊的权力。假如要象上述方法那样去为每一个用户分配这种角色，我们在维护上将面临很多麻烦。因此，我们采用缺省角色功能来解决这个问题。
+所谓缺省角色指的是被隐式分配给每一个用户（包括注册和非注册的用户）的角色。它们无需象前面所描述的那样去被分配给用户。当我们调用CWebUser::checkAccess，缺省角色将首先被检查，就像它们已经被分配给当前用户一样。
+缺省角色必须通过CAuthManager::defaultRoles属性进行声明。例如，下面的应用配置声明了两个缺省角色：authenticated和guest。
+return array('components'=>array('authManager'=>array('class'=>'CDbAuthManager', 'defaultRoles'=>array('authenticated', 'guest'), ), ), );
+因为缺省角色实质上是被分配给每一个用户的，它通常需要伴随一个业务规则用来确定它是否真正适用某个用户。例如，下面的代码定义了两个角色，authenticated和guest，它们在实质上分别被分配给已通过验证和未通过验证的用户。
+
+$bizRule='return !Yii::app()->user->isGuest;'; 
+$auth->createRole('authenticated',$bizRule); 
+$bizRule='return Yii::app()->user->isGuest;'; 
+$auth->createRole('guest',$bizRule);
+
+Rights注意事项：
+如果配置了缺省角色，必须配置bizRule，以防出现授权问题。

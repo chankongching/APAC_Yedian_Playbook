@@ -1,0 +1,6 @@
+message RedisCache{
+    enum Type{
+        FOO = 1;
+    }
+    required Type type = 1;
+}

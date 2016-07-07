@@ -1,0 +1,9 @@
+<uwsgi>
+    <uid>www</uid>
+    <gid>www</gid>
+    <socket>:8078</socket>
+    <chdir>/pywww/WeixinInterface/</chdir>
+    <module>django_wsgi</module>
+    <processes>4</processes>
+    <daemonize>uwsgi.log</daemonize>
+</uwsgi>

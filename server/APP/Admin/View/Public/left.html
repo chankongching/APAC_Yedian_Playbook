@@ -1,0 +1,47 @@
+<aside class="aside">
+    <!-- START Sidebar (left)-->
+    <div class="aside-inner">
+        <nav data-sidebar-anyclick-close="" class="sidebar">
+            <!-- START sidebar nav-->
+            <ul class="nav">
+                <!-- Iterates over all sidebar items-->
+                <li class="nav-heading ">
+                    <span data-localize="sidebar.heading.HEADER">夜点管理系统</span>
+                </li>
+                <li class=" ">
+                    <a href="#xktv" title="XKTV管理" data-toggle="collapse">
+                        <!-- <div class="pull-right label label-info">0</div> -->
+                        <em class="icon-wrench"></em>
+                        <span data-localize="sidebar.nav.MXktv">KTV管理</span>
+                    </a>
+                    <ul id="xktv" class="nav sidebar-subnav collapse">
+                        <li class="sidebar-subnav-header">KTV列表</li>
+                        <li class=" ">
+                            <a href="{:U('Xktv/lists')}" title="XKTV列表">
+                                <span>KTV列表</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class=" ">
+                    <a href="#taocanM" title="套餐管理" data-toggle="collapse">
+                        <!-- <div class="pull-right label label-info">0</div> -->
+                        <em class="icon-wrench"></em>
+                        <span data-localize="sidebar.nav.MXktv">套餐管理</span>
+                    </a>
+                    <ul id="taocanM" class="nav sidebar-subnav collapse">
+                        <li class="sidebar-subnav-header">套餐管理</li>
+                        <li class=" ">
+                            <a href="{:U('Taocan/datelists')}" title="时间段管理">
+                                <span>时间段管理</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+            <!-- END sidebar nav-->
+        </nav>
+    </div>
+    <!-- END Sidebar (left)-->
+</aside>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<table>
+		<thead>
+			<th>id</th>
+			<th>openid</th>
+			<th>display_name</th>
+			<th>mobile</th>
+			<th>img</th>
+		</thead>
+		<tbody>
+		<volist name="user_lists" id="vo">
+			<tr>
+				<td>{$vo.id}</td>
+				<td>{$vo.openid}</td>
+				<td>{$vo.display_name}</td>
+				<td>{$vo.mobile}</td>
+				<td>{$vo.img}</td>
+			</tr>
+		</volist>
+		</tbody>
+	</table>
+</body>
+</html>

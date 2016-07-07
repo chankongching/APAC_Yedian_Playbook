@@ -1,0 +1,71 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Bootstrap Admin App + jQuery">
+    <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+    <title>登录 - 后台管理系统</title>
+    <!-- =============== VENDOR STYLES ===============-->
+    <!-- FONT AWESOME-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/fontawesome/css/font-awesome.min.css">
+    <!-- SIMPLE LINE ICONS-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/simple-line-icons/css/simple-line-icons.css">
+    <!-- =============== BOOTSTRAP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/bootstrap.css" id="bscss">
+    <!-- =============== APP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/app.css" id="maincss">
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="block-center mt-xl wd-xl">
+        <!-- START panel-->
+        <div class="panel panel-dark panel-flat">
+            <div class="panel-heading text-center">
+                <a href="#">
+                    <img src="/wechatshangjia/Public/Admin/img/logo.png" alt="Image" class="block-center img-rounded">
+                </a>
+            </div>
+            <div class="panel-body">
+                <p class="text-center pv">请登录</p>
+                <form role="form" data-parsley-validate="" novalidate="" class="mb-lg" action="<?php echo U('checkLogin');?>"
+                      method="post">
+                    <div class="form-group has-feedback">
+                        <input id="InputUsername" type="email" placeholder="用户名" autocomplete="off"
+                               required class="form-control" name="username">
+                        <span class="fa fa-envelope form-control-feedback text-muted"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input id="InputPassword" type="password" placeholder="密码" required
+                               class="form-control" name="password">
+                        <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    </div>
+                    <div class="clearfix">
+                        <div class="checkbox c-checkbox pull-left mt0">
+                            <label>
+                                <input type="checkbox" value="" name="remember">
+                                <span class="fa fa-check"></span>记住密码</label>
+                        </div>
+                        <!-- <div class="pull-right"><a href="recover.html" class="text-muted">忘记密码?</a> -->
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-block btn-primary mt-lg">登录</button>
+                </form>
+                <!-- <a href="register.html" class="btn btn-block btn-default">现在注册</a> -->
+            </div>
+        </div>
+        <!-- END panel-->
+        <div class="p-lg text-center">
+            <span>&copy;</span>
+            <span>2016</span>
+            <br>
+            <span>夜点管理平台</span>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

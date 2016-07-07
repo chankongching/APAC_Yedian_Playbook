@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Bootstrap Admin App + jQuery">
+    <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+    <title>首页</title>
+    <!-- =============== VENDOR STYLES ===============-->
+    <!-- FONT AWESOME-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/fontawesome/css/font-awesome.min.css">
+    <!-- SIMPLE LINE ICONS-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/simple-line-icons/css/simple-line-icons.css">
+    <!-- ANIMATE.CSS-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/animate.css/animate.min.css">
+    <!-- WHIRL (spinners)-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/whirl/dist/whirl.css">
+    <!-- =============== PAGE VENDOR STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/datatables-colvis/css/dataTables.colVis.css">
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/css/dataTables.bootstrap.css">
+    <!-- =============== BOOTSTRAP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/bootstrap.css" id="bscss">
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
+    <!-- =============== APP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/app.css" id="maincss">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- top navbar-->
+        <header class="topnavbar-wrapper">
+            <!-- START Top Navbar-->
+            <include file="Public/header" />
+            <!-- END Top Navbar-->
+        </header>
+        <!-- sidebar-->
+        <include file="Public/left" />
+        <!-- offsidebar-->
+        <include file="Public/right" />
+        <!-- Main section-->
+        <section>
+            <!-- Page content-->
+            <div class="content-wrapper">
+                <div class="content-heading">添加核销记录</div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">{$ktvname}</div>
+                    <div class="panel-body">
+                        <form class="form-horizontal p-20" action="{:U()}" method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="hidden" name='ktvid' value="{$ktvid}" />
+                                    <div class="form-group">
+                                        <div class="col-sm-4">核销数量:</div>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="请填写要核销的数字" class="form-control" name='count'>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">核销时间</div>
+                                        <div class="col-sm-8">
+                                            <p id="datetimepicker" class="input-group date">
+                                                <input type="text" class="form-control" name='create_time'>
+                                                <span class="input-group-addon">
+                                                <span class="fa fa-calendar"></span>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <button type='submit' class='btn btn-block btn-warning'>确定添加</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Main section-->
+        <!-- Page footer-->
+        <footer>
+            <div class="p-lg text-center">
+                <span>&copy;</span>
+                <span>2016</span>
+                <span>-</span>
+                <span>夜点娱乐酒水核销平台</span>
+                <br>
+                <span></span>
+            </div>
+        </footer>
+    </div>
+    <!-- =============== VENDOR SCRIPTS ===============-->
+    <!-- MODERNIZR-->
+    <script src="/wechatshangjia/Public/Admin/vendor/modernizr/modernizr.js"></script>
+    <!-- JQUERY-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery/dist/jquery.js"></script>
+    <!-- BOOTSTRAP-->
+    <script src="/wechatshangjia/Public/Admin/vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- STORAGE API-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+    <!-- JQUERY EASING-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery.easing/js/jquery.easing.js"></script>
+    <!-- ANIMO-->
+    <script src="/wechatshangjia/Public/Admin/vendor/animo.js/animo.js"></script>
+    <!-- SLIMSCROLL-->
+    <script src="/wechatshangjia/Public/Admin/vendor/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- SCREENFULL-->
+    <script src="/wechatshangjia/Public/Admin/vendor/screenfull/dist/screenfull.js"></script>
+    <!-- LOCALIZE-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery-localize-i18n/dist/jquery.localize.js"></script>
+    <!-- RTL demo-->
+    <script src="/wechatshangjia/Public/Admin/js/demo/demo-rtl.js"></script>
+    <!-- =============== PAGE VENDOR SCRIPTS ===============-->
+    <!-- DATATABLES-->
+    <script src="/wechatshangjia/Public/Admin/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatables-colvis/js/dataTables.colVis.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrap.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrapPagination.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/moment/min/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="/wechatshangjia/Public/Admin/vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="/wechatshangjia/Public/Admin/vendor/eonasdan-bootstrap-datetimepicker/build/js/zh-cn.js"></script>
+    <!-- Demo-->
+    <!-- =============== APP SCRIPTS ===============-->
+    <script src="/wechatshangjia/Public/Admin/js/app.js"></script>
+    <script type="text/javascript">
+    $('#datetimepicker').datetimepicker({
+        format: "YYYY-MM-DD HH:mm:ss",
+        locale: 'zh-cn',
+        icons: {
+            time: 'fa fa-clock-o',
+            date: 'fa fa-calendar',
+            up: 'fa fa-chevron-up',
+            down: 'fa fa-chevron-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-crosshairs',
+            clear: 'fa fa-trash'
+        }
+    });
+    </script>
+</body>
+
+</html>

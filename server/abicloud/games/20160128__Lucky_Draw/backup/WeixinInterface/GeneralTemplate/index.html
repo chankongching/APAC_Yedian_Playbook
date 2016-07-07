@@ -1,0 +1,79 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>夜点幸运大转盘</title>
+    <meta name="hotcss" content="initial-dpr=1">
+    <script>(function(window,document){(function(){var viewportEl=document.querySelector('meta[name="viewport"]'),hotcssEl=document.querySelector('meta[name="hotcss"]'),dpr=window.devicePixelRatio||1;if(hotcssEl){var hotcssCon=hotcssEl.getAttribute("content");if(hotcssCon){var initialDpr=hotcssCon.match(/initial\-dpr=([\d\.]+)/);if(initialDpr){dpr=parseFloat(initialDpr[1])}}}var scale=1/dpr,content="width=device-width, initial-scale="+scale+", minimum-scale="+scale+", maximum-scale="+scale+", user-scalable=no";if(viewportEl){viewportEl.setAttribute("content",content)}else{viewportEl=document.createElement("meta");viewportEl.setAttribute("name","viewport");viewportEl.setAttribute("content",content);document.head.appendChild(viewportEl)}})();var hotcss={};hotcss.px2rem=function(px,designWidth){if(!designWidth){designWidth=parseInt(hotcss.designWidth,10)}return parseInt(px,10)*320/designWidth/20};hotcss.mresize=function(){var innerWidth=window.innerWidth;if(!innerWidth){return false}document.documentElement.style.fontSize=(innerWidth*20/320)+"px"};hotcss.mresize();window.addEventListener("resize",hotcss.mresize,false);window.addEventListener("load",hotcss.mresize,false);setTimeout(function(){hotcss.mresize()},300);window.hotcss=hotcss})(window,document);</script>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<div id="landingPage">
+    <div led id="title"><img src="/static/img/title_l.png"></div>
+    <div led id="prizes"><img src="/static/img/prizes_l.png"><span id="total"></span></div>
+    <div id="lottery">
+        <div class="dial"></div>
+        <div class="indicator"></div>
+    </div>
+    <div led="1s" id="btn_rule"><img src="/static/img/rule_l.png"></div>
+</div>
+
+<div id="ruleLayer" class="layer">
+    <span led="2s" class="close"><img src="/static/img/rule_close_l.png"></span>
+
+    <div class="box">
+        <div led class="outer"><img src="/static/img/rule_outer_l.png"></div>
+        <div led class="inner"><img src="/static/img/rule_inner_l.png"></div>
+        <div led="1s" class="text"><img src="/static/img/rule_text_l.png"></div>
+    </div>
+</div>
+
+<div id="loseLayer" class="layer">
+    <div led class="triangle"><img src="/static/img/lose_triangle_l.png"></div>
+    <div led="1s" class="title"><img src="/static/img/lose_title_l.png"></div>
+    <div led class="chance"><img src="/static/img/lose_chance_l.png"><span id="chance"></span></div>
+
+    <div led class="btn_again"><img src="/static/img/lose_again_l.png"></div>
+    <div led class="btn_order"><img src="/static/img/lose_order_l.png"></div>
+</div>
+
+
+<div id="lose2Layer" class="layer">
+    <div led class="circle"><img src="/static/img/lose2_circle_l.png"></div>
+    <div led="1s" class="title"><img src="/static/img/lose2_title_l.png"></div>
+    <div led class="text"><img src="/static/img/lose2_text_l.png"></div>
+
+    <div led class="btn_order"><img src="/static/img/lose2_order_l.png"></div>
+</div>
+
+
+<div id="winLayer" class="layer">
+    <div class="page1">
+        <div led class="star"><img src="/static/img/win_star_l.png"></div>
+        <div led="1s" class="title"><img src="/static/img/win_title_l.png"></div>
+        <div led class="text"><img src="/static/img/win_text_l.png"></div>
+
+        <div led class="code_box"><img src="/static/img/win_code_box_l.png"><span id="code"></span></div>
+        <div class="next_arrow"><img src="/static/img/win_next.png"></div>
+    </div>
+    <div class="page2">
+        <div class="ktvlist">
+            <div><a led href="#" class="btn_order"><img src="/static/img/win_order_l.png"></a></div>
+            <div><a led href="#" class="btn_order"><img src="/static/img/win_order_l.png"></a></div>
+            <div><a led href="#" class="btn_order"><img src="/static/img/win_order_l.png"></a></div>
+            <div><a led href="#" class="btn_order"><img src="/static/img/win_order_l.png"></a></div>
+            <div><a led href="#" class="btn_order"><img src="/static/img/win_order_l.png"></a></div>
+        </div>     
+        <div class="follow">
+            <img src="/static/img/qrcode.png" class="qrcode">
+        </div>   
+    </div>
+</div>
+
+<script src="//res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="{% static 'js/zepto.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

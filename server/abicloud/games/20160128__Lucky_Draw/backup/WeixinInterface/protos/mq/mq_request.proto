@@ -1,0 +1,25 @@
+message MessageQueueRequest{
+    enum MessageType{
+        PRINT = 0;
+        AUTH = 1;
+    }
+    required MessageType msg_type = 1;
+    required string msg_datetime = 2;
+    repeated PrintOrderRequest ord_reqs = 3; //single order with all items
+    optional UserRequest user_req = 4;
+}
+message PrintOrderRequest{
+    required string orderid = 1;  //orderid will be all the same in one order request
+    optional string item_name = 2;
+    optional string item_detail_name = 3;
+    optional string item_buy_count_and_unit = 4; //split by / before buy_count and unit
+    optional string deliver_date = 5; //will be dulipcated
+    optional string deliver_time = 6; //will be dulipcated
+}
+message UserRequest{
+    required string user_name = 1;
+    optional string user_mobile = 2;
+    optional string user_address = 3;
+    optional string user_comment = 4;
+    optional string location = 5;
+}

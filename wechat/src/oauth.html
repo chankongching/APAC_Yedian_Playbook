@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script>
+    var _hmt = _hmt || [];
+    _hmt.push(["_setAutoPageview", false]);
+    if (location.search.indexOf("code=") === -1) _hmt.push(["_trackPageview", location.pathname]);
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?a9e84022ad4ba5c4e42b26942cda6755";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+</head>
+<body>
+<script>
+function getURLParameter(name) {
+    var results = (new RegExp("[?&]" + name + "=([^&]*)")).exec(location.search);
+    return results ? decodeURIComponent(results[1]) : null;
+}
+
+var urlCode = getURLParameter("code");
+var sessionCode = sessionStorage.getItem("wx_code");
+
+if (sessionCode) {
+    document.addEventListener("WeixinJSBridgeReady", function () {
+        WeixinJSBridge.invoke("closeWindow");
+    }, false);
+} else if (urlCode) {
+    sessionStorage.setItem("wx_code", urlCode);
+    location.replace("./" + (getURLParameter("target_url") ? "#!" + getURLParameter("target_url") : ""));
+} else {
+    var redirectUrl = encodeURIComponent(location.href.replace("#!", ""));
+    // redirectUrl = encodeURIComponent("http://app.jingsocial.com/openid/dynamicOauth?wechat=" + redirectUrl);
+    location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx2cb833fc48c5d66f&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo&state=state#wechat_redirect";
+}
+</script>
+</body>
+</html>

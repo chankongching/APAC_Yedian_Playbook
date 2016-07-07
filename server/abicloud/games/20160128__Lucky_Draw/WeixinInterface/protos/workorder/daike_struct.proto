@@ -1,0 +1,32 @@
+message DaikeApp{
+    message Ticket{
+        message Via{
+        required string channel=1;
+        }
+
+        message Comment{
+        required int32 id=1;
+        required string body=2;
+        required int32 user_id=3;
+        required bool public=4;
+        required string created_at=5;
+        }
+
+        required int32 id=1;
+        required string status=2;
+        required string title=3;
+        required string description=4;
+        repeated string tags=5;
+        required string user_id=6;
+        required Via via=7;
+        repeated Comment comments=8;
+        required string created_at=9;
+        required string updated_at=10;
+    }
+    required string event=1;
+    required Ticket ticket=2;
+    optional int32 prev_assignee_id=3;
+    optional int32 comment_id=4;
+    optional string prev_status=5;
+}
+

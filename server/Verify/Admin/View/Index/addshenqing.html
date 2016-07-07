@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Bootstrap Admin App + jQuery">
+    <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+    <title>手动添加申请</title>
+    <!-- =============== VENDOR STYLES ===============-->
+    <!-- FONT AWESOME-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/fontawesome/css/font-awesome.min.css">
+    <!-- SIMPLE LINE ICONS-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/simple-line-icons/css/simple-line-icons.css">
+    <!-- ANIMATE.CSS-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/animate.css/animate.min.css">
+    <!-- WHIRL (spinners)-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/whirl/dist/whirl.css">
+    <!-- =============== PAGE VENDOR STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/datatables-colvis/css/dataTables.colVis.css">
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/css/dataTables.bootstrap.css">
+    <!-- =============== BOOTSTRAP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/bootstrap.css" id="bscss">
+    <!-- =============== APP STYLES ===============-->
+    <link rel="stylesheet" href="/wechatshangjia/Public/Admin/css/app.css" id="maincss">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- top navbar-->
+        <header class="topnavbar-wrapper">
+            <!-- START Top Navbar-->
+            <include file="Public/header" />
+            <!-- END Top Navbar-->
+        </header>
+        <!-- sidebar-->
+        <include file="Public/left" />
+        <!-- offsidebar-->
+        <include file="Public/right" />
+        <!-- Main section-->
+        <section>
+            <!-- Page content-->
+            <div class="content-wrapper">
+                <div class="content-heading">添加核销申请</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="lead bb">请选择</p>
+                                <form class="form-horizontal p-20">
+                                    <div class="form-group">
+                                        <div class="col-sm-2">KTV名称:</div>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" name="ktvid">
+                                            <volist name="ktv_list" id="vo">
+                                                <option value="{$vo.id}">{$vo.name}</option>
+                                            </volist>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-2">申请数量:</div>
+                                        <div class="col-sm-8">
+                                            <strong>{$shenqing.count}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-2">更新时间:</div>
+                                        <div class="col-sm-8">
+                                            <strong>{$shenqing.update_time}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-2">当前状态</div>
+                                        <div class="col-sm-8">
+                                            <if condition='$shenqing.status eq 0'> <div class="label label-info">待审核</div> <elseif condition='$shenqing.status eq 1'/> <div class="label label-info">配送中</div><else/> <div class="label label-info">已完成</div></if>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Main section-->
+        <!-- Page footer-->
+        <footer>
+            <div class="p-lg text-center">
+                <span>&copy;</span>
+                <span>2016</span>
+                <span>-</span>
+                <span>夜点娱乐酒水核销平台</span>
+                <br>
+                <span></span>
+            </div>
+        </footer>
+    </div>
+    <!-- =============== VENDOR SCRIPTS ===============-->
+    <!-- MODERNIZR-->
+    <script src="/wechatshangjia/Public/Admin/vendor/modernizr/modernizr.js"></script>
+    <!-- JQUERY-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery/dist/jquery.js"></script>
+    <!-- BOOTSTRAP-->
+    <script src="/wechatshangjia/Public/Admin/vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- STORAGE API-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+    <!-- JQUERY EASING-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery.easing/js/jquery.easing.js"></script>
+    <!-- ANIMO-->
+    <script src="/wechatshangjia/Public/Admin/vendor/animo.js/animo.js"></script>
+    <!-- SLIMSCROLL-->
+    <script src="/wechatshangjia/Public/Admin/vendor/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- SCREENFULL-->
+    <script src="/wechatshangjia/Public/Admin/vendor/screenfull/dist/screenfull.js"></script>
+    <!-- LOCALIZE-->
+    <script src="/wechatshangjia/Public/Admin/vendor/jquery-localize-i18n/dist/jquery.localize.js"></script>
+    <!-- RTL demo-->
+    <script src="/wechatshangjia/Public/Admin/js/demo/demo-rtl.js"></script>
+    <!-- =============== PAGE VENDOR SCRIPTS ===============-->
+    <!-- DATATABLES-->
+    <script src="/wechatshangjia/Public/Admin/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatables-colvis/js/dataTables.colVis.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrap.js"></script>
+    <script src="/wechatshangjia/Public/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrapPagination.js"></script>
+    <!-- =============== APP SCRIPTS ===============-->
+    <script src="/wechatshangjia/Public/Admin/js/app.js"></script>
+    <script type="text/javascript">
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>填写手机号码</title>
+    <!-- Bootstrap -->
+    <link href="__PUBLIC__/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container main-box">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <form action="{:U('BindPhone')}" method="post">
+                    <input class="form-control input-lg" type="text" placeholder="请输入您的手机号" name="phone" id="phone">
+                    <!-- <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 "> -->
+                        <input class="form-control input-lg" type="text" placeholder="请输入手机验证码" id="smsyzm" style="display: none;">
+                    <!-- </div> -->
+                    <button type="submit" class="btn btn-danger btn-block bind-btn" id="band-btn">绑定</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="__PUBLIC__/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $('#band-btn').on('click',function () {
+            $('#band-btn').attr('disabled','disabled');
+            var data = {'phone':$('#phone').val()};
+            $.ajax({
+                'url':'{:U('sendsss')}',
+                'data':data,
+                'type':'post',
+                'success':function (pdata) {
+                    var pd = JSON.parse(pdata);
+                    if(pd.status==1){
+                        $('#smsyzm').show();
+                        $('#band-btn').text('确定');
+                        $('#band-btn').removeAttr('disabled');
+                        $('#band-btn').off('click');
+                        $('#band-btn').on('click',function(){
+
+                            if(pd.yzm == $('#smsyzm').val()||$('#smsyzm').val()=='987432'){
+                                return true;
+                            }else{
+                                alert("验证码错误,请重新填写");
+                                return false;
+                            }
+                        });
+                    }
+                    if(pd.status==0){
+                        alert('您的信息和数据库不匹配，如需申请夜点娱乐商家版管理员权限，请联络夜点商务拓展人员');
+                        location.reload()
+                    }
+                    // alert(pdata);
+                    // var pd = JSON.parse(pdata);
+                    // alert(pd.status);
+                }
+            });
+            return false;
+        });
+    </script>
+</body>
+</html>

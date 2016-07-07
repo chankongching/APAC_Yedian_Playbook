@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>管理所有订单</title>
+    <!-- Bootstrap -->
+    <link href="__PUBLIC__/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+    <div class="container main-box">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <div>
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">{$total_title}</a></li>
+                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">员工详情</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="container total-box">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <span class="badge">{$order_count_total}</span> 订单总数
+                                            </li>
+                                            <a href="{:U('orderlist',array('type'=>'weichuli'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.weichuli}</span>待处理
+                                                </li>
+                                            </a>
+                                            <a href="{:U('orderlist',array('type'=>'youfang'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.youfang}</span>已确认
+                                                </li>
+                                            </a>
+                                            <a href="{:U('duijiu')}">
+
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.duijiushui}</span>已兑换酒水
+                                                </li>
+                                            </a>
+                                            <a href="{:U('orderlist',array('type'=>'wufang'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.wufang}</span>无房取消
+                                                </li>
+                                            </a>
+                                            <a href="{:U('orderlist',array('type'=>'timeout'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.timeout}</span>超时未处理
+                                                </li>
+                                            </a>
+                                            <a href="{:U('orderlist',array('type'=>'yonghucancel'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.yonghucancel}</span>用户取消
+                                                </li>
+                                            </a>
+                                            <a href="{:U('orderlist',array('type'=>'daodianqueren'))}">
+                                                <li class="list-group-item">
+                                                    <span class="badge">{$result_total.daodianqueren}</span>到店确认
+                                                </li>
+                                            </a>
+                                        </ul>
+                                    </div>
+                                    <!-- List group -->
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <div class="container total-box">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <!-- List group -->
+                                        <ul class="list-group">
+                                            <volist name="employees" id="vo">
+                                                <li class="list-group-item">
+                                                    <h3>{$vo.name}</h3>
+                                                    <if condition="$vo.status eq 0"><h4>已于{$vo.update_time}注销</h4></if>
+                                                        <p class="orders_status">
+                                                            <!-- <button class="btn btn-primary">今日已处理 <span class="badge">14</span></button> -->
+                                                            <a  href="{:U('orderlist',array('type'=>'youfang','openid'=>$vo['openid']))}"  ><button class="btn btn-success">有房 <span class="badge">{$vo.total.youfang}</span></button></a>
+                                                            <a  href="{:U('orderlist',array('type'=>'wufang','openid'=>$vo['openid']))}" ><button class="btn btn-info">无房 <span class="badge">{$vo.total.wufang}</span></button></a>
+                                                            <a  href="{:U('orderlist',array('type'=>'daodianqueren','openid'=>$vo['openid']))}"  ><button class="btn btn-info">到店确认 <span class="badge">{$vo.total.daodianqueren}</span></button></a>
+                                                            <a  href="#"  ><button class="btn btn-info">兑换酒水 <span class="badge">{$vo.total.duijiushui}</span></button></a>
+                                                            <!-- <button class="btn btn-primary">超时未处理 <span class="badge">14</span>{:U('duijiu_geren',array('openid'=>$vo['openid']))}</button> -->
+                                                            <!-- <button class="btn btn-danger">用户取消 <span class="badge">14</span></button> -->
+                                                        </p>
+                                                </li>
+                                                <!-- Modal -->
+                                            </volist>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <div>
+                    <p>
+                        <if condition="$total_title eq '今日概况'">
+                            <a href="{:U('MakeOrder',array('r_mark'=>'history'))}"><button class="btn-block btn btn-primary">历史数据</button></a>
+                            <else/>
+                            <a href="{:U('MakeOrder',array('r_mark'=>'today'))}"><button class="btn-block btn btn-primary">当日数据</button></a>
+                        </if>
+                    </p>
+
+
+                    <p><a href="javascript:window.location.reload();"><button class="btn-block btn btn-danger">刷新当前数据</button></a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="__PUBLIC__/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript">
+    // alert('sdfsdf');
+    var data = {
+        'url': encodeURIComponent(location.href)
+    };
+    $.ajax({
+        'url': "{:U('getJsSign')}",
+        'type': 'get',
+        'data':'url='+encodeURIComponent(location.href),
+        'success': function(pdata) {
+            // alert(pdata);
+            var sign = JSON.parse(pdata);
+            if (sign.status == 1) {
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: sign.sign.appId, // 必填，公众号的唯一标识
+                    timestamp: sign.sign.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: sign.sign.nonceStr, // 必填，生成签名的随机串
+                    signature: sign.sign.signature, // 必填，签名，见附录1
+                    jsApiList: [
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                   ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+                wx.ready(function () {
+                    wx.hideOptionMenu();
+                });
+            }
+
+        }
+    });
+    </script>
+</body>
+
+</html>

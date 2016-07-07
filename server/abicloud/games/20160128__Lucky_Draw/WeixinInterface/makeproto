@@ -1,0 +1,4 @@
+protoc --python_out=. --proto_path=. protos/base/*.proto protos/background/*.proto
+protoc --python_out=. --proto_path=. protos/workorder/*.proto
+protoc --python_out=. --proto_path=. protos/mq/*.proto
+protoc --python_out=. --proto_path=. protos/redis/*.proto

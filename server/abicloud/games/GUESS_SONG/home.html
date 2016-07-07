@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>我是估歌王</title>
+    <meta name="hotcss" content="initial-dpr=1">
+    <script>(function(window,document){(function(){var viewportEl=document.querySelector('meta[name="viewport"]'),hotcssEl=document.querySelector('meta[name="hotcss"]'),dpr=window.devicePixelRatio||1;if(hotcssEl){var hotcssCon=hotcssEl.getAttribute("content");if(hotcssCon){var initialDpr=hotcssCon.match(/initial\-dpr=([\d\.]+)/);if(initialDpr){dpr=parseFloat(initialDpr[1])}}}var scale=1/dpr,content="width=device-width, initial-scale="+scale+", minimum-scale="+scale+", maximum-scale="+scale+", user-scalable=no";if(viewportEl){viewportEl.setAttribute("content",content)}else{viewportEl=document.createElement("meta");viewportEl.setAttribute("name","viewport");viewportEl.setAttribute("content",content);document.head.appendChild(viewportEl)}})();var hotcss={};hotcss.px2rem=function(px,designWidth){if(!designWidth){designWidth=parseInt(hotcss.designWidth,10)}return parseInt(px,10)*320/designWidth/20};hotcss.mresize=function(){var innerWidth=window.innerWidth;if(!innerWidth){return false}document.documentElement.style.fontSize=(innerWidth*20/320)+"px"};hotcss.mresize();window.addEventListener("resize",hotcss.mresize,false);window.addEventListener("load",hotcss.mresize,false);setTimeout(function(){hotcss.mresize()},300);window.hotcss=hotcss})(window,document);</script>
+    <link rel="stylesheet" href="style.css?_=201512181236597">
+</head>
+<body>
+
+<div id="homePage">
+    <img src="img/p1_yedian.png" class="logo">
+    <img src="img/p1_title.png" class="title">
+    <img src="img/p1_man.png" class="man">
+    <a href="javascript:;" class="btn_list"><img src="img/p1_btn_list.png" alt="排行"></a>
+    <a href="javascript:;" class="btn_start"><img src="img/p1_btn_start.png" alt="开始"></a>
+    <p class="text">看图猜歌名,大奖等你拿！<br>遇到难关有3次求助朋友的机会哦！ </p>
+</div>
+
+<div id="gamePage">
+    <span id="progress"></span>
+    <div class="top">
+        <span id="time"></span>
+        <div class="picbox"></div>
+    </div>
+    <div class="bottom"></div>
+    <a href="javascript:;" class="btn_help"><img src="img/p2_btn_help.png" alt="求助好友"><span class="n">?</span></a>
+    <a href="javascript:;" class="btn_restart"><img src="img/p2_btn_restart.png" alt="重新开始"></a>
+</div>
+
+<div id="resultPage">
+    <div class="top">
+        <img src="img/p3_get.png" class="get">
+        <p>估歌用时<span class="time">?</span>秒，排行榜<span class="rank">?</span>名！</p>
+    </div>
+
+    <div class="btns">
+        <a href="javascript:;" class="btn_again"><img src="img/btn_again.png" alt="再来挑战"></a>
+        <a href="javascript:;" class="btn_list"><img src="img/p3_btn_list.png" alt="排行榜"></a>
+        <a href="javascript:;" class="btn_share"><img src="img/btn_share.png" alt="炫耀一下"></a>
+    </div>
+
+    <div class="qrcode">
+        <img src="img/p3_qrcode.png">
+        <p>排行榜前100名抽出15个<br>Apple Watch、Beats耳机！<br>所有参与小伙伴随机抽奖送电影票哦！<br>查看中奖名单，请长按二维码关注夜点娱乐！</p>
+    </div>
+</div>
+
+<div id="listPage">
+    <img src="img/p4_title.png" class="title">
+    <div class="board-wrap">
+        <div class="board">
+            <ol id="toplist"></ol>
+            <span class="loadingtip">正在加载…</span>
+        </div>
+    </div>
+    <div class="btns">
+        <a href="javascript:;" class="btn_again"><img src="img/btn_again.png" alt="再来挑战"></a>
+        <a href="javascript:;" class="btn_rule"><img src="img/btn_rule.png" alt="获奖规则"></a>
+        <a href="javascript:;" class="btn_share"><img src="img/btn_share.png" alt="炫耀一下"></a>
+    </div>
+</div>
+
+<div id="helpLayer">
+    <img src="img/help.png">
+</div>
+
+<div id="shareLayer">
+    <div class="arrow"></div>
+    <div class="title"></div>
+    <div class="text"></div>
+</div>
+
+<div id="ruleLayer">
+    <div class="paper">
+        <p class="text">“我是估歌王”活动将于<br>1月5日中午12点截止，<br>中奖者名单将于1月10日前<br>在【夜点娱乐】微信公布。<br>排名前100的用户中将随机送出<br>5块Apple Watch、10副Beats耳机；<br>与此同时，10个小米蓝牙音箱和<br>50张电影票将随机送给参与挑战的用户！<br>如果你的微信昵称出现在1月10日前<br>由夜点娱乐公布的中奖名单上，<br>请及时联系夜点娱乐！</p>
+        <img src="img/rule_qrcode.png" class="qrcode">
+        <p class="text2">查看中奖名单，请长按二维码关注夜点娱乐！</p>
+    </div>
+</div>
+
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="js/zepto.min.js"></script>
+<script src="js/app.min.js?_=201512181236598"></script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?856f2d7d140d1f6da75b0bcd1293f7a9";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</body>
+</html>

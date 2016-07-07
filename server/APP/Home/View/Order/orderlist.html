@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>已处理历史订单</title>
+    <!-- Bootstrap -->
+    <link href="__PUBLIC__/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="__PUBLIC__/css/style.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+</head>
+
+<body>
+    <div class="container main-box-orderlist">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+            <!-- <button class="btn btn-block btn-danger" onclick="history.go(-1);">返回</button> -->
+                <h1><small>{$today}{$empname}共有{$count}个{$type}订单</small></h1>
+                <volist name="order" id="vo">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">订单编号：{$vo.id}</div>
+                        <div class="panel-body">
+                            <br> 下单时间：{$vo.makeordertime}
+                            <br> 预约时间：{$vo.starttime}
+                            <br> 持续时间：{$vo.time} 小时
+                            <br> 包房类型：{$vo.roomtype}
+                            <br> 预定人数：{$vo.members}
+                            <br> 联系电话：{$vo.phone}
+                            <br> 联系人：{$vo.name}
+                            <br>
+                            订单状态：{$vo.status_info}
+                            <br>
+                            <if condition="($vo.status_info eq '未处理') OR ($vo.status_info eq '用户取消') OR ($vo.status_info eq '自动取消')">
+                                <elseif condition="($vo.status_info eq '到店确认完成')" />由{$vo.fuwuyuanqueren}到店确认
+                            <else /> 操作员：{$vo.fuwuyuan}
+                            </if>
+                        </div>
+                    </div>
+                </volist>
+            </div>
+        </div>
+    </div>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="__PUBLIC__/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript">
+    // alert('sdfsdf');
+    var data = {
+        'url': encodeURIComponent(location.href)
+    };
+    $.ajax({
+        'url': "{:U('getJsSign')}",
+        'type': 'get',
+        'data':'url='+encodeURIComponent(location.href),
+        'success': function(pdata) {
+            // alert(pdata);
+            var sign = JSON.parse(pdata);
+            if (sign.status == 1) {
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: sign.sign.appId, // 必填，公众号的唯一标识
+                    timestamp: sign.sign.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: sign.sign.nonceStr, // 必填，生成签名的随机串
+                    signature: sign.sign.signature, // 必填，签名，见附录1
+                    jsApiList: [
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                   ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+                wx.ready(function () {
+                    wx.hideOptionMenu();
+                });
+            }
+
+        }
+    });
+    </script>
+</body>
+
+</html>

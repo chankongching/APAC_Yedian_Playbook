@@ -1,0 +1,31 @@
+<html>
+<body>
+<h4>中奖结果报表：</h4>
+<table border="1">
+    <tr>
+        <td>中奖号</td>
+        <td>openid</td>
+        <td>中奖时间</td>
+        <td>微信昵称</td>
+        <td>微信头像</td>
+    </tr>
+        {% for p in pz_lst%}
+    <tr>
+        <td>{{p.pk}}</td>
+        <td>{{p.weixinuser_id}}</td>
+        <td>{{p.pz_s_time}}</td>
+
+        {% if p.wx_obj.user_wx_nickname %}
+            <td>{{p.wx_obj.user_wx_nickname}}</td>
+            <td><image src="{{p.wx_obj.user_wx_img}}" height='100' width='100'></image></td>
+        {% else %}
+            <td>未关注/未关联</td>
+
+        {% endif %}
+    </tr>
+        {% endfor %}
+</table>
+
+</body>
+</html>
+

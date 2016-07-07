@@ -1,0 +1,827 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "ABI Cloud APP应用接口。<br><br>该应用接口主要用于 ABI Cloud APP调用。<br>Updated: 2015-7-26",
+        "version": "1.7.0",
+        "title": "ABICloud APP接口",
+        "termsOfService": "",
+        "contact": {
+            "name": "API Support",
+            "url": "http://rbnldev.chinacloudapp.cn/",
+            "email": "support@smartnms.com"
+        },
+        "license": {
+            "name": "API BASE URL: http://rbnldev.chinacloudapp.cn/",
+            "url": "http://rbnldev.chinacloudapp.cn/"
+        }
+    },
+    "host": "rbnldev.chinacloudapp.cn",
+    "basePath": "",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "Setting",
+            "description": "基本设置相关接口"
+        },
+        {
+            "name": "Users",
+            "description": "用户相关接口"
+        },
+        {
+            "name": "Booking",
+            "description": "KTV相关接口"
+        }
+    ],
+    "paths": {
+        "/user/register": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User Local Register <b>[正式 2015-07-22]</b>",
+                "description": "Customers should register to sign in to Cloud service system",
+                "operationId": "doUserRegister",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "RegisterRequest",
+                        "description": "Local Register Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/login": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Local User login <b>[正式 2015-07-22]</b>",
+                "description": "Customer can use mobile number and password registered before to log in to the Cloud system again, and get their new user token",
+                "operationId": "doUserLogin",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "LoginRequest",
+                        "description": "Local User login Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/oauthlogin": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Wechat User login <b>[正式 2015-07-22]</b>",
+                "description": "Customers can log in via OAuth account to sign in to Cloud service system",
+                "operationId": "doOAuthLogin",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "OpenLoginRequest",
+                        "description": "Wechat User login Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/OpenLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/resetpass": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Reset User password <b>[正式 2015-07-22]</b>",
+                "description": "When users forgot password, they can apply to reset password, this API may be changed if verify code needed",
+                "operationId": "doResetPass",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "ResetPassRequest",
+                        "description": "Reset password request Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ResetPassRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/logout": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User Logout <b>[正式 2015-07-22]</b>",
+                "description": "Customer can log out from the Cloud service system directory",
+                "operationId": "doLogout",
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/sendcode": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Send SMS Code <b>[正式 2015-07-22]</b>",
+                "description": "Register or reset password will send SMS code",
+                "operationId": "doSendCode",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "VerifyCodeRequest",
+                        "description": "SMS request Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/VerifyCodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/phoneverify": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Verify Mobile Phone <b>[正式 2015-07-22]</b>",
+                "description": "Verify mobile phone when customer added or updated mobile phone",
+                "operationId": "doPhoneVerify",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "PhoneVerifyRequest",
+                        "description": "SMS request Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PhoneVerifyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/info": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user info <b>[暂定 2015-07-22]</b>",
+                "description": "Get user info，必须是合法用户才能获取",
+                "operationId": "getUserInfo",
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br> 400 - 系统错误, 401 - 无效登录, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user info <b>[暂定 2015-07-22]</b>",
+                "description": "Update user info，必须是合法用户才能获取",
+                "operationId": "doUpdateUserInfo",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "UpdateUserInfoRequest",
+                        "description": "Update User Profile Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUserInfoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br> 400 - 系统错误, 401 - 无效登录, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/processpoints": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Loyalty Points Process <b>[未定 2015-07-22]</b>",
+                "description": "Reward points to customer or redeeming points by activities",
+                "operationId": "doProcessPoints",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "GetPointRequest",
+                        "description": "GetPointRequest request Information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/GetPointRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/user/getpointshistory": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get Loyalty Points History <b>[未定 2015-07-22]</b>",
+                "description": "Customer can get user points history list",
+                "operationId": "doGetPointsHistory",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "Start record, the first record is 0",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "Total records need to return",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功示例，具体返回信息请查看接口返回信息",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultModel"
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/booking/xktvdistrict": {
+            "get": {
+                "tags": [
+                    "Booking"
+                ],
+                "summary": "获取KTV区域编码信息 <b>[正式 2015-07-02]</b>",
+                "description": "获取KTV区域信息，目前包含省、市、区县三级编码。",
+                "operationId": "doGetXKTVDistrict",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "parent",
+                        "description": "所属区域编码，默认为空，则获取顶级地区编码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "开始条数，从第几条开始返回，默认为0",
+                        "required": false,
+                        "default": 0,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "返回总条数，默认为100",
+                        "required": false,
+                        "default": 100,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+                    }
+                }
+
+            }
+        },
+        "/booking/xktvlist": {
+            "get": {
+                "tags": [
+                    "Booking"
+                ],
+                "summary": "根据区域编码获取KTV信息 <b>[正式 2015-07-02]</b>",
+                "description": "根据区域编码获取KTV详细信息。",
+                "operationId": "doGetXKTVList",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "description": "所属区域编码，必须提供，一般为区县编码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "开始条数，从第几条开始返回，默认为0",
+                        "required": false,
+                        "default": 0,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "返回总条数，默认100",
+                        "required": false,
+                        "default": 100,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+                    }
+                }
+
+            }
+        },
+        "/booking/xktvsearchlist": {
+            "get": {
+                "tags": [
+                    "Booking"
+                ],
+                "summary": "根据名称，地址和电话搜索KTV信息 <b>[正式 2015-07-02]</b>",
+                "description": "根据名称，地址和联系电话搜索获取KTV信息。",
+                "operationId": "doGetXKTVSearchList",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "KTV名称",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "address",
+                        "description": "KTV地址",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "telephone",
+                        "description": "KTV电话",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "开始条数，从第几条开始返回，默认为0",
+                        "required": false,
+                        "default": 0,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "返回总条数，默认为100",
+                        "required": false,
+                        "default": 100,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+
+                    },
+                    "default": {
+                        "description": "接口处理错误:<br>400 - 系统错误, 403 - 未授权",
+                        "schema": {
+                            "$ref": "#/definitions/ResultListModel"
+                        }
+                    }
+                }
+
+            }
+        }
+
+    },
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+
+    },
+    "definitions": {
+        "AvatarListRequestModel": {
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "开始位置"
+                },
+                "limit": {
+                    "type": "integer",
+                    "format": "int64",
+                    "default": 100,
+                    "description": "返回条数"
+                },
+                "deviceid": {
+                    "type": "string",
+                    "description": "设备IMEI"
+                }
+            }
+        },
+        "RegisterRequest": {
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number or other number, act as username",
+                    "example": "13888888888"
+                },
+                "display_name": {
+                    "type": "string",
+                    "description": "Nickname of the customer",
+                    "example": "KTV User"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password set by the customer",
+                    "example": "123456"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "local user type, eg default normal user - KTV",
+                    "example": "KTV"
+                },
+                "verifycode": {
+                    "type": "string",
+                    "description": "SMS message verify code. get from API /user/sendcode",
+                    "example": ""
+                }
+            }
+        },
+        "LoginRequest": {
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number or other number set by the customer",
+                    "example": "13888888888"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password of the customer",
+                    "example": "123456"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "local user type, eg default normal user - KTV",
+                    "example": "KTV"
+                }
+            }
+        },
+        "OpenLoginRequest": {
+            "properties": {
+                "openid": {
+                    "type": "string",
+                    "description": "Oauth open id or account name of the current user",
+                    "example": "oz237509345-9g9f"
+                },
+                "display_name": {
+                    "type": "string",
+                    "description": "Nickname of the customer",
+                    "example": "Blue Sky"
+                },
+                "avatar_url": {
+                    "type": "string",
+                    "description": "avatar of the customer",
+                    "example": "http://weixin.qq.com/dfsdfsdfsd.png"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "Oauth authorize type, eg 1 – Wechat,  2 - SINA,  3 - QQ , ..",
+                    "example": "1"
+                }
+            }
+        },
+        "ResetPassRequest": {
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number, act as username, needed to get the reset password",
+                    "example": "13888888888"
+                },
+                "verifycode": {
+                    "type": "string",
+                    "description": "SMS message verify code. get from API /user/sendcode",
+                    "example": ""
+                }
+            }
+        },
+        "VerifyCodeRequest": {
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number or other number set by the customer",
+                    "example": "13888888888"
+                }
+            }
+        },
+        "PhoneVerifyRequest": {
+            "properties": {
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number, when added or updated by customer",
+                    "example": "13888888888"
+                },
+                "verifycode": {
+                    "type": "string",
+                    "description": "SMS message verify code. get from API /user/sendcode",
+                    "example": ""
+                }
+            }
+        },
+        "UpdateUserInfoRequest": {
+            "properties": {
+                "gender": {
+                    "type": "integer",
+                    "description": "1 - male and  2 - female 0 - unknown",
+                    "example": 0
+                },
+                "address": {
+                    "type": "string",
+                    "description": "address",
+                    "example": "Beijing"
+                },
+                "mobile": {
+                    "type": "string",
+                    "description": "Mobile phone number, verified by API  /user/phoneverify",
+                    "example": "13888888888"
+                }
+            }
+        },
+        "GetPointRequest": {
+            "properties": {
+                "activities_id": {
+                    "type": "string",
+                    "description": "Activities id",
+                    "example": ""
+                },
+                "source_id": {
+                    "type": "string",
+                    "description": "Activities source id ??? TBD",
+                    "example": ""
+                }
+            }
+        },
+        "ResultListModel": {
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "接口返回代码"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "接口返回json数据，如果错误，则为空json"
+                },
+                "msg": {
+                    "type": "string",
+                    "description": "接口返回信息"
+                }
+
+            }
+
+        },
+        "ResultModel": {
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "接口返回代码"
+                },
+                "msg": {
+                    "type": "string",
+                    "description": "接口返回信息"
+                }
+
+            }
+
+        }
+    }
+}

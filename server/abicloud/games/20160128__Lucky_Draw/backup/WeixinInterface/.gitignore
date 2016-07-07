@@ -1,0 +1,8 @@
+nfo
+*.pot
+*.py[co]
+__pycache__
+*.log
+static/media/
+cscope.*
+tags

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>夜点商家版明细</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/wechatshangjia/Public/Business/styles/dataTables.bootstrap.min.css">
+    <!---->
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/wechatshangjia/Public/Business/js/jquery.dataTables.min.js"></script>
+    <script src="/wechatshangjia/Public/Business/js/dataTables.bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 main">
+            <div class="table-responsive">
+                <table id="xktvlist" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                </table>
+        </div>
+    </div>
+</div>
+    <script>
+        $(document).ready(function() {
+            $('#xktvlist').DataTable( {
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url":"{:U()}",
+                    "type": "POST"
+                },
+                "scrollX": true,
+                "autoWidth": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                },
+                "lengthMenu": [[30, 60, 120, -1], [30, 60, 120, "All"]],
+                "columns": [
+                    { "data": "id" ,title:'id'},
+                    { "data": "name" ,title:'name' },
+                    { "data": "area_id",title:"area_id"},
+                    { "data": "desc",title:"desc"},
+                    { "data": "spic1",title:"spic1"},
+                    { "data": "bpic1",title:"bpic1"},
+                    { "data": "spic2",title:"spic2"},
+                    { "data": "bpic2",title:"bpic2"},
+                    { "data": "spic3",title:"spic3"},
+                    { "data": "bpic3",title:"bpic3"},
+                    { "data": "spic4",title:"spic4"},
+                    { "data": "bpic4",title:"bpic4"},
+                    { "data": "spic5",title:"spic5"},
+                    { "data": "bpic5",title:"bpic5"},
+                    { "data": "bathroom",title:"bathroom"},
+                    { "data": "parking",title:"parking"},
+                    { "data": "WIFI",title:"WIFI"},
+                    { "data": "Themerooms",title:"Themerooms"},
+                    { "data": "XKTV",title:"XKTV"},
+                    { "data": "WirelessMicrophones",title:"WirelessMicrophones"},
+                    { "data": "address" ,title:'address'},
+                    { "data": "telephone" ,title:'telphone'},
+                    { "data": "openhours" ,title:'openhours'},
+                    { "data": "roomtotal",title:"roomtotal"},
+                    { "data": "type" ,title:'type'},
+                    { "data": "managername",title:'manager',"orderable": false,"searchable": false},
+                    { "data": "managertel",title:'managertel',"orderable": false,"searchable": false},
+                    { "data": "bindstatus",title:'绑定情况',"orderable": false,"searchable": false}
+                ]
+            } );
+        } );
+    </script>
+</body>
+</html>

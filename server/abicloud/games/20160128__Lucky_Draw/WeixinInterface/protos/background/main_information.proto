@@ -1,0 +1,72 @@
+import "protos/base/item_detail_infomation.proto";
+import "protos/base/dbo_settings.proto";
+
+
+message MainInformation {
+
+    required string RequestName = 2;
+
+    required string RequestId =3;
+
+    optional string RequestDescription =7;
+
+    optional DboSetting dbo_setting = 8;
+}
+
+
+
+message ItemStruct {
+    required bool ItemIsAvailable = 1; //0(False) is unavailable 1(True) is available
+    optional string ItemID = 2; //if have optional means exist item if itemid id null means create a new object
+    required string ItemName = 3;
+    required string ItemchineseName = 4;
+    required string ItemCategoryName = 5;
+    optional string ItemDescription = 6;
+    optional string ItemPicUrl = 7;
+
+    optional ItemsDetailInformationCollection subProductCollection = 8;
+
+    optional bool ItemInHomePage = 9;
+
+    optional bool IsHotItem = 10;
+    optional string HotItemPicUrl = 11;
+}
+
+message OrderStruct {
+    required string orderID = 2;
+}
+
+
+
+/* Requests for GET*/
+/*Bad code need abstract for all code*/
+message ItemsRequest {
+    repeated ItemStruct items = 1;
+}
+
+message PostRequests {
+    enum MessageType{
+        MAININFO = 0;
+        ITEMSINFO = 1;
+        ORDERINFO = 2;
+    }
+    enum RequestOperations {
+        ADD = 0;
+        MODIFY = 1;
+        DELETE = 2; //maybe can use for unavailabel
+    }
+
+    message Operations{
+        required RequestOperations req = 1;
+
+        repeated ItemStruct items = 2;
+
+        repeated OrderStruct orders = 3;
+
+        repeated MainInformation main_infos = 4;
+    }
+
+    required MessageType msgtype = 1;
+    required string dboid = 2;
+    repeated Operations operations = 5;
+}

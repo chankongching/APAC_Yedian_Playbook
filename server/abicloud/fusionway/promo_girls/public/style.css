@@ -1,0 +1,381 @@
+* {
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+html, body {
+	background: linear-gradient(120deg, #db4e3f 0%,#ba0224 100%);
+	background: -webkit-linear-gradient(-60deg, #db4e3f 0%,#ba0224 100%);
+	min-height: 100%;
+}
+ul, li {
+	list-style: none;
+}
+#main {
+	bottom: 0px;
+	height: 100%;
+	left: 0px;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+#list {
+	height: 100%;
+}
+#list header {
+	height: 28%;
+	margin: 0 auto;
+	width: 90%;
+}
+#list header div {
+	height: 60%;
+}
+#list header h1 {
+	text-align: center;
+}
+#list header p {
+	font-size: .8em;
+	text-align: right;
+}
+#items {
+	display: block;
+	height: 72%;
+	width: 100%;
+}
+#items li {
+	display: block;
+	float: left;
+	height: 50%;
+	width: 50%;
+}
+#items li a {
+	display: block;
+	height: 100%;
+	width: 100%;
+}
+#items li div {
+	background: #fff;
+	border-radius: 5px;
+	height: 60%;
+	margin: 0 auto;
+	width: 80%;
+}
+#items li h4, #items li p {
+	margin: 0 auto;
+	width: 80%;
+}
+#items li h4 {
+	font-size: 1em;
+	padding-top: .2em;
+}
+#items li p {
+	font-size: .8em;
+}
+#detail {
+	height: 100%;
+}
+#detail header {
+	background: #fff;
+	height: 38%;
+}
+#content {
+	height: 30%;
+	margin: 0 auto;
+	overflow: hidden;
+	width: 90%;
+}
+#content h1 {
+	height: 2.5em;
+	line-height: 3em;
+}
+#content span {
+	display: block;
+	font-size: .8em;
+	height: 2em;
+	line-height: 1em;
+}
+#content p {
+	font-size: .8em;
+}
+#action {
+	height: 32%;
+	margin: 0 auto;
+	width: 90%;
+}
+#action span {
+	display: block;
+	float: left;
+	font-size: .8em;
+	height: 60%;
+	line-height: 3em;
+	text-align: center;
+	width: 50%;
+}
+#action span input {
+	align-content: center;
+	background: none;
+	border: 1px solid #fff;
+	box-shadow: none;
+	display: block;
+	font-size: 1.8em;
+	height: 1.5em;
+	margin: 0 auto;
+	text-align: center;
+	-webkit-appearance: none;
+	width: 50%;
+}
+#action .submit {
+	background: #000;
+	border: none;
+	display: block;
+	font-size: 1em;
+	height: 30%;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#confirm {
+	height: 100%;
+}
+#info {
+	height: 50%;
+	margin: 0 auto;
+	overflow: hidden;
+	width: 90%;
+}
+#info div:first-child {
+	background: #fff;
+	border-radius: 5%;
+}
+#info div {
+	float: left;
+	height: 50%;
+	margin: 25% 0 0 2.5%;
+	width: 45%;
+}
+#info h4 {
+	margin-top: 35%;
+}
+#info h4, #info p {
+	font-size: .8em;
+}
+#submit {
+	clear: both;
+	height: 50%;
+	margin: 0 auto;
+	width: 90%;
+}
+#submit h3 {
+	height: 27.2%;
+	line-height: 4em;
+	text-align: center;
+}
+#submit span {
+	display: block;
+	float: left;
+	height: 47.2%;
+	width: 50%;
+}
+#submit span input {
+	align-content: center;
+	background: #fff;
+	border: 1px solid #fff;
+	box-shadow: none;
+	color: #fc3a3a;
+	display: block;
+	font-size: .8em;
+	height: 38%;
+	margin: 0 auto;
+	text-align: center;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#submit span .captcha {
+	background: transparent;
+	color: #fff;
+}
+#submit .submit {
+	background: #000;
+	border: none;
+	display: block;
+	font-size: 1em;
+	height: 19.2%;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#done {
+	height: 100%;
+}
+#done h3:first-child {
+	position: absolute;
+	text-align: center;
+	top: 5%;
+	width: 100%;
+}
+#tips {
+	height: 37.2%;
+	margin: 0 auto;
+	width: 90%;
+}
+#tips p {
+	padding-bottom: 1em;
+}
+#tips p:first-child {
+	font-size: 1.2em;
+}
+#done .button {
+	height: 9.6%;
+	margin: 0 auto;
+	width: 90%;
+}
+#done .button input {
+	background: #000;
+	border: none;
+	display: block;
+	font-size: 1em;
+	height: 100%;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#achievement {
+	height: 100%;
+}
+#achievement div {
+	height: 87.2%;
+	margin: 0 auto;
+	width: 80%;
+}
+#achievement div p {
+	font-size: 1.1em;
+	padding-top: 15%;
+}
+#achievement div p span {
+	font-size: .8em;
+}
+#achievement div p:first-child {
+	text-align: right;
+}
+#achievement input {
+	background: #000;
+	border: none;
+	display: block;
+	font-size: 1em;
+	height: 9.6%;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#readytoclose {
+	height: 100%;
+}
+#readytoclose p {
+	height: 87.2%;
+	line-height: 10em;
+	text-align: center;
+}
+#readytoclose input {
+	background: #000;
+	border: none;
+	display: block;
+	font-size: 1em;
+	height: 9.6%;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 80%;
+}
+#checkuserstatus, #checkuserinfo {
+	height: 100%;
+	margin: 0 auto;
+	width: 90%;
+}
+#checkuserstatus p:first-child {
+	padding-top: 20%;
+}
+#checkuserstatus p {
+	height: 10%;
+	padding: 5% 0 0 0;
+	text-align: center;
+}
+#checkuserstatus input, #checkuserinfo input {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	display: block;
+	font-size: 1.5em;
+	line-height: 2em;
+	margin: 0 auto;
+	-webkit-appearance: none;
+	width: 90%;
+}
+#checkuserstatus .input input {
+	border-bottom: 1px solid #fff;
+}
+#checkuserstatus .button input {
+	background: #fff;
+	border: none;
+	border-radius: 5px;
+	color: #fc3a3a;
+	display: block;
+	font-size: 1em;
+	padding: .5em 0;
+	-webkit-appearance: none;
+}
+#checkuserstatus .checkuserstatus_error, #checkuserinfo .checkuserinfo_error {
+	background: #90061d;
+	border-radius: 5px;
+	color: #fff;
+	display: none;
+	height: auto;
+	margin: 2em auto;
+	padding: 1em;
+	width: 80%;
+}
+#checkuserinfo, #checkuserinfo form {
+	height: 100%;
+}
+#checkuserinfo form div {
+	height: 87.2%;
+	margin: 0 auto;
+	width: 80%;
+}
+#checkuserinfo form div h3 {
+	padding-top: 70%;
+}
+#checkuserinfo form div p {
+	font-size: .8em;
+	padding: .3em 0;
+}
+#checkuserinfo form div p.tips {
+	font-size: .7em;
+}
+#checkuserinfo input {
+	background: #000;
+	border: none;
+	border-radius: 5px;
+	color: #fff;
+	display: block;
+	font-size: 1em;
+	padding: .5em 0;
+	-webkit-appearance: none;
+}
+#readytoclose {
+	height: 100%;
+}
+#readytoclose p {
+	height: 87.2%;
+	margin: 0 auto;
+	width: 80%;
+}
+#readytoclose input {
+	background: #000;
+	border: none;
+	border-radius: 5px;
+	color: #fff;
+	display: block;
+	font-size: 1em;
+	padding: .5em 0;
+	-webkit-appearance: none;
+}
