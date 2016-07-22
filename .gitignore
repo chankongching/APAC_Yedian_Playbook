@@ -1,0 +1,6 @@
+.*
+*.retry
+ansible/roles/*
+!ansible/roles/yedian-*
+!.gitignore
+!.placeholder
