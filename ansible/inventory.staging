@@ -7,8 +7,7 @@ staging-yedian-lb-1
 
 [web]
 staging-yedian-web-1
-staging-yedian-web-1
-
+staging-yedian-web-2
 
 [mysql]
 staging-yedian-db-1
