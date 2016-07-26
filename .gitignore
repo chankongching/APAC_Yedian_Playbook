@@ -97,6 +97,7 @@ ENV/
 server/abicloud/protected/runtime/
 server/APP/Runtime/
 server/wechat_ktv/Runtime/
+server/Verify/Runtime/
 server/abicloud/assets/
 server/abicloud/avatar/
 server/abicloud/wechatshangjia/Public/qrcode/
