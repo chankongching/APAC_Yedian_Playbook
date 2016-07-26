@@ -6,3 +6,22 @@
 - hosts: all
   roles:
     - role: wcl-common
+      common_users:
+        - name: wcladmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ wcladmin_ssh_pub_keys }}"
+      common_users:
+        - name: ydadmin
+          sudo: yes
+          ssh: yes
+          # authorized: "{{ ydadmin_ssh_pub_keys }}"
+
+      disable_firewall: yes
+      handle_firewall: false
+
+    - role: dj-wasabi.zabbix-agent
+      agent_server: "zabbix.service.wiredcraft.com,127.0.0.1"
+      # Empty both interface and IP to listen to all
+      agent_listeninterface:
+      agent_listenip: 
