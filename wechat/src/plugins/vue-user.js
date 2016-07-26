@@ -1,5 +1,5 @@
 function install(Vue) {
-    Vue.prototype.$userdata = {};
+    Vue.prototype.$user = {};
 };
 
 module.exports = install;

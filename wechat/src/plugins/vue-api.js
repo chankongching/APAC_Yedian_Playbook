@@ -1,55 +1,42 @@
 import utils from "../libs/utils";
 
 function install(Vue) {
-    var context;
-
-    function request(method, url, data) {
-        return new Vue.Promise(function(resolve, reject) {
-            Vue.http[method](url, data).then(function({data}) {
-                if (data.result === 0) {
-                    resolve(data);
-                } else if (data.result === 450) {
-                    data.list = [];
-                    data.total = 0;
-                    resolve(data);
-                } else {
-                    reject(data);
-                }
-            }, function(response) {
-                reject(response);
-            });
-        }, context);
-    }
-
-    var api = {
-        get(url, data) {
-            return request("get", url, data);
+    let api = {
+        get(url, data, cacheable) {
+            if (cacheable) {
+                let cached = getCache("get", url, data);
+                if (cached) return new Vue.Promise.resolve(cached, context);
+            }
+            return request("get", url, data, cacheable);
         },
-        post(url, data) {
-            return request("post", url, data);
+        post(url, data, cacheable) {
+            if (cacheable) {
+                let cached = getCache("post", url, data);
+                if (cached) return new Vue.Promise.resolve(cached, context);
+            }
+            return request("post", url, data, cacheable);
         },
-        login(data) {
-            return request("post", "user/oauthlogin", data).then(function(data) {
-                Vue.http.headers.common["X-KTV-User-Token"] = data.token;
-                return data;
-            }, function(data) {
-                throw new Error(data.msg || "用户登录失败");
-            });
+        oAuthLogin(data) {
+            return request("post", "user/oauthlogin", data)
+                .then(function (data) {
+                    Vue.http.headers.common["X-KTV-User-Token"] = data.token;
+                    return data;
+                }, function (data) {
+                    throw new Error(data.msg || "登录失败");
+                });
         },
         getUserInfo(preferLocal) {
-            if (preferLocal && Object.keys(Vue.prototype.$userdata).length > 0) {
-                return new Vue.Promise.resolve(Vue.prototype.$userdata, context);
+            if (preferLocal && Object.keys(Vue.prototype.$user).length > 0) {
+                return new Vue.Promise.resolve(Vue.prototype.$user, context);
             }
             return request("get", "user/info").then(function(data) {
-                Vue.prototype.$userdata = data;
+                Vue.prototype.$user = data;
                 if (data.lat != -1 && data.lng != -1) {
                     sessionStorage.setItem("location", JSON.stringify({
                         lat: data.lat,
                         lng: data.lng
                     }));
                 }
-                return data;
-            }, function(data) {
                 return data;
             });
         },
@@ -74,8 +61,88 @@ function install(Vue) {
                 mobile: mobile,
                 verifycode: code
             });
+        },
+        wechatPay(orderId) {
+            return new Vue.Promise(function(resolve, reject) {
+                if (window.isWXReady) {
+                    request("post", "wechat_ktv/Pay/Index/payapi", {
+                        openid: this.$user.openid,
+                        trade_no: orderId
+                    }).then(function(data) {
+                        let params = data.signinfo.jsApiParameters;
+
+                        wx.chooseWXPay({
+                            appId: params.appId,
+                            timestamp: params.timeStamp,
+                            nonceStr: params.nonceStr,
+                            package: params.package,
+                            signType: params.signType,
+                            paySign: params.paySign,
+                            success: resolve,
+                            fail: res => reject({msg: "支付失败"}),
+                            cancel: res => reject({msg: "支付取消"})
+                        });
+                    }, reject);
+                } else {
+                    reject({msg: "支付失败：未加载微信 JSSDK" });
+                }
+            }, context);
         }
     };
+
+    let cacheStore = {};
+    let context;
+
+    if (process.env.NODE_ENV !== "production") window.__apiCache = cacheStore;
+
+    function getCacheId(method, url, params) {
+        return method + ":" + url + (params ? Object.keys(params).reduce((prev, curr) => prev + curr + "=" + params[curr] + "&", "?") : "");
+    }
+
+    function setCache(method, url, params, data) {
+        let id = getCacheId(method, url, params);
+
+        return cacheStore[id] = data;
+    }
+
+    function getCache(method, url, params) {
+        let id = getCacheId(method, url, params);
+
+        return cacheStore.hasOwnProperty(id) ? cacheStore[id] : false;
+    }
+
+    function request(method, url, params, cacheable) {
+        return new Vue.Promise(function(resolve, reject) {
+            Vue.http[method](url, method === "get" ? {params: params} : params).then(function(response) {
+                let data = response.data;
+
+                if (typeof data === "string") {
+                    try {
+                        data = JSON.parse(response.data);
+                    } catch (err) {
+                        reject({
+                            msg: "response data is not valid JSON"
+                        });
+                        return false;
+                    }
+                }
+
+                if (data.result === 0) {
+                    if (cacheable) setCache(method, url, params, data);
+                    resolve(data);
+                } else if (data.result === 450) {
+                    data.list = [];
+                    data.total = 0;
+                    if (cacheable) setCache(method, url, params, data);
+                    resolve(data);
+                } else {
+                    reject(data);
+                }
+            }, function(response) {
+                reject(response);
+            });
+        }, context);
+    }
 
     Object.defineProperties(Vue, {
         api: {

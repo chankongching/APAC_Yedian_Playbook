@@ -11,9 +11,12 @@
             <ul class="ktv-list">
                 <li v-for="ktv in list | limitBy currLimit" :style="ktv.piclist[0].bigpicurl | backgroundImage">
                     <a v-link="{ name: 'detail', params: { id: ktv.xktvid }}">
-                        <span v-if="ktv.sjq" class="stamp stamp-djq"></span>
                         <span v-if="ktv.taocan" class="stamp stamp-goldpkg"></span>
                         <div class="content">
+                            <div class="marks">
+                                <span v-if="ktv.sjq" class="mark mark-djq"></span>
+                                <span v-if="ktv.online_pay" class="mark mark-zxf"></span>
+                            </div>
                             <h3 class="title">{{ktv.xktvname}}</h3>
                             <span class="rating"><span class="full"></span><span class="stars" :style="{width:ktv.rate*20+'%'}"></span></span>
                             <p class="address">{{ktv.address}}</p>
@@ -54,7 +57,8 @@ import utils from "../libs/utils";
 export default {
     data() {
         return {
-            keyword: this.$route.params.keyword,
+            keyword: this.$route.query.q,
+            city: this.$route.query.city,
 
             list: [],
 
@@ -120,8 +124,9 @@ export default {
             this.$api.get("booking/xktvsearchlist", {
                 offset: this.offset,
                 limit: this.limit,
-                name: this.keyword
-            }).then(function (data) {
+                name: this.keyword,
+                city: this.city
+            }, true).then(function (data) {
                 if (data.total == 0) {
                     this.loadingStatus = 2;
                     return false;

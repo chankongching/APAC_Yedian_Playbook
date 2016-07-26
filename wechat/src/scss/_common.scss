@@ -82,11 +82,6 @@
         right: 20px;
     }
 
-    .title {
-        font-size: 16px;
-        margin-bottom: 5px;
-    }
-
     .stamp {
         position: absolute;
         top: 40px;
@@ -95,12 +90,26 @@
         height: 47px;
         @extend %sprite;
     }
-    .stamp-djq { @include rsprite($stamp-djq-group, true, false); }
     .stamp-goldpkg {
         top: 0;
         left: 0;
         @include rsprite($stamp-goldpkg-corner-group, true, false);
     }
+
+    .title {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .marks {
+        margin-bottom: 4px;
+    }
+
+    .mark {
+        display: inline-block;
+    }
+    .mark-djq { @include svg-icon($mark-djq); }
+    .mark-zxf { @include svg-icon($mark-zxf); }
 
     .rating {
         position: relative;

@@ -90,21 +90,34 @@ export default {
         }
     },
     ready() {
-        this.width = window.innerWidth;
         this.startX = 0;
         this.startY = 0;
         this.distance = 0;
         this.isMoving = false;
+        this.initialized = false;
 
-        this.resize();
-
-        if (this.auto) this.timer = setInterval(this.next, this.delay);
+        this.init();
     },
     beforeDestroy() {
-        if (this.slides.length > 1) $(this.$el).off(".ss");
-        if (this.auto) clearInterval(this.timer);
+        $(window).off(".ss");
+
+        if (this.slides.length > 1) {
+            $(this.$el).off(".ss");
+            if (this.auto) clearInterval(this.timer);
+        }
     },
     methods: {
+        init() {
+            if (this.initialized) {
+                this.resize();
+            } else if (this.slides.length > 1) {
+                this.bindEvents();
+                this.resize();
+                if (this.auto) this.timer = setInterval(this.next, this.delay);
+
+                this.initialized = true;
+            }
+        },
         bindEvents() {
             let $el = $(this.$el);
 
@@ -142,6 +155,10 @@ export default {
                     this.isMoving = false;
                 };
             });
+
+            $(window).on("resize.ss", utils.throttle(() => {
+                this.resize();
+            }));
         },
         translateX(x) {
             this.$els.carousel.style.WebkitTransform = this.$els.carousel.style.transform = "translate3d(" + x + "px,0,0)";
@@ -166,30 +183,23 @@ export default {
             this.translateX(-this.width * index);
             this.current = index;
             $(this.$el).off(".temp");
-            if (this.auto) this.timer = setInterval(this.next, this.delay);
-        },
-        handleClick(link) {
-            if (link) {
-                alert(link);
-            }
+            if (this.slides.length > 1 && this.auto) this.timer = setInterval(this.next, this.delay);
         },
         resize() {
-            if (this.slides.length < 2) return false;
-
             let width = window.innerWidth;
             let carousel = this.$els.carousel;
+
+            this.width = width;
 
             if (carousel) {
                 carousel.style.left = -width + "px";
                 carousel.style.width = (this.slides.length + 2) * width + "px";
 
-                this.$nextTick(function() {
-                    Array.prototype.forEach.call(carousel.children, function(slide) {
-                        slide.style.width = width + "px";
-                    });
-                });
+                this.translateX(-this.width * this.current);
 
-                this.bindEvents();
+                Array.prototype.forEach.call(carousel.children, function(slide) {
+                    slide.style.width = width + "px";
+                });
             };
         },
         next() {
@@ -200,7 +210,7 @@ export default {
         }
     },
     watch: {
-        slides: "resize"
+        slides: "init"
     }
 }
 </script>

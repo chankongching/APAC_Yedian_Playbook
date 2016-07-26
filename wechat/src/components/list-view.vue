@@ -149,7 +149,7 @@
                 + label {
                     vertical-align: middle;
                     padding-left: 7px;
-                    padding-right: 55px;
+                    padding-right: 50px;
                 }
             }
         }

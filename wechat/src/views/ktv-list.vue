@@ -2,7 +2,7 @@
     <div class="page-ktvlist" :class="{loading:loadingStatus==1}">
         <header class="masthead list-selector" v-el:masthead>
             <ul class="selector-triggers">
-                <li :class="{active:activeLayer=='area'}" @click="activeLayer=activeLayer=='area'?false:'area'"><span class="selector-trigger"><span class="text">{{filterKey.name}}</span><span class="icon icon-arrow"></span></span></li>
+                <li :class="{active:activeLayer=='area'}" @click="activeLayer=activeLayer=='area'?false:'area'"><span class="selector-trigger"><span class="text">{{areaText}}</span><span class="icon icon-arrow"></span></span></li>
                 <li :class="{active:activeLayer=='sort'}" @click="activeLayer=activeLayer=='sort'?false:'sort'"><span class="selector-trigger"><span class="text">{{sortKey.name}}</span><span class="icon icon-arrow"></span></span></li>
                 <li :class="{active:activeLayer=='event'}" @click="activeLayer=activeLayer=='event'?false:'event'"><span class="selector-trigger"><span class="text">优惠筛选</span><span class="icon icon-arrow"></span></span></li>
             </ul>
@@ -14,17 +14,26 @@
 
             <div class="selector-droplist droplist-filter" v-show="activeLayer=='area'" transition="flip">
                <nav class="tab">
-                    <a :class="{active:filterBy=='distance'}" @click="filterBy='distance'">附近</a>
-                    <a :class="{active:filterBy=='area'}" @click="filterBy='area'">商区</a>
+                    <a :class="{active:activePanel=='city'}" @click="activePanel='city'">城市</a>
+                    <a :class="{active:activePanel=='area'}" @click="activePanel='area'">商区</a>
+                    <a :class="{active:activePanel=='distance'}" @click="activePanel='distance'">附近</a>
                </nav>
 
                 <div class="filter-panels">
-                    <ul class="distance-list" v-show="filterBy=='distance'">
-                        <li v-for="distance in distanceList" :class="{active:filterKey==distance}" @click="filterKey=distance">{{distance.name}}</li>
+                    <ul class="city-list" v-show="activePanel=='city'">
+                        <li class="gps" :class="{na:!gpsCity.code,active:activeCity==gpsCity}" @click="activeCity=gpsCity,activePanel='area'">GPS定位：{{gpsCity.name}}</li>
+
+                        <li v-for="city in cityList" :class="{active:activeCity==city}" @click="activeCity=city,activePanel='area'">{{city.name}}</li>
                     </ul>
 
-                    <ul class="area-list" v-show="filterBy=='area'">
-                        <li v-for="area in areaList" :class="{active:filterKey==area}" @click="filterKey=area">{{area.name}}</li>
+                    <ul class="area-list" v-show="activePanel=='area'">
+                        <li class="all" :class="{active:filterKey==allAreas}" @click="filterKey=allAreas,activeLayer=false">{{allAreas.name}}</li>
+
+                        <li v-for="area in areaList" :class="{active:filterKey==area}" @click="filterKey=area,activeLayer=false">{{area.name}}</li>
+                    </ul>
+
+                    <ul class="distance-list" v-show="activePanel=='distance'">
+                        <li v-for="distance in distanceList" :class="{active:filterKey==distance}" @click="filterKey=distance,activeLayer=false">{{distance.name}}</li>
                     </ul>
                 </div>
             </div>
@@ -40,7 +49,7 @@
                     <li v-for="event in eventTypes" :class="{active:event.selected}" @click="event.selected=!event.selected">{{event.name}}</li>
                 </ul>
 
-                <span class="ok" @click="updateList()">确定</span>
+                <span class="ok" @click="activeLayer=false,updateList()">确定</span>
             </div>
         </header>
 
@@ -52,11 +61,24 @@
 
         <section class="ktv-list-container">
             <ul class="ktv-list">
-                <li v-for="ktv in list | orderBy orderKey -1 | limitBy currLimit" :style="ktv.piclist[0].bigpicurl | backgroundImage" :data-weight="ktv.weight">
+                <li v-if="stickKtv" :style="stickKtv.pic | backgroundImage">
+                    <a @click="$handleLink(stickKtv.link, 'stick')">
+                        <div class="content">
+                            <h3 class="title">{{stickKtv.event_name}}</h3>
+                            <span class="rating"><span class="full"></span><span class="stars" :style="{width:stickKtv.rating*20+'%'}"></span></span>
+                            <p class="address">{{stickKtv.address}}</p>
+                            <span class="distance" v-if="stickKtv.distance != null">{{stickKtv.distance}}KM</span>
+                        </div>
+                    </a>
+                </li>
+                <li v-for="ktv in list | orderBy orderKey -1 | limitBy currLimit" track-by="xktvid" :style="ktv.piclist[0].bigpicurl | backgroundImage">
                     <a v-link="{ name: 'detail', params: { id: ktv.xktvid }}">
-                        <span v-if="ktv.sjq" class="stamp stamp-djq"></span>
                         <span v-if="ktv.taocan" class="stamp stamp-goldpkg"></span>
                         <div class="content">
+                            <div class="marks">
+                                <span v-if="ktv.sjq" class="mark mark-djq"></span>
+                                <span v-if="ktv.online_pay" class="mark mark-zxf"></span>
+                            </div>
                             <h3 class="title">{{ktv.xktvname}}</h3>
                             <span class="rating"><span class="full"></span><span class="stars" :style="{width:ktv.rate*20+'%'}"></span></span>
                             <p class="address">{{ktv.address}}</p>
@@ -261,7 +283,7 @@
 
     .tab {
         height: 54px;
-        width: 250px;
+        width: 300px;
         margin: 0 auto;
         a {
             display: inline-block;
@@ -306,17 +328,29 @@
         }
     }
 
+    .city-list {
+        .gps {
+            width: auto;
+        }
+
+        .na {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    .city-list .gps,
+    .area-list .all {
+         + li {
+            clear: left;
+        }
+    }
+
     .distance-list {
         max-width: 280px;
         li {
             width: 5em;
             margin: 8px 20px;
-        }
-    }
-
-    .area-list {
-        li:nth-child(2) {
-            clear: left;
         }
     }
 
@@ -341,6 +375,8 @@
     }
     .filter-panels {
         border-top: 1px solid $borderDark;
+        overflow: auto;
+        @include scrollable;
     }
 }
 
@@ -381,6 +417,8 @@
 
 <script>
 import utils from "../libs/utils";
+import store from "../libs/store";
+import Vue from "vue";
 
 export default {
     data() {
@@ -390,9 +428,9 @@ export default {
             { distance: 2000, name: "离我2KM" },
             { distance: 3000, name: "离我3KM" }
         ];
-        let areaList = [
-            { code: 0, name: "全部商区" }
-        ];
+
+        let allAreasObj = { code: 0, name: "全部商区" };
+
         let sortTypes = [
             { code: "distance",         name: "离我最近" },
             { code: "smart",            name: "智能排序" },
@@ -410,22 +448,24 @@ export default {
         ];
 
         return {
-            banners: [{
-                pic: "./assets/img/banner/20160623.jpg",
-                link: "http://letsktv.chinacloudapp.cn/dist/oneyuan"
-            }, {
-                pic: "./assets/img/banner/20160620.jpg",
-                link: "http://letsktv.chinacloudapp.cn/wechat_ktv/home/event/enter"
-            }],
+            banners: store.baseinfo.banner.lists || [],
+            stickKtv: null,
 
             activeLayer: false,
+            activePanel: "area",
 
             keyword: "",
 
-            filterBy: "area",
+            cityList: [],
+            gpsCity: {
+                name: "正在定位…"
+            },
+            activeCity: null,
+
             distanceList: distanceList,
-            areaList: areaList,
-            filterKey: areaList[0],
+            areaList: [],
+            allAreas: allAreasObj,
+            filterKey: allAreasObj,
 
             sortTypes: sortTypes,
             sortKey: sortTypes[1],
@@ -447,19 +487,74 @@ export default {
     },
     route: {
         data() {
-            let vm = this;
             let query = this.$route.query;
 
             if (query.event == "jq") this.eventTypes[0].selected = true;
             if (query.event == "goldpkg") this.eventTypes[1].selected = true;
 
-            utils.getLocation(null, null, function(){
-                if (query.district) {
-                    vm.getDistrictList(query.district);
-                } else {
-                    vm.fetch();
-                    vm.getDistrictList();
-                }
+            utils.getLocation(null, null, coords => {
+                this.getCityList().then(function() {
+                    if (store.city) {
+                        this.activeCity = this.cityList.filter(item => item.code == store.city)[0];
+                        this.gpsCity.name = store.gpsCity;
+                    } else {
+                        return this.reverseGeocodeLocation(coords).then(function(city) {
+                            if (this.isCityAvailable(city)) {
+                                city.code = this.cityList.filter(item => item.name == city.name)[0].code;
+                                this.activeCity = this.gpsCity = city;
+                            } else {
+                                store.gpsCity = this.gpsCity.name = city.name;
+                                throw new Error("检测到您当前城市没有可预订的KTV，是否手动切换城市？");
+                            }
+                        }, error => {
+                            store.gpsCity = this.gpsCity.name = "定位失败";
+                            throw new Error("系统检测不到当前位置信息，是否需要手动切换城市？");
+                        }).catch(error => {
+                            this.activeCity = this.cityList[0];
+
+                            if (this.cityList.length > 1 && confirm(error.message)) {
+                                this.activePanel = "city";
+                                this.activeLayer = "area";
+                            }
+                        });
+                    }
+                }).then(function(){
+                    this.getDistrictList().then(function() {
+                        let districtCode = query.district || store.district;
+
+                        if (districtCode) {
+                            let found = false;
+                            let area;
+
+                            for (let i=0,len=this.areaList.length; i<len; i++) {
+                                area = this.areaList[i];
+
+                                if (area.code == districtCode) {
+                                    this.filterKey = area;
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (found) return;
+                        }
+
+                        this.fetch();
+                    });
+
+                    this.$watch("activeCity", function(value) {
+                        this.fetchCoords().then(function() {
+                            if (!this.filterKey.distance && this.filterKey.code !== this.allAreas.code) {
+                                this.filterKey = this.allAreas;
+                            } else {
+                                store.city = this.activeCity.code;
+                                store.district = this.filterKey.code;
+                                this.updateList();
+                            }
+                        });
+                        this.getDistrictList();
+                    });
+                })
             });
         }
     },
@@ -496,6 +591,8 @@ export default {
                 masthead.classList.remove("hide");
             };
         }, 100));
+
+        $(".filter-panels").css("max-height", winHeight - 152);
     },
     beforeDestroy() {
         $(document).off(".page");
@@ -504,6 +601,7 @@ export default {
     methods: {
         buildQuery(source) {
             let query = {
+                city: this.activeCity.code,
                 code: this.filterKey.code,
                 best: this.sortKey.code == "smart" ? "distance" : this.sortKey.code,
                 type: this.type,
@@ -524,7 +622,7 @@ export default {
                 if (this.coords) {
                     this.fetchByDistance();
                 } else {
-                    this.fetchCoords(function() {
+                    this.fetchCoords().then(function() {
                         this.fetchByDistance();
                     });
                 };
@@ -540,14 +638,20 @@ export default {
                 return false;
             };
             this.loadingStatus = 1;
-            this.$api.get("booking/xktvlist", this.buildQuery({
+            this.$api.get("booking/Xktvlist", this.buildQuery({
                 offset: this.offset,
                 limit: this.limit,
-            })).then(function (data) {
+            }), true).then(function (data) {
                 if (data.total == 0) {
                     this.loadingStatus = 2;
                     return false;
                 };
+
+                if (data.event && !this.stickKtv) {
+                    data.event.distance = utils.getDistance(data.event.lat, data.event.lng);
+                    this.stickKtv = data.event;
+                };
+
                 let isSmartSort = this.sortKey.code == "smart";
                 data.list.forEach(item => {
                     item.distance = utils.getDistance(item.lat, item.lng);
@@ -580,7 +684,7 @@ export default {
             };
             this.loadingStatus = 1;
 
-            let items = this.coords;
+            let items = this.coords || [];
 
             if (this.eventTypes[0].selected) {
                 items = items.filter(item => item.sjq);
@@ -596,13 +700,19 @@ export default {
 
             items = items.slice(this.offset, this.offset + this.limit);
 
-            this.$api.post("booking/xktvlist", this.buildQuery({
+            this.$api.post("booking/Xktvlist", this.buildQuery({
                 list: items.map(item => item.xktvid),
-            })).then(function (data) {
+            }), true).then(function (data) {
                 if (data.total == 0) {
                     this.loadingStatus = 2;
                     return false;
                 };
+
+                if (data.event && !this.stickKtv) {
+                    data.event.distance = utils.getDistance(data.event.lat, data.event.lng);
+                    this.stickKtv = data.event;
+                };
+
                 let isSmartSort = this.sortKey.code == "smart";
                 data.list.forEach(item => {
                     item.distance = utils.getDistance(item.lat, item.lng);
@@ -626,9 +736,12 @@ export default {
                 this.loadingStatus = -1;
             });
         },
-        fetchCoords(callback) {
+        fetchCoords() {
             this.loadingStatus = 1;
-            this.$api.get("booking/xktvcoords").then(function(data) {
+            
+            return this.$api.get("booking/xktvcoords", {
+                city: this.activeCity.code
+            }, true).then(function(data) {
                 data.list.forEach(function(item) {
                     item.distance = utils.getDistance(item.lat, item.lng);
                 });
@@ -636,33 +749,31 @@ export default {
                     return a.distance - b.distance;
                 });
                 this.coords = data.list;
+                this.loadingStatus = 0;
             }, function(data) {
-                throw new Error(data.msg);
-            }).then(callback, function(error) {
-                this.errorMsg = error.message;
+                this.errorMsg = data.message;
                 this.loadingStatus = -1;
             });
         },
-        getDistrictList(districtCode) {
-            this.$api.get("booking/Xktvdistrict", {
-                parent: 440100
-            }).then(function(data) {
-                this.areaList = this.areaList.concat(data.list);
-                if (districtCode) {
-                    for (let i=1,len=this.areaList.length;i<len;i++) {
-                        let area = this.areaList[i];
-                        if (area.code == districtCode) {
-                            this.filterKey = area;
-                            break;
-                        }
+        getCityList() {
+            return this.$api.get("booking/CityList", {}, true).then(function(data) {
+                let list = data.lists.map(function(item) {
+                    return {
+                        name: item.name,
+                        code: item.area_id
                     }
-                };
-            }, function(data) {
-                this.errorMsg = data.msg;
+                });
+                this.cityList = list;
+            });
+        },
+        getDistrictList() {
+            return this.$api.get("booking/Xktvdistrict", {
+                parent: this.activeCity.code
+            }, true).then(function(data) {
+                this.areaList = data.list;
             });
         },
         updateList() {
-            this.activeLayer = false;
             this.loadingStatus = 0;
             this.list = [];
             this.page = this.offset = 0;
@@ -680,19 +791,48 @@ export default {
             
             this.$router.go({
                 name: "search",
-                params: {
-                    keyword: this.keyword
+                query: {
+                    q: this.keyword,
+                    city: this.activeCity.code
                 }
             });
         },
         handleBanner(link) {
-            this.$trackEvent("banner", "click", link);
-            setTimeout(function(){
-                location.href = link;
-            }, 300);
+            this.$handleLink(link, "banner");
+        },
+        reverseGeocodeLocation(coords) {
+            if (!coords) return Vue.Promise.reject(new Error("missing parameter"));
+
+            return this.$http.jsonp("http://apis.map.qq.com/ws/geocoder/v1/", {
+                params: {
+                    key: "4QMBZ-YW5AR-AAZWF-WXXP2-QWJ3V-3DFGN",
+                    location: coords.lat + "," + coords.lng,
+                    get_poi: 0,
+                    output: "jsonp"
+                }
+            }).then(function({data}) {
+                if (data.status === 0 && data.result.ad_info.adcode) {
+                    return {
+                        name: data.result.ad_info.city,
+                        code: data.result.ad_info.adcode
+                    };
+                } else {
+                    throw new Error(data.message);
+                }
+            });
+        },
+        isCityAvailable(target) {
+            return this.cityList.some(city => target.name == city.name);
         }
     },
     computed: {
+        areaText() {
+            if (this.filterKey.distance) {
+                return this.filterKey.name;
+            } else {
+                return this.activeCity ? (this.filterKey.code ? this.filterKey.name : this.activeCity.name) : "城市-商区";
+            }
+        },
         currLimit() {
             return this.page * this.perPage;
         },
@@ -705,9 +845,16 @@ export default {
             if (!!value.code && this.sortKey.code == "distance") {
                 this.sortKey = this.sortTypes[0];
             };
+            if (value.code) {
+                store.city = this.activeCity.code;
+                store.district = value.code;
+            };
             this.updateList();
         },
-        sortKey: "updateList",
+        sortKey() {
+            this.activeLayer = false;
+            this.updateList();
+        },
         activeLayer(show) {
             document.body.classList.toggle("no-scroll", show);
         }

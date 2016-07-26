@@ -10,7 +10,7 @@
                     <div class="card" :style="events[events.length-1].pic | backgroundImage"></div>
                 </li>
                 <li class="slide" v-for="event in events">
-                    <a class="card" @click="go(event.link)" :style="event.pic | backgroundImage"></a>
+                    <a class="card" @click="$handleLink(event.link, 'events')" :style="event.pic | backgroundImage"></a>
                 </li>
                 <li class="slide">
                     <div class="card" :style="events[0].pic | backgroundImage"></div>
@@ -110,23 +110,12 @@
 
 <script>
 import stackBlur from "../libs/StackBlur";
+import store from "../libs/store";
 
 export default {
     data() {
         return {
-            events: [{
-                pic: "./assets/img/events/20160623.jpg",
-                link: "http://letsktv.chinacloudapp.cn/dist/oneyuan/"
-            }, {
-                pic: "./assets/img/events/20160620.jpg",
-                link: "http://letsktv.chinacloudapp.cn/wechat_ktv/home/event/enter"
-            }, {
-                pic: "./assets/img/events/1.jpg",
-                link: "/ktv?event=jq"
-            }, {
-                pic: "./assets/img/events/2.jpg",
-                link: "http://letsktv.chinacloudapp.cn/_tools/redirecttohistorymessage.php"
-            }],
+            events: store.baseinfo.poster.lists || [],
             current: 0,
             currentBg: 0
         }
@@ -231,16 +220,6 @@ export default {
             this.current = index == -1 ? this.events.length - 1 : index % this.events.length;
             this.index = index;
             $(document).off(".temp");
-        },
-        go(link) {
-            this.$trackEvent("events", "click", link);
-            if (link.indexOf("http") == 0) {
-                setTimeout(() => {
-                    location = link;
-                }, 300);
-            } else {
-                this.$router.go(link);
-            };
         },
         blurBackground() {
             let vm = this;

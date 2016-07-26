@@ -20,15 +20,32 @@
             </div>
         </section>
 
-        <section class="section-package" v-if="package">
+        <section class="section-package" v-if="pkg">
             <h2 class="section-title"><span class="icon icon-beer"></span>已选酒水套餐</h2>
-            <div class="section-bd" :class="{huanchang:package.huanchang}">
+            <div class="section-bd active" :class="{huanchang:pkg.huanchang}">
                 <span class="check"></span>
-                <h5 class="name">{{package.pre_txt}}{{package.name}}</h5>
-                <div class="secrow" v-if="!package.huanchang">
-                    <span class="orig-price">原价{{package.price}}</span>
-                    <span class="yd-price">夜点价¥{{package.price_yd}}</span>
+                <h5 class="name">{{pkg.pre_txt}}{{pkg.name}}</h5>
+                <div class="secrow" v-if="!pkg.huanchang&&!ktv.online_pay">
+                    <span class="orig-price">原价{{pkg.price}}</span>
+                    <span class="yd-price">夜点价¥{{pkg.price_yd}}</span>
                 </div>
+            </div>
+        </section>
+
+        <section class="section-payment" v-if="pkg&&!pkg.huanchang&&ktv.online_pay">
+            <div class="section-bd">
+                <ul>
+                    <li :class="{active:onlinePay}" @click="onlinePay=true">
+                        <span class="check"></span>
+                        <strong class="method">在线付</strong>
+                        <span class="price">¥{{pkg.price_yd_online}}</span>
+                    </li>
+                    <li :class="{active:!onlinePay}" @click="onlinePay=false">
+                        <span class="check"></span>
+                        <strong class="method">到店付</strong>
+                        <span class="price">¥{{pkg.price_yd}}</span>
+                    </li>
+                </ul>
             </div>
         </section>
 
@@ -42,7 +59,10 @@
         <section class="section-rules" v-if="terms">
             <h2 class="section-title"><span class="icon icon-tips"></span>小提示</h2>
             <div class="section-bd">
-                <ol>
+                <ol v-if="onlinePayActive">
+                    <li v-for="term in termsForOnlinePay">{{term}}</li>
+                </ol>
+                <ol v-else>
                     <li v-for="term in terms">{{term}}</li>
                 </ol>
             </div>
@@ -58,7 +78,8 @@
 
         <p class="remark">预订说明: 通过夜点预订KTV，只需要在夜点提交订单，达到KTV现场支付，即可享受夜点最强黄金档的价格优惠。</p>
 
-        <button type="button" class="btn-float btn-order" :disabled="isInvalidOrder" @click="submitOrder" v-el:submit-btn><span></span></button>
+        <button type="button" class="btn-float btn-pay" :disabled="isInvalidOrder" @click="submitOrder(true)" v-el:pay-btn v-if="onlinePayActive"><span></span></button>
+        <button type="button" class="btn-float btn-order" :disabled="isInvalidOrder" @click="submitOrder(false)" v-el:submit-btn v-else><span></span></button>
 
         <flash-message v-ref:flash-message></flash-message>
 
@@ -67,7 +88,7 @@
 
         <modal id="coupon-modal" title="选择兑酒券" :closeable="false" :submit="updateCoupon" v-ref:coupon-modal>
             <ul class="coupon-list">
-                <li v-for="cp in couponList" :class="{active:coupon==cp}" @click="coupon=cp" :style="{backgroundImage:'url(http://t1.intelfans.com/'+(cp.status===0?cp.img:cp.img_disable)+')'}">
+                <li v-for="cp in couponList" :class="{active:coupon==cp}" @click="coupon=cp" :style="{backgroundImage:'url('+(cp.status===0?cp.img:cp.img_disable)+')'}">
                     <span class="check"></span>
                     <div class="content">
                         <h3 class="name">{{cp.name}}</h3>
@@ -194,26 +215,23 @@
         }
     }
 
-    .section-package {
-        .section-bd {
-            position: relative;
-            padding-right: 70px;
-        }
-        li {
-            position: relative;
-            padding: 15px 20px 15px 60px;
-            border-bottom: 1px solid $borderDark;
-        }
+    .check {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        border: 1px solid #fff;
+        background: rgba(#fff, 0.5);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        margin-top: -10px;
+        opacity: 0.7;
+        transform: scale(0.7);
+    }
+    .active {
         .check {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            border: 1px solid #fff;
-            background: rgba(#fff, 0.5);
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            margin-top: -10px;
+            opacity: 1;
+            transform: none;
             &:after {
                 content: '';
                 border: 1px solid #fff;
@@ -226,13 +244,24 @@
                 margin: 5px 0 0 5px;
             }
         }
+    }
+
+    .section-package {
+        .section-bd {
+            position: relative;
+            padding-right: 70px;
+        }
+        li {
+            position: relative;
+            padding: 15px 20px 15px 60px;
+            border-bottom: 1px solid $borderDark;
+        }
         .name {
             font-size: 14px;
-            margin-top: 1px;
-            margin-bottom: 10px;
             line-height: 1.3;
         }
         .secrow {
+            margin-top: 10px;
             text-align: right;
         }
         .orig-price {
@@ -257,6 +286,35 @@
             .name {
                 margin: 0;
             }
+        }
+    }
+
+    .section-payment {
+        margin-top: -20px;
+        border-top: 1px solid $borderDark;
+
+        .section-bd {
+            padding: 0;
+        }
+        ul {
+            margin-left: 25px;
+        }
+        li {
+            position: relative;
+            padding: 15px 20px 15px 0;
+            border-bottom: 1px solid $borderDark;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        .method {
+            font-weight: normal;
+        }
+        .price {
+            float: right;
+            color: $brown;
+            margin-right: 50px;
         }
     }
 
@@ -340,11 +398,23 @@
         line-height: 1.5;
     }
 
-    .btn-order {
+    .btn-float {
         background-color: #900D1E;
 
         span {
             @include rsprite($btn-tjdd-group);
+        }
+    }
+
+    .btn-order {
+        span {
+            @include rsprite($btn-tjdd-group);
+        }
+    }
+
+    .btn-pay {
+        span {
+            @include rsprite($btn-wxzf-group);
         }
     }
 }
@@ -459,6 +529,7 @@
 
 <script>
 import utils from "../libs/utils";
+import store from "../libs/store";
 
 export default {
     data() {
@@ -467,6 +538,7 @@ export default {
             now: null,
             lastorder: null,
             terms: [],
+            termsForOnlinePay: [],
 
             arrivalTimeList: [],
             arrivalTimeListLimit: 8,
@@ -477,8 +549,9 @@ export default {
             day: null,
             roomtype: null,
             course: null,
-            package: null,
+            pkg: null,
             coupon: null,
+            onlinePay: false,
 
             couponList: [],
             couponText: "",
@@ -500,20 +573,20 @@ export default {
     route: {
         canActivate() {
             if (process.env.NODE_ENV !== "production") {
-                if (window.__bookdata) {
-                    localStorage.setItem("bookdata", JSON.stringify(window.__bookdata));
+                if (store.bookdata) {
+                    localStorage.setItem("bookdata", JSON.stringify(store.bookdata));
                 } else {
                     let localdata = localStorage.getItem("bookdata");
-                    if (localdata) window.__bookdata = JSON.parse(localdata);
+                    if (localdata) store.bookdata = JSON.parse(localdata);
                 }
             }
 
-            return !!window.__bookdata;
+            return !!store.bookdata;
         },
         data() {
-            let bookdata = window.__bookdata;
+            let bookdata = store.bookdata;
 
-            window.__bookdata = null;
+            delete store.bookdata;
 
             if (bookdata.course.yesterday && bookdata.course.crossday) {
                 let date = new Date(bookdata.day.date);
@@ -525,9 +598,11 @@ export default {
             this.day = bookdata.day;
             this.course = bookdata.course;
             this.roomtype = bookdata.roomtype;
-            this.package = bookdata.package;
+            this.pkg = bookdata.package;
             this.lastorder = bookdata.lastorder;
             this.terms = bookdata.terms;
+            this.termsForOnlinePay = bookdata.termsForOnlinePay;
+            this.onlinePay = this.pkg && !this.pkg.huanchang && this.ktv.online_pay;
 
             let timeList = [];
             let timeRange = [];
@@ -547,7 +622,7 @@ export default {
             }
 
             let newEndTime = endTime;
-            if (this.package.duration) newEndTime = utils.adjustTime(endTime, -this.package.duration + 1);
+            if (this.pkg.duration) newEndTime = utils.adjustTime(endTime, -this.pkg.duration + 1);
 
             // newEndTime 不在套餐时间段内，也不等于结束时间 || newEndTime 等于开始时间
             if ((!utils.isBetweenTime(newEndTime, startTime, endTime) && newEndTime != endTime) || newEndTime == startTime) {
@@ -648,9 +723,8 @@ export default {
             this.couponText = this.coupon.id == 0 ? this.coupon.name : "已选择：" + this.coupon.name;
             this.$refs.couponModal.close();
         },
-        submitOrder(skip) {
-            this.$els.submitBtn.disabled = true;
-
+        submitOrder(onlinePay) {
+            let btn = onlinePay ? this.$els.payBtn : this.$els.submitBtn;
             let startDate = new Date(this.day.date);
             let [startHour, startMinute] = this.startTime.split(":").map(n => parseInt(n));
             let [endHour, endMinute] = this.endTime.split(":").map(n => parseInt(n));
@@ -670,19 +744,49 @@ export default {
                 starttime: utils.parseDate("yyyy-MM-dd hh:mm:ss", startDate),
                 endtime: utils.parseDate("yyyy-MM-dd hh:mm:ss", endDate),
                 couponid: this.coupon.id,
-                taocantype: this.package.huanchang ? 1 : 0,
-                taocanid: this.package.huanchang ? "" : this.package.id
+                taocantype: this.pkg.huanchang ? 1 : 0,
+                taocanid: this.pkg.huanchang ? "" : this.pkg.id,
+                onlinepay: onlinePay ? 1 : 0
             };
 
+            btn.disabled = true;
+
             this.$api.post("booking/submitorder_new", params).then(function(data) {
-                let msg = "<p>您的订单已提交成功<br>我们会尽早为您安排合适的时间<br>请留意夜点娱乐公众号为您发送的订单信息</p>";
-                msg += "<h4>预订说明</h4><p>通过夜点预订KTV，只需要在夜点提交订单，到达KTV现场支付，即可享受夜点最强黄金档的价格优惠。</p>";
-                this.$refs.flashMessage.show("success", msg, function() {
-                    this.$router.replace("/order");
-                });
+                let orderId = data.order_code;
+
+                if (onlinePay) {
+                    this.$api.wechatPay(orderId).then(function(data) {
+                        alert("预订成功");
+                        this.$router.replace({
+                            name: "ktv-order",
+                            params: {
+                                id: orderId
+                            }
+                        });
+                    }, function(data) {
+                        alert(data.msg || "支付失败");
+                        this.$router.replace({
+                            name: "ktv-order",
+                            params: {
+                                id: orderId
+                            }
+                        });
+                    });
+                } else {
+                    let msg = "<p>您的订单已提交成功<br>我们会尽早为您安排合适的时间<br>请留意夜点娱乐公众号为您发送的订单信息</p>";
+                    msg += "<h4>预订说明</h4><p>通过夜点预订KTV，只需要在夜点提交订单，到达KTV现场支付，即可享受夜点最强黄金档的价格优惠。</p>";
+                    this.$refs.flashMessage.show("success", msg, function() {
+                        this.$router.replace({
+                            name: "ktv-order",
+                            params: {
+                                id: orderId
+                            }
+                        });
+                    });
+                }
             }, function(data) {
                 alert(data.msg || "预订失败");
-                this.$els.submitBtn.disabled = false;
+                btn.disabled = false;
             });
         },
         isTomorrow(time, start, end) {
@@ -705,21 +809,21 @@ export default {
             return !(utils.isMobile(this.editMobile.mobile) && utils.isCaptcha(this.editMobile.captcha));
         },
         isInvalidOrder() {
-            return !this.startTime || !this.package || !this.userMobile;
+            return !this.startTime || !this.pkg || !this.userMobile;
         },
         endTime() {
-            if (this.package.huanchang) {
-                return this.package.duration === 0 ? this.course.endtime : utils.adjustTime(this.startTime, this.package.duration);
+            if (this.pkg.huanchang) {
+                return this.pkg.duration === 0 ? this.course.endtime : utils.adjustTime(this.startTime, this.pkg.duration);
             } else {
-                if (this.package.type === 0) {
+                if (this.pkg.type === 0) {
                     return this.course.endtime;
                 } else {
-                    return utils.minTime(utils.adjustTime(this.startTime, this.package.longtime), this.course.endtime);
+                    return utils.minTime(utils.adjustTime(this.startTime, this.pkg.longtime), this.course.endtime);
                 }
             }
         },
         orderMeta() {
-            if (!this.package) return "";
+            if (!this.pkg) return "";
 
             let date = new Date(this.day.date);
             let duration = utils.diffTime(this.startTime, this.endTime);
@@ -728,11 +832,14 @@ export default {
                 date.setDate(date.getDate() + 1);
             }
 
-            if (this.package.huanchang) {
-                if (duration > this.package.duration && this.package.duration > 0) duration = this.package.duration;
+            if (this.pkg.huanchang) {
+                if (duration > this.pkg.duration && this.pkg.duration > 0) duration = this.pkg.duration;
             }
 
             return (utils.parseDate("yyyy年MM月dd日", date)) + " " + this.startTime + "-" + this.endTime + " 欢唱" + duration + "小时 " + this.roomtype.name + "（" + this.roomtype.desc + "）";
+        },
+        onlinePayActive() {
+            return this.pkg && !this.pkg.huanchang && this.ktv.online_pay && this.onlinePay;
         }
     },
     filters: {

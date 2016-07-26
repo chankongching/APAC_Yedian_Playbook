@@ -11,12 +11,16 @@
                 <table>
                     <tbody>
                         <tr v-if="ktv.taocan">
-                            <th><span class="stamp stamp-goldpkg"></span></th>
+                            <th><span class="icon icon-goldpkg"></span></th>
                             <td>夜点承诺始终提供价格最优的KTV黄金档套餐。通过夜点预订KTV，即可享受全城重点KTV的会员价优惠。<span class="more">更多>></span></td>
                         </tr>
                         <tr v-if="ktv.sjq">
-                            <th><span class="stamp stamp-djq"></span></th>
+                            <th><span class="icon icon-djq"></span></th>
                             <td>只要通过夜点预订KTV即可获得一张含6罐百威啤酒的二次兑酒券。下次预订KTV的时候即可使用。<span class="more">更多>></span></td>
+                        </tr>
+                        <tr v-if="ktv.online_pay">
+                            <th><span class="icon icon-zxf"></span></th>
+                            <td>无<span class="more">更多>></span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -78,8 +82,14 @@
                             <span class="check"></span>
                             <h5 class="name">{{pkg.pre_txt}}{{pkg.name}}</h5>
                             <div class="secrow">
-                                <span class="orig-price">原价{{pkg.price}}</span>
-                                <span class="yd-price">夜点价¥{{pkg.price_yd}}</span>
+                                <span v-if="ktv.online_pay">
+                                    <span class="price price-dd">到店价¥{{pkg.price_yd}}</span>
+                                    <span class="price price-online">在线价¥{{pkg.price_yd_online}}</span>
+                                </span>
+                                <span v-else>
+                                    <span class="price price-orig">原价{{pkg.price}}</span>
+                                    <span class="price price-yd">夜点价¥{{pkg.price_yd}}</span>
+                                </span>
                                 <button type="button" class="btn btn-booking" @click="goBook(pkg)">预订</button>
                             </div>
                         </li>
@@ -125,14 +135,14 @@
             <div class="flash-message-dialog">
                 <ul>
                     <li class="section" v-if="ktv.taocan">
-                        <span class="stamp stamp-goldpkg"></span>
+                        <span class="icon icon-goldpkg"></span>
                         <h4>最强黄金档说明</h4>
                         <ul>
                             <li>夜点承诺始终提供价格最优的KTV黄金档套餐。通过夜点预订KTV，即可享受全城重点KTV的会员价优惠。</li>
                         </ul>
                     </li>
                     <li class="section" v-if="ktv.sjq">
-                        <span class="stamp stamp-djq"></span>
+                        <span class="icon icon-djq"></span>
                         <h4>兑酒券使用说明</h4>
                         <ol>
                             <li>在预订KTV的时候选择使用兑酒券，到店后，由前台收银员扫描订单中的二维码，即可确认到店并获得相应数量的啤酒。</li>
@@ -142,6 +152,13 @@
                             <li>通过完成订单所获得的兑酒券，次日可用，有效期14天。</li>
                             <li>以任何形式取消订单，兑酒券都将会返还到用户账户，下次预订还可继续使用。</li>
                             <li>每位用户每天可使用两张兑酒券。</li>
+                        </ol>
+                    </li>
+                    <li class="section" v-if="ktv.online_pay">
+                        <span class="icon icon-zxf"></span>
+                        <h4>在线付说明</h4>
+                        <ol>
+                            <li>无</li>
                         </ol>
                     </li>
                     <li class="section" v-if="ktv.taocan">
@@ -191,6 +208,7 @@
 <style lang="sass">
 @import "../scss/variables";
 @import "../scss/rsprite";
+@import "../scss/svg-sprite";
 @import "../scss/mixins";
 
 .page-ktvdetail {
@@ -261,12 +279,13 @@
                 text-align: center;
             }
 
-            .stamp {
+            .icon {
                 display: inline-block;
                 @extend %sprite;
             }
-            .stamp-goldpkg { @include rsprite($stamp-goldpkg-group, true, false); }
-            .stamp-djq { @include rsprite($stamp-djq-sm-group, true, false); }
+            .icon-goldpkg { @include rsprite($stamp-goldpkg-group, true, false); }
+            .icon-djq { @include svg-icon($mark-djq-noborder); }
+            .icon-zxf { @include svg-icon($mark-zxf-noborder); }
 
             td {
                 line-height: 1.5;
@@ -520,13 +539,14 @@
             margin-bottom: 0;
         }
     }
-    .stamp {
+    .icon {
         display: block;
         margin: 0 auto 20px;
         @extend %sprite;
     }
-    .stamp-goldpkg { @include rsprite($stamp-goldpkg-group, true, false); }
-    .stamp-djq { @include rsprite($stamp-djq-group, true, false); }
+    .icon-goldpkg { @include rsprite($stamp-goldpkg-group, true, false); }
+    .icon-djq { @include svg-icon($mark-djq); }
+    .icon-zxf { @include svg-icon($mark-zxf); }
 
     .btn {
         display: block;
@@ -702,13 +722,24 @@
     .secrow {
         text-align: right;
     }
-    .orig-price {
+    .price {
+        margin-left: .5em;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+    .price-orig {
         font-size: 12px;
         text-decoration: line-through;
     }
-    .yd-price {
+    .price-dd {
         color: $brown;
-        margin-left: .5em;
+        font-size: 12px;
+    }
+    .price-yd,
+    .price-online {
+        color: $brown;
     }
     .btn {
         border-radius: 3px;
@@ -826,6 +857,7 @@
 
 <script>
 import utils from "../libs/utils";
+import store from "../libs/store";
 
 export default {
     data() {
@@ -917,7 +949,7 @@ export default {
                 let yesterdayDateString = new Date(this.time - 86400000).toDateString();
                 let daysText = "日一二三四五六".split("");
                 let nowHour = this.now.getHours();
-                let taocaninfo = data.data.taocaninfo;
+                let taocaninfo = this.taocaninfo = data.data.taocaninfo;
 
                 delete data.data.taocaninfo;
 
@@ -956,9 +988,7 @@ export default {
                     }),
                     roomtypes: taocaninfo.roomtype.sort((a, b) => {
                         return b.show == a.show ? parseInt(a.desc) - parseInt(b.desc) : b.show - a.show;
-                    }),
-                    lastorder: data.data.lastofjiedan ? data.data.lastofjiedan.time : null,
-                    terms: taocaninfo.tiaokuan.map(term => term.name)
+                    })
                 };
                 this.bookDay = this.tcInfo.days[0];
                 if (!this.filteredCourses.filter(course => !course.expired).length) {
@@ -984,7 +1014,7 @@ export default {
             });
         },
         openMap() {
-            if (window.wxIsReady) {
+            if (window.isWXReady) {
                 wx.openLocation({
                     latitude: this.ktv.lat,
                     longitude: this.ktv.lng,
@@ -1006,15 +1036,15 @@ export default {
         },
         doFavorite() {
             let id = this.ktv.xktvid;
-            let add = this.$userdata.collectionids.indexOf(id) == -1;
+            let add = this.$user.collectionids.indexOf(id) == -1;
 
             this.$api.post("user/" + (add ? "addcollection" : "delcollection"), {
                 "xktvid": id
             }).then(function(data) {
                 if (add) {
-                    this.$userdata.collectionids += "," + id;
+                    this.$user.collectionids += "," + id;
                 } else {
-                    this.$userdata.collectionids = this.$userdata.collectionids.replace(id, "");
+                    this.$user.collectionids = this.$user.collectionids.replace(id, "");
                 };
                 this.favorite = add;
                 this.$refs.favoriteModal.open();
@@ -1027,7 +1057,7 @@ export default {
 
             this.$api.post("feedback/feedback", {
                 "ktvid": this.ktv.xktvid,
-                "openid": this.$userdata.userid,
+                "openid": this.$user.openid,
                 "errortype": errorIDs.join(",")
             }).then(function(data) {
                 this.$refs.feedbackModal.close();
@@ -1107,15 +1137,16 @@ export default {
                 this.bookPkg = pkg;
             };
 
-            window.__bookdata = JSON.parse(JSON.stringify({
+            store.bookdata = JSON.parse(JSON.stringify({
                 now: this.now,
                 ktv: this.ktv,
                 day: this.bookDay,
                 course: this.bookCourse,
                 roomtype: this.bookRoomType,
                 package: this.bookPkg,
-                lastorder: this.tcInfo.lastorder,
-                terms: this.tcInfo.terms,
+                lastorder: this.ktv.lastofjiedan ? this.ktv.lastofjiedan.time : null,
+                terms: this.taocaninfo.tiaokuan.map(term => term.name),
+                termsForOnlinePay: this.taocaninfo.tiaokuan_online.map(term => term.name),
                 starttime: this.startTime
             }));
 

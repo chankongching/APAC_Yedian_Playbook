@@ -74,6 +74,13 @@ input::-webkit-inner-spin-button {
 
 input[type="search"] {
     appearance: textfield;
+
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+        display: none;
+    }
 }
 
 a,

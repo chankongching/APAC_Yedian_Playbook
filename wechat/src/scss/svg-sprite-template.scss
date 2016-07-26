@@ -1,0 +1,18 @@
+{{#shapes}}
+
+${{base}}: (
+	width: {{width.outer}}px,
+	height: {{height.outer}}px,
+	// background-position: {{position.absolute.xy}},
+	background-position: {{position.relative.xy}},
+);
+
+{{/shapes}}
+
+@mixin svg-icon($icon) {
+	background: url("../img/sprite.svg") no-repeat;
+	width: map-get($icon, width);
+	height: map-get($icon, height);
+	background-position: map-get($icon, background-position);
+}
+

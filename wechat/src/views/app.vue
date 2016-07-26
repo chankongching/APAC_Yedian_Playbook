@@ -6,6 +6,7 @@
 <style lang="sass">
 @import "../scss/variables";
 @import "../scss/rsprite";
+@import "../scss/svg-sprite";
 @import "../scss/base";
 @import "../scss/common";
 @import "../scss/share";

@@ -12,7 +12,7 @@ function install(Vue, router) {
         window.shareData.desc = window.defaultShareData.desc;
         window.shareDataTL.title = window.defaultShareData.titleTL;
         window.shareData.imgUrl = window.shareDataTL.imgUrl = window.defaultShareData.imgUrl;
-        window.shareData.link = window.shareDataTL.link = location.href.replace(location.search, "").replace("?fromTabBar=1", "");
+        window.shareData.link = window.shareDataTL.link = location.href.replace("?fromTabBar=1", "");
     });
 };
 

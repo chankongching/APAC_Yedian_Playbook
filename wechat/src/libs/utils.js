@@ -39,7 +39,7 @@ utils.getLocation = (function() {
             geoSuccess(cachedData, "cache");
         } else if (retryTimes > 1) {
             geoError();
-        } else if (window.wxIsReady) {
+        } else if (window.isWXReady) {
             window.wx.getLocation({
                 type: "gcj02",
                 success: function(res) {
@@ -408,4 +408,49 @@ utils.adjustTime = function(time, hours, minutes) {
  */
 utils.padZero = function(n) {
     return n < 10 ? "0" + n : n;
+};
+
+/**
+ * 加载 CSS
+ * @param {string} src 地址
+ * @param {function} [callback] 加载成功回调函数
+ */
+utils.loadCSS = function(src, callback) {
+    var sheets = document.styleSheets;
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = src;
+    link.media = "only x";
+
+    function checkCssStatus() {
+        for (var i = 0; i < sheets.length; i++) {
+            if (sheets[i].href === link.href) {
+                if (callback) callback();
+                link.media = "all";
+                return false;
+            }
+        }
+        setTimeout(checkCssStatus, 10);
+    };
+
+    document.head.appendChild(link);
+
+    setTimeout(checkCssStatus, 10);
+
+    return link;
+};
+
+/**
+ * 加载 JS
+ * @param {string} src 地址
+ * @param {function} [callback] 加载成功回调函数
+ */
+utils.loadJS = function(src, callback) {
+    var script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    if (callback) script.onload = callback;
+    document.head.appendChild(script);
+
+    return script;
 };

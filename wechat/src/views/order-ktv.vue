@@ -11,7 +11,7 @@
                     <button type="button" class="btn" v-if="order.order_status==5&&!order.rating.status" @click.stop="showRatingModal(order)">待评价</button>
                     <time class="ordertime">{{order | humanDate}}</time>
                     <p class="info">共 {{order | duration}} 小时&emsp;{{order.room_name}}</p>
-                    <p class="couponinfo" v-if="order.coupon_info">订单包含兑酒券一张，到店消费可免费兑换{{order.coupon_info.name}}。</p>
+                    <p class="couponinfo" v-if="order.coupon_info.count">订单包含兑酒券一张，到店消费可免费兑换{{order.coupon_info.name}}。</p>
                 </div>
             </li>
         </ul>
@@ -168,7 +168,7 @@ export default {
         postReview() {
             this.$api.post("feedback/comment", {
                 ktvid: this.ratingOrder.ktvinfo.xktvid,
-                openid: this.$userdata.openid,
+                openid: this.$user.openid,
                 DecorationRating: this.ratings.decoration,
                 SoundRating: this.ratings.sound,
                 ServiceRating: this.ratings.service,

@@ -1,22 +1,21 @@
 <template>
     <div class="page-ktvorder">
-        <header class="masthead order-navbar">
-            <nav class="segmented-control">
-                <a class="active" v-link="'/order/ktv'">KTV订单</a>
-                <a v-link="'/order/gift'">礼品订单</a>
-            </nav>
-        </header>
-
         <figure class="ktv-pic" :style="order.ktvinfo | backgroundImage"></figure>
 
         <div v-if="order.ktvinfo">
+            <section class="pay-countdown" v-if="timeRemaining > -1">
+                <h4>支付剩余时间</h4><time>{{timeRemaining | humanTime}}</time>
+            </section>
+
             <section class="baseinfo">
                 <div class="action">
                     <span class="status">{{order.order_status | statusName}}</span>
-                    <button type="button" class="btn" v-if="isCancelable(order.order_status)" @click.stop="cancelOrder(order, $event)"><span class="text">取消订单</span><span class="icon icon-spinner"></span></button>
+                    <button type="button" class="btn" v-if="isOrderCancelable" @click.stop="cancelOrder" v-el:cancel-btn><span class="text">取消订单</span><span class="icon icon-spinner"></span></button>
                 </div>
-                <h2 class="name">{{order.ktvinfo.xktvname}}</h2>
+                <h2 class="name" v-link="{ name: 'detail', params: { id: order.ktvinfo.xktvid }}">{{order.ktvinfo.xktvname}}</h2>
                 <span class="rating"><span class="full"></span><span class="stars" :style="{width:order.ktvinfo.rate*20+'%'}"></span></span>
+
+                <p class="refund-tip" v-if="order.order_status==21">您的款项将于3-5 个工作日返还您的账户</p>
             </section>
 
             <list-view class="bg">
@@ -25,10 +24,10 @@
             </list-view>
 
             <ul class="detail">
-                <li><span class="label">时间</span><span class="value">{{humanDate}} <span class="duration">共 <strong>{{(this.order.endtime - this.order.starttime)/60/60}}</strong> 小时</span></span></li>
+                <li><span class="label">时间</span><span class="value">{{orderDate}} <span class="duration">共 <strong>{{(this.order.endtime - this.order.starttime)/60/60}}</strong> 小时</span></span></li>
                 <li><span class="label">包房</span><span class="value">{{order.room_name}}</span></li>
                 <li><span class="label">套餐</span><span class="value">{{order.taocan_info?order.taocan_info.name:"无"}}</span></li>
-                <li><span class="label">兑酒券</span><span class="value">{{order.coupon_info?order.coupon_info.name+((order.order_status==4||order.order_status==7||order.order_status==14)?"（已返还）":""):"无"}}</span></li>
+                <li><span class="label">兑酒券</span><span class="value">{{order.coupon_info.count?order.coupon_info.name+((order.order_status==4||order.order_status==7||order.order_status==14)?"（已返还）":""):"无"}}</span></li>
             </ul>
 
             <ul class="detail">
@@ -37,7 +36,7 @@
             </ul>
         </div>
 
-        <figure class="qrcode" v-if="order.order_status!=1&&order.order_status!=4&&order.order_status!=7&&order.order_status!=14">
+        <figure class="qrcode" v-if="canDisplayQrcode">
             <img :src="order.qrcode" />
             <figcaption>请将此二维码出示给工作人员</figcaption>
         </figure>
@@ -57,7 +56,9 @@
             </div>
         </modal>
 
-        <button type="button" class="btn-float" v-if="order.order_status==5&&!order.rating.status" @click="$refs.ratingModal.open()"><span></span></button>
+        <button type="button" class="btn-float btn-comment" v-if="order.order_status==5&&!order.rating.status" @click="$refs.ratingModal.open()"><span></span></button>
+
+        <button type="button" class="btn-float btn-pay" @click="payOrder" v-if="timeRemaining > -1" v-el:pay-btn><span></span></button>
 
         <flash-message id="order-success-message" btn-text="分享给好友" v-ref:order-success-message>
             <div class="screen1">
@@ -69,6 +70,19 @@
             </div>
             <div class="share-tip"></div>
         </flash-message>
+
+        <div id="order-redpacket" v-el:order-redpacket>
+            <span class="arrow"></span>
+            <div class="body">
+                <div class="redpacket"></div>
+                <p class="rate_title" v-if="!order.is_pingjia.status">为这次预订打个分吧</p>
+                <p>
+                    <rating :value.sync="ratings.app" size="28" color="#FDE04A" :once="true" :disabled="!!order.is_pingjia.status" @change="redpacketRating"></rating>
+                </p>
+                <p class="thanks">感谢您的参与！</p>
+                <span class="close" @click="$els.orderRedpacket.style.display='none'"></span>
+            </div>
+        </div>
 
         <flash-message v-ref:flash-message></flash-message>
 
@@ -82,7 +96,6 @@
 @import "../scss/rsprite";
 
 .page-ktvorder {
-    padding-top: 44px;
     margin-bottom: 74px;
 
     .ktv-pic {
@@ -90,6 +103,20 @@
         background: $mainDarker no-repeat 50%;
         background-size: cover;
     }
+
+    .pay-countdown {
+        margin-top: 20px;
+        text-align: center;
+
+        h4 {
+            margin-bottom: .5em;
+        }
+
+        time {
+            font-size: 2em;
+        }
+    }
+
     .baseinfo {
         margin: 20px;
 
@@ -100,6 +127,7 @@
             .status {
                 text-align: right;
                 display: block;
+                margin-top: 2px;
                 margin-bottom: 7px;
                 color: #7B2431;
             }
@@ -109,7 +137,7 @@
                 border: 1px solid currentColor;
                 width: 60px;
                 height: 24px;
-                margin-top: -2px;
+                margin-top: -3px;
 
                 .icon {
                     @include rsprite($icon-loader-group);
@@ -154,6 +182,10 @@
             .full {
                 opacity: .5;
             }
+        }
+
+        .refund-tip {
+            text-align: center;
         }
     }
 
@@ -217,10 +249,18 @@
 
     .btn-float {
         background-color: #900D1E;
+    }
 
+    .btn-comment {
         span {
             @include rsprite($btn-ljpj-group);
         }
+    }
+
+    .btn-pay {
+        span {
+            @include rsprite($btn-wxzf-group);
+        }        
     }
 }
 
@@ -287,6 +327,58 @@
     }
 }
 
+#order-redpacket {
+    background: rgba(0,0,0,.88);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    color: $main;
+    font-size: 16px;
+    display: none;
+
+    .arrow {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 68px;
+        height: 85px;
+        background: url(../img/redpacket_arrow.png) no-repeat 50%;
+        background-size: contain;
+    }
+    .body {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 255px;
+        text-align: center;
+        transform: translate3d(-50%, -50%, 0);
+    }
+    .redpacket {
+        width: 255px;
+        height: 204px;
+        background: url(../img/redpacket.png) no-repeat 50%;
+        background-size: contain;
+        margin: 0 auto 30px;
+    }
+    .c-rating {
+
+    }
+    .thanks {
+        display: none;
+    }
+    .close {
+        display: block;
+        width: 37px;
+        height: 37px;
+        background: url(../img/redpacket_close.png) no-repeat 50%;
+        background-size: contain;
+        margin: 0 auto;
+    }
+}
+
 #rating-modal {
     .rating-list {
         clear: both;
@@ -343,6 +435,8 @@ export default {
                 18 : "已支付",     // Paid by Wechat
                 19 : "已支付",     // Paid by Alipay
                 20 : "已支付",     // Paid by Cash
+                21 : "退款中",     // Refunding
+                22 : "退款完成",   // Refunded
                 3  : "已确认",     // Confirmed
                 7  : "已取消",     // Canceled
                 5  : "已完成",     // Complete
@@ -351,6 +445,8 @@ export default {
             },
 
             order: {},
+
+            timeRemaining: -1,
 
             ratings: {
                 decoration: 0,
@@ -372,6 +468,8 @@ export default {
     },
     ready() {
         window.scrollTo(0, 0);
+
+        if (this.$route.query.share) this.showShareLayer(this.$route.query.share);
     },
     beforeDestroy() {
         clearInterval(this.timer);
@@ -384,37 +482,45 @@ export default {
             }).then(function (data) {
                 this.order = data;
                 this.loadingStatus = 2;
+                if (data.is_pingjia.status) this.ratings.app = data.is_pingjia.appRating;
                 if (data.order_status == 3) this.timer = setInterval(this.checkStatus.bind(this), 5e3);
+                if (data.is_pay_online && data.order_status == 17) this.payCountdown(data.payendtime - data.now);
             }, function(data) {
                 this.errorMsg = data.msg;
                 this.loadingStatus = -1;
             });
         },
-        isCancelable(status) {
-            return status === 1 || status === 3;
-        },
-        cancelOrder(order, event) {
+        cancelOrder() {
+            let order = this.order;
+
             if (!confirm("确定要取消" + order.ktvinfo.xktvname + " " + (utils.parseDate("yyyy年MM月dd日 hh:mm", new Date(order.starttime * 1000))) + " " + order.room_name + "的订单吗？")) {
                 return false;
             };
 
-            let btn = event.target;
+            let promise;
 
-            if (btn.tagName != "BUTTON") btn = btn.parentNode;
-            btn.classList.add("loading");
+            this.$els.cancelBtn.classList.add("loading");
 
-            this.$api.post("booking/cancelorder", {
-                ordercode: order.order_code,
-                ktvid: order.ktvinfo.xktvid
-            }).then(function(data) {
-                order.order_status = 7;
-                btn.classList.remove("loading");
+            if (order.is_pay_online) {
+                promise = this.$api.get("booking/cancelpayorder", {
+                    ordercode: order.order_code,
+                });
+            } else {
+                promise = this.$api.post("booking/cancelorder", {
+                    ordercode: order.order_code,
+                    ktvid: order.ktvinfo.xktvid
+                });
+            }
+
+            promise.then(function(data) {
+                this.order.order_status = order.is_pay_online ? 21 : 7;
+                this.$els.cancelBtn.classList.remove("loading");
             }, function(data){
                 alert(data.msg || "取消订单失败");
             });
         },
         openMap() {
-            if (window.wxIsReady) {
+            if (window.isWXReady) {
                 wx.openLocation({
                     latitude: this.order.ktvinfo.lat,
                     longitude: this.order.ktvinfo.lng,
@@ -436,33 +542,39 @@ export default {
         },
         checkStatus() {
             this.$api.get("booking/checkstatus", {
-                order_code: this.$route.params.id
+                order_code: this.order.order_code
             }).then(function (data) {
                 if (data.status == 5) {
                     this.order.order_status = data.status;
                     clearInterval(this.timer);
-                    this.$refs.orderSuccessMessage.show(null, null, function(){
-                        if (this.btnText != "关闭") {
-                            this.$trackEvent("分享给好友", "click");
-                            this.$el.querySelector(".share-tip").style.top = -this.$el.querySelector(".flash-message-dialog").getBoundingClientRect().top + 30 + "px";
-                            this.$el.classList.add("show-share");
-                            this.btnText = "关闭";
-                            return false;
-                        }
-                    });
-                    this.$wxShare({
-                        title: "夜点送您广州KTV派对啤酒兑酒券",
-                        desc: "为您的KTV派对加点料！夜点兑酒券发放中，无论新老用户，点击即可参与抽奖！马上参与！",
-                        link: "http://letsktv.chinacloudapp.cn/dist/event/",
-                        imgUrl: "http://letsktv.chinacloudapp.cn/dist/event/img/weixin_share_pic.jpg"
-                    });
+                    this.showShareLayer(data.ShareCoupon.code);
                 };
+            });
+        },
+        showShareLayer(code) {
+            /*
+            this.$refs.orderSuccessMessage.show(null, null, function(){
+                if (this.btnText != "关闭") {
+                    this.$trackEvent("分享给好友", "click");
+                    this.$el.querySelector(".share-tip").style.top = -this.$el.querySelector(".flash-message-dialog").getBoundingClientRect().top + 30 + "px";
+                    this.$el.classList.add("show-share");
+                    this.btnText = "关闭";
+                    return false;
+                }
+            });
+            */
+            this.$els.orderRedpacket.style.display = "block";
+            this.$wxShare({
+                title: "夜点送你广州KTV兑酒券！",
+                desc: "好友K歌局，有酒才痛快！夜点免费兑酒券，等你来抢！",
+                link: "http://letsktv.chinacloudapp.cn/dist/redpacket/?coupon=" + code,
+                imgUrl: "http://letsktv.chinacloudapp.cn/dist/redpacket/img/weixin_share_pic.jpg"
             });
         },
         postReview() {
             this.$api.post("feedback/comment", {
                 ktvid: this.order.ktvinfo.xktvid,
-                openid: this.$userdata.openid,
+                openid: this.$user.openid,
                 DecorationRating: this.ratings.decoration,
                 SoundRating: this.ratings.sound,
                 ServiceRating: this.ratings.service,
@@ -476,6 +588,39 @@ export default {
             }, function(data){
                 alert(data.msg || "提交失败");
             });
+        },
+        payCountdown(seconds) {
+            this.timeRemaining = seconds;
+            this.timeRemainingLast = Date.now();
+
+            this.timer = setInterval(() => {
+                if (this.timeRemaining > 0) {
+                    let now = Date.now();
+                    this.timeRemaining -= Math.round((now - this.timeRemainingLast) / 1e3);
+                    this.timeRemainingLast = now;
+                } else {
+                    this.timeRemaining = -1;
+                    clearInterval(this.timer);
+                }
+            }, 1e3);
+        },
+        payOrder() {
+            this.$api.wechatPay(this.order.order_code).then(function(data) {
+                alert("支付成功");
+                clearInterval(this.timer);
+                this.timeRemaining = -1;
+                this.order.order_status = 18;
+            }, function(data) {
+                alert(data.msg || "支付失败");
+            });
+        },
+        redpacketRating(rate) {
+            this.$api.post("feedback/commentapp", {
+                ktvid: this.order.ktvinfo.xktvid,
+                orderid: this.order.order_code,
+                appRating: rate
+            });
+            $(this.$els.orderRedpacket).find(".thanks").show();
         }
     },
     filters: {
@@ -489,10 +634,13 @@ export default {
         },
         mobileFormat(mobile) {
             return mobile && mobile.replace(/(\d{3})(\d{4})(\d{4})/, "$1 $2 $3");
+        },
+        humanTime(seconds) {
+            return utils.padZero(Math.floor(seconds / 60)) + ":" + utils.padZero(seconds % 60);
         }
     },
     computed: {
-        humanDate() {
+        orderDate() {
             if (this.order.starttime && this.order.endtime) {
                 let date = new Date(this.order.starttime * 1000);
                 let hour = date.getHours();
@@ -504,6 +652,12 @@ export default {
         },
         isRatingComplete() {
             return Object.keys(this.ratings).every(item => this.ratings[item]);
+        },
+        isOrderCancelable() {
+            return this.order.order_status == 1 || this.order.order_status == 3 || this.order.order_status == 18;
+        },
+        canDisplayQrcode() {
+            return !(this.order.order_status == 1 || this.order.order_status == 4 || this.order.order_status == 7 || this.order.order_status == 14 || this.order.order_status == 17);
         }
     }
 }

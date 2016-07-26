@@ -3,7 +3,12 @@
 		<ul class="ktv-list">
             <li v-for="ktv in list" :style="ktv.piclist[0].bigpicurl | backgroundImage">
                 <a v-link="{ name: 'detail', params: { id: ktv.xktvid }}">
+                    <span v-if="ktv.taocan" class="stamp stamp-goldpkg"></span>
                     <div class="content">
+                        <div class="marks">
+                            <span v-if="ktv.sjq" class="mark mark-djq"></span>
+                            <span v-if="ktv.online_pay" class="mark mark-zxf"></span>
+                        </div>
                         <h3 class="title">{{ktv.xktvname}}</h3>
                         <span class="rating"><span class="full"></span><span class="stars" :style="{width:ktv.rate*20+'%'}"></span></span>
                         <p class="address">{{ktv.address}}</p>

@@ -5,16 +5,19 @@ import VueApi from "./plugins/vue-api";
 import VueUser from "./plugins/vue-user";
 import VueStats from "./plugins/vue-stats";
 import VueWeChat from "./plugins/vue-wechat";
+import VuewHelper from "./plugins/vue-helper";
 import filters from "./filters";
 import directives from "./directives";
 import wechat from "./libs/wechat";
+import store from "./libs/store";
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(VueApi);
 Vue.use(VueUser);
+Vue.use(VuewHelper);
 
-Vue.http.options.root = "http://t1.intelfans.com";
+Vue.http.options.root = "http://wechat.fusionmaster.net";
 Vue.http.headers.common["X-KTV-Application-Name"] = "eec607d1f47c18c9160634fd0954da1a";
 Vue.http.headers.common["X-KTV-Vendor-Name"] = "1d55af1659424cf94d869e2580a11bf8";
 Vue.http.headers.common["X-KTV-Application-Platform"] = "1";
@@ -60,7 +63,7 @@ router.map({
         hideBar: true,
         component: require("./views/book.vue")
     },
-    "/search/:keyword": {
+    "/search": {
         name: "search",
         hideBar: true,
         component: require("./views/search.vue")
@@ -120,12 +123,27 @@ router.map({
         name: "events",
         title: "夜点精彩",
         component: require("./views/events.vue")
+    },
+    "/wechat": {
+        component: {}
     }
 });
 
 router.redirect({
     "/order": "/order/ktv",
     "*": "/ktv"
+});
+
+router.beforeEach(function(transition) {
+    if (transition.to.path === "/wechat") {
+        if (transition.from.path && window.isWXReady) {
+            wx.closeWindow();
+        } else {
+            transition.abort();
+        };
+    } else {
+        transition.next();
+    }
 });
 
 router.afterEach(function(transition) {
@@ -135,28 +153,32 @@ router.afterEach(function(transition) {
 Vue.use(VueStats, router);
 Vue.use(VueWeChat, router);
 
-function startApp(data) {
-    Vue.api.login({
+function wechatLogin(data) {
+    Vue.api.oAuthLogin({
         type: "wechat",
         openid: data.openid,
         display_name: data.display_name,
         avatar_url: data.avatar_url
     }).then(function() {
+        return Vue.Promise.all([
+            Vue.api.get("app/baseinfo").then(data => store.baseinfo = data.baseinfo),
+            Vue.api.getUserInfo()
+        ]);
+    }).then(function() {
         let hash = location.hash;
 
-        if (!(!hash || hash == "#!/ktv" || hash.indexOf("#!/ktv?") === 0)) {
+        if ((/micromessenger/i).test(navigator.userAgent)) {
+            history.replaceState(null, null, "#!/wechat");
+            history.pushState(null, null, hash);
+        }
+
+        if (hash && hash != "#!/ktv" && hash.indexOf("#!/ktv?") == -1) {
             history.replaceState(null, null, "#!/ktv");
             history.pushState(null, null, hash);
         }
 
-        Vue.api.getUserInfo().then(function() {
-            router.start(App, "app");
-        }, function(error) {
-            alert(error.message);
-        });
-    }, function(error) {
-        alert(error.message);
-    });
+        router.start(App, "app");
+    }).catch(error => alert(error.msg || error.message || "加载失败"));
 }
 
 // just for debugging
@@ -166,15 +188,11 @@ if (process.env.NODE_ENV !== "production") {
     window.router = router;
     window.$ = jQuery;
 
-    startApp({
+    wechatLogin({
         "openid": "oQPyxvxrLZeiwO8roMyD07GFwS2E",
         "display_name": "小影",
         "avatar_url": ""
     });
 } else {
-    wechat.init(function(data) {
-        startApp(data);
-    }, function(data) {
-        alert(data.msg || JSON.stringify(data));
-    });
+    wechat.authenticate(wechatLogin, data => alert(data.msg || JSON.stringify(data)));
 }

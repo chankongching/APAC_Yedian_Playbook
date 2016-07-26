@@ -1,0 +1,95 @@
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+
+body {
+	position: relative;
+	margin: 0;
+	background: #090203 url(../img/landing_bg.jpg) no-repeat 50%;
+	background-size: cover;
+	color: #fff;
+	font: 300 16px/1 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Wenquanyi Micro Hei", Arial, sans-serif;
+}
+
+.about {
+	display: table;
+	width: 48%;
+	height: 100%;
+	text-align: center;
+	margin-left: 2%;
+}
+
+.about-inner {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.desc {
+	line-height: 2em;
+	text-align: left;
+	width: 26em;
+	margin: 0 auto;
+}
+
+.pic {
+	position: absolute;
+	left: 48%;
+	top: 0;
+	height: 100%;
+	width: 50%;
+	text-align: center;
+}
+
+.mobile {
+	position: absolute;
+	left: 50%;
+	margin-left: -200px;
+	bottom: 0;
+	display: block;
+}
+
+
+@media (min-width: 1440px) {
+	.desc {
+		font-size: 20px;
+	}
+	.mobile {
+		width: 60%;
+	}	
+}
+
+@media (max-width: 768px) {
+	html, body {
+		overflow: auto;
+		height: auto;
+		min-height: 100%;
+	}
+	.about {
+		display: block;
+		margin: 30px auto 50px;
+		height: auto;
+		width: auto;
+		max-width: 30em;
+		font-size: 14px;
+	}
+	.logo {
+		width: 145px;
+	}
+	.desc {
+		width: auto;
+		margin: 0 2em;
+	}
+	.pic {
+		position: static;
+		height: auto;
+		width: auto;
+	}
+	.mobile {
+		position: static;
+		width: 70%;
+		max-width: 432px;
+		margin-left: 24%;
+	}
+}
