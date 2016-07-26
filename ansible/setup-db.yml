@@ -5,6 +5,9 @@
 
 - hosts: db
   roles:
-    - role: wcl-percona
+    # Check group_vars/redis/vars for defaults
     - role: wcl-redis
-    - role: wcl-memcached
+    # Check group_vars/memcached/vars for defaults
+    - role: memcached
+    # Check group_vars/mysql/vars for defaults
+    - role: percona

@@ -1,6 +1,8 @@
 ---
-# Set MySQL / Percona config
+percona_server_version: 5.5
+percona_server_root_password: "{{ vault_mysql_server_root_password }}"
 
+# Set MySQL / Percona config
 mysql_bind: 0.0.0.0
 mysql_port: 3306
 mysql_datadir: /var/lib/mysql/
@@ -11,12 +13,10 @@ mysql_pid: /var/run/mysqld/mysqld.pid
 mysql_log_error: /var/log/mysql/error.log
 
 mysql_slow_query_log: '1'
-mysql_long_query_time: '1'
+mysql_long_query_time: 1.0
 mysql_slow_query_log_file: /var/lib/mysql/slow.log
 
 mysql_innodb_buffer_pool_size: 8G
-
-
 
 
 #
