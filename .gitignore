@@ -92,3 +92,12 @@ celerybeat-schedule
 # virtualenv
 venv/
 ENV/
+
+#Lincoln stuff:
+server/abicloud/protected/runtime/
+server/APP/Runtime/
+server/wechat_ktv/Runtime/
+server/abicloud/assets/
+server/abicloud/avatar/
+server/abicloud/wechatshangjia/Public/qrcode/
+
