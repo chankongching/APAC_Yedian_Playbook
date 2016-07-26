@@ -1,0 +1,3 @@
+---
+redis_tarball: true
+redis_version: 3.2.1

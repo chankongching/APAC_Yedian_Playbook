@@ -41,11 +41,11 @@
 # Database servers
 #
 - src: https://github.com/wiredcraft-ops/ansible-redis.git
-  name: ansible-redis
+  name: wcl-redis
   version: master
 
-- src: https://github.com/wiredcraft-ops/role-wcl-memcached.git
-  name: wcl-memcached
+- src: geerlingguy.memcached
+  name: memcached
   version: master
 
 - src: tersmitten.percona-server
