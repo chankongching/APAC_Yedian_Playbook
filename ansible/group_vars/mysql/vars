@@ -298,7 +298,7 @@ percona_server_etc_my_cnf:
       - name: innodb_log_files_in_group
         value: 2
       - name: innodb_log_block_size
-        value: 4096
+        value: 512
       
       - name: innodb_max_dirty_pages_pct
         value: 90
