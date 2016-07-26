@@ -1,5 +1,5 @@
 ---
-percona_server_version: 5.5
+percona_server_version: 5.6
 percona_server_root_password: "{{ vault_mysql_server_root_password }}"
 
 # Set MySQL / Percona config
