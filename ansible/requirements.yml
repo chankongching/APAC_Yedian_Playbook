@@ -1,0 +1,73 @@
+---
+#
+# For all servers
+#
+- src: https://github.com/wiredcraft-ops/role-wcl-common.git
+  name: wcl-common
+  version: master
+
+
+#
+# Load balancers
+#
+- src: https://github.com/wiredcraft-ops/role-wcl-haproxy.git
+  name: wcl-haproxy
+  version: master
+
+
+#
+# Web component
+#
+- src: https://github.com/wiredcraft-ops/role-wcl-nginx.git
+  name: wcl-nginx
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-php.git
+  name: wcl-php
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-php-fpm.git
+  name: wcl-php-fpm
+  version: master
+
+# Maybe for latert
+# - src: https://github.com/wiredcraft-ops/role-wcl-varnish.git
+#   name: wcl-varnish
+#   version: master
+
+
+
+#
+# Database servers
+#
+- src: https://github.com/wiredcraft-ops/ansible-redis.git
+  name: ansible-redis
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-memcached.git
+  name: wcl-memcached
+  version: master
+
+- src: tersmitten.percona-server
+  name: percona
+
+
+
+
+- src: https://github.com/wiredcraft-ops/role-wcl-zabbix-scripts.git
+  name: wcl-zabbix-scripts
+  version: master
+
+
+
+
+# - src: geerlingguy.mysql
+
+# - src: https://github.com/dj-wasabi/ansible-zabbix-proxy
+#   name: dj-wasabi.zabbix-proxy
+#   version: master
+
+- src: https://github.com/dj-wasabi/ansible-zabbix-agent
+  name: dj-wasabi.zabbix-agent
+  version: master
+
