@@ -1,0 +1,47 @@
+#
+# Run the code base and serves the end users
+#
+
+[lb]
+prod-lb-1
+
+[web]
+prod-web-1
+prod-web-1
+
+
+[mysql]
+prod-db-1
+
+[redis]
+prod-db-1
+
+[memcached]
+prod-db-1
+
+#
+# Tools
+# 
+
+[admin]
+prod-admin-1
+
+[zabbix]
+prod-admin-1
+
+[tools:children]
+admin
+zabbix
+
+
+#
+# Shared group to get platform specific vars
+#
+
+[prod:children]
+lb
+web
+db
+redis
+memcached
+tools

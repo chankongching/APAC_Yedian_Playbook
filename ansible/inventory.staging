@@ -1,0 +1,47 @@
+#
+# Run the code base and serves the end users
+#
+
+[lb]
+staging-lb-1
+
+[web]
+staging-web-1
+staging-web-1
+
+
+[mysql]
+staging-db-1
+
+[redis]
+staging-db-1
+
+[memcached]
+staging-db-1
+
+#
+# Tools
+# 
+
+[admin]
+staging-admin-1
+
+[zabbix]
+staging-admin-1
+
+[tools:children]
+admin
+zabbix
+
+
+#
+# Shared group to get platform specific vars
+#
+
+[staging:children]
+lb
+web
+db
+redis
+memcached
+tools
