@@ -1,4 +1,4 @@
 ---
 # Simple file for extra vars that can't be applied at the group or host level
 
-env: staging
+yedian_env: staging
