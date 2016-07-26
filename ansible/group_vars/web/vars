@@ -18,6 +18,7 @@ php_packages:
   - php5-recode
   - php5-sqlite
   - php5-xsl
+  - php5-xmlrpc
   - php5-xcache
 
 pecl_packages: []
