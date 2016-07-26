@@ -15,6 +15,7 @@
         - name: ydadmin
           sudo: yes
           ssh: yes
+          authorized: []
           # authorized: "{{ ydadmin_ssh_pub_keys }}"
 
       disable_firewall: yes
