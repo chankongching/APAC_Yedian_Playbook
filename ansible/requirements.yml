@@ -6,6 +6,14 @@
   name: wcl-common
   version: master
 
+- src: https://github.com/dj-wasabi/ansible-zabbix-agent
+  name: zabbix-agent
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-zabbix-scripts.git
+  name: wcl-zabbix-scripts
+  version: master
+
 
 #
 # Load balancers
@@ -52,22 +60,11 @@
   name: percona
 
 
-
-
-- src: https://github.com/wiredcraft-ops/role-wcl-zabbix-scripts.git
-  name: wcl-zabbix-scripts
+#
+# Admin server
+#
+- src: https://github.com/dj-wasabi/ansible-zabbix-proxy
+  name: zabbix-proxy
   version: master
 
-
-
-
-# - src: geerlingguy.mysql
-
-# - src: https://github.com/dj-wasabi/ansible-zabbix-proxy
-#   name: dj-wasabi.zabbix-proxy
-#   version: master
-
-- src: https://github.com/dj-wasabi/ansible-zabbix-agent
-  name: dj-wasabi.zabbix-agent
-  version: master
 

@@ -1,0 +1,23 @@
+# Setup of the admin server
+- hosts: admin
+  roles:
+    - role: zabbix-proxy
+      zabbix_server_host: zabbix.service.wiredcraft.com
+      database_type_long: sqlite3
+      database_type: sqlite3
+      
+  tasks:
+    - name: Install Ansible dependencies
+      apt: 
+        name={{ item }}
+        state=present
+      with_items:
+        - git
+        - make
+        - gcc
+
+    - name: Install Ansible
+      pip:
+        name=ansible
+        state=present
+
