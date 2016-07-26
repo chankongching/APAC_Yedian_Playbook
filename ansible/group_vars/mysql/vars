@@ -1,0 +1,353 @@
+---
+# Set MySQL / Percona config
+
+mysql_bind: 0.0.0.0
+mysql_port: 3306
+mysql_datadir: /var/lib/mysql/
+mysql_server_id: 10
+
+mysql_socket: /var/run/mysqld/mysqld.sock
+mysql_pid: /var/run/mysqld/mysqld.pid
+mysql_log_error: /var/log/mysql/error.log
+
+mysql_slow_query_log: '1'
+mysql_long_query_time: '1'
+mysql_slow_query_log_file: /var/lib/mysql/slow.log
+
+mysql_innodb_buffer_pool_size: 8G
+
+
+
+
+#
+# Use the variables from above to build the mysql / percona object 
+# used in the config file
+# 
+percona_server_etc_my_cnf:
+  - section: mysql
+    options:
+      - name: password
+      - name: port
+        value: "{{ mysql_port }}"
+      - name: socket
+        value: "{{ mysql_socket }}"
+
+  - section: mysqldump
+    options:
+      - name: quick
+      - name: max_allowed_packet
+        value: 16M
+
+  - section: myisamchk
+    options:
+      - name: key_buffer_size
+        value: 256M
+      - name: sort_buffer_size
+        value: 256M
+      - name: read_buffer
+        value: 2M
+      - name: write_buffer
+        value: 2M
+
+  - section: mysqld_safe
+    options:
+      - name: numa_interleave
+        value: '1'
+
+  - section: mysqld
+    options:
+      #
+      # General
+      #
+      - name: user
+        value: mysql
+      - name: skip_symbolic_links
+      - name: character_set_server
+        value: utf8
+      - name: collation_server
+        value: utf8_unicode_ci
+      - name: pid_file
+        value: "{{ mysql_pid }}"
+      - name: datadir
+        value: "{{ mysql_datadir }}"
+      - name: default_storage_engine
+        value: INNODB
+      - name: event_scheduler
+        value: DISABLED
+      - name: tmpdir
+        value: /tmp
+      - name: skip_external_locking
+
+      #
+      # Networking
+      #
+      - name: bind_address
+        value: "{{ mysql_bind }}"
+      - name: port
+        value: "{{ mysql_port }}"
+
+      - name: back_log
+        value: 4096
+      - name: max_connections
+        value: 2048
+      - name: max_connect_errors
+        value: 1000000
+      - name: skip_name_resolve
+      - name: max_allowed_packet
+        value: 32M
+
+      - name: socket
+        value: "{{ mysql_socket }}"
+
+      #
+      # Security
+      #
+      - name: old_passwords
+        value: '0'
+      - name: secure_auth
+      - name: safe_user_create
+      - name: local_infile
+        value: '0'
+
+      #
+      # Misc
+      #
+      - name: table_open_cache
+        value: 4096
+      - name: table_open_cache_instances
+        value: 16
+      - name: table_definition_cache
+        value: 4096
+      - name: metadata_locks_hash_instances
+        value: 256
+      - name: binlog_cache_size
+        value: 64K
+      - name: sort_buffer_size
+        value: 256K
+      - name: join_buffer_size
+        value: 16M
+      - name: thread_cache_size
+        value: 100
+      - name: query_cache_type
+        value: '0'
+      - name: query_cache_size
+        value: '0'
+      - name: query_cache_limit
+        value: 2M
+      - name: thread_stack
+        value: 192K
+      - name: net_buffer_length
+        value: 16K
+      - name: transaction_isolation
+        value: READ-COMMITTED
+      - name: innodb_autoinc_lock_mode
+        value: '1'
+      - name: max_heap_table_size
+        value: 128M
+      - name: tmp_table_size
+        value: 128M
+      - name: open-files-limit
+        value: 65535
+
+      - name: query_cache_strip_comments
+        value: 'On'
+      - name: expand_fast_index_creation
+        value: 'On'
+      - name: userstat
+        value: 'On'
+
+      #
+      # Logging
+      #
+      - name: log_error
+        value: "{{ mysql_log_error }}"
+      - name: log_warnings
+        value: 2
+      - name: log_output
+        value: FILE
+
+      - name: slow_query_log
+        value: "{{ mysql_slow_query_log }}"
+      - name: slow_query_log_file
+        value: "{{ mysql_slow_query_log_file }}"
+      - name: long_query_time
+        value: "{{ mysql_long_query_time }}"
+      - name: log_slow_verbosity
+        value: Full
+      - name: slow_query_log_timestamp_always
+        value: 'On'
+      - name: slow_query_log_timestamp_precision
+        value: Microsecond
+
+      - name: log_slow_admin_statements
+      - name: log_slow_slave_statements
+        value: 'Off'
+      - name: log_queries_not_using_indexes
+        value: '0'
+
+      - name: sync_binlog
+        value: 100
+      - name: server_id
+        value: "{{ mysql_server_id }}"
+      - name: log_bin
+        value: mysql-bin
+      - name: binlog_format
+        value: MIXED
+      - name: max_binlog_size
+        value: 256M
+      - name: expire_logs_days
+        value: 7
+      - name: log_bin_index
+        value: mysql-bin.index
+      - name: master_info_file
+        value: master.info 
+      - name: relay_log_info_file 
+        value: relay-log.info 
+      - name: relay_log
+        value: relay-bin
+      - name: relay_log_index
+        value: relay-bin.index 
+      - name: max_relay_log_size 
+        value: '0'
+      - name: log_slave_updates
+      - name: binlog_row_image
+        value: minimal
+
+      - name: sync_master_info
+        value: '1'
+      - name: sync_relay_log
+        value: '1'
+      - name: sync_relay_log_info
+        value: '1'
+
+      - name: binlog_checksum
+        value: CRC32
+      - name: master_verify_checksum
+        value: '1'
+      - name: slave_sql_verify_checksum
+        value: '1'
+      - name: slave_parallel_workers
+        value: '0'
+
+      #
+      # MyISAM
+      #
+      - name: key_buffer_size
+        value: 64M
+      - name: delay_key_write
+        value: 'Off'
+      - name: read_buffer_size
+        value: 256K
+      - name: read_rnd_buffer_size
+        value: 16M
+      - name: bulk_insert_buffer_size
+        value: 64M
+      
+      - name: myisam_sort_buffer_size
+        value: 8M
+      - name: myisam_max_sort_file_size
+        value: 1G
+      - name: myisam_repair_threads
+        value: '1'
+      - name: myisam_recover
+        value: BACKUP,FORCE
+      - name: myisam_use_mmap
+        value: '0'
+      - name: concurrent_insert
+        value: 2
+
+      #
+      # InnoDB
+      #
+      - name: innodb_buffer_pool_size
+        value: "{{ mysql_innodb_buffer_pool_size }}"
+      - name: innodb_flush_log_at_timeout
+        value: '1'
+      - name: innodb_flush_log_at_trx_commit
+        value: 2
+      - name: innodb_data_file_path
+        value: ibdata1:10M:autoextend:max:500M
+      - name: innodb_thread_concurrency
+        value: 8
+      - name: innodb_doublewrite
+        value: '1'
+
+      - name: innodb_file_per_table
+        value: '1'
+      - name: innodb_file_format
+        value: Barracuda
+      - name: innodb_undo_tablespaces
+        value: '0'
+      - name: innodb_status_file
+        value: 'On'
+      - name: innodb_additional_mem_pool_size
+        value: 8M
+      - name: innodb_force_recovery
+        value: '0'
+      - name: innodb_fast_shutdown
+        value: '0'
+      - name: innodb_log_buffer_size
+        value: 16M
+      - name: innodb_rollback_on_timeout
+        value: 'On'
+      - name: innodb_sync_array_size
+        value: 16
+      - name: innodb_strict_mode
+      - name: innodb_log_file_size
+        value: 128M
+      - name: innodb_log_files_in_group
+        value: 2
+      - name: innodb_log_block_size
+        value: 4096
+      
+      - name: innodb_max_dirty_pages_pct
+        value: 90
+      - name: innodb_flush_method
+        value: ALL_O_DIRECT
+      - name: innodb_lock_wait_timeout
+        value: 50
+      - name: innodb_support_xa
+        value: 'On'
+      - name: innodb_open_files
+        value: 4096
+
+      - name: innodb_stats_on_metadata
+        value: '0'
+      - name: innodb
+        value: FORCE
+      - name: innodb_buffer_pool_instances
+        value: 8
+      - name: innodb_old_blocks_time
+        value: 1000
+      - name: innodb_read_io_threads
+        value: 4
+      - name: innodb_write_io_threads
+        value: 4
+      - name: innodb_flush_neighbors
+        value: 2
+      - name: innodb_adaptive_flushing
+        value: '1'
+
+      - name: innodb_corrupt_table_action
+        value: Warn
+      - name: innodb_buffer_pool_dump_at_shutdown
+        value: '1'
+      - name: innodb_buffer_pool_load_at_startup
+        value: 60
+      - name: innodb_fake_changes
+        value: 'Off'
+
+      - name: innodb_io_capacity
+        value: 1000
+      - name: innodb_io_capacity_max
+        value: 2000
+
+      - name: innodb_lru_scan_depth 
+        value: 2000 
+      - name: innodb_checksum_algorithm
+        value: crc32
+      - name: innodb_monitor_enable
+        value: "'%'"
+      - name: innodb_adaptive_hash_index_partitions
+        value: 65
+
