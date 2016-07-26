@@ -33,6 +33,16 @@ prod-yedian-admin-1
 admin
 zabbix
 
+#
+# Misc groups
+#
+
+[db:children]
+mysql
+redis
+memcached
+
+
 
 #
 # Shared group to get platform specific vars
