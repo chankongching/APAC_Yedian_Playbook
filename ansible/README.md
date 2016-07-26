@@ -28,5 +28,10 @@ ansible-galaxy install -r requirements.yml -p roles
 ## Run deployment
 
 ```
-ansible-playbook -i inventory.staging main.yml --ask-vault-pass
+# Run the staging deployment
+ansible-playbook -i inventory.staging main.yml --ask-vault-pass -e @vars.staging
+
+# Run the prod deployment
+ansible-playbook -i inventory.prod main.yml --ask-vault-pass -e @vars.prod
 ```
+
