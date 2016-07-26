@@ -6,3 +6,39 @@
 - hosts: lb
   roles:
     - role: wcl-haproxy
+      haproxy_global:
+        log:
+          - bind: 127.0.0.1
+            facility: local0
+            level: info
+        description: "{{ ansible_hostname }}"
+        maxconn: 65536
+        user: haproxy
+        group: haproxy
+        daemon: true
+        spread_checks: 3
+        stats:
+          - socket /tmp/haproxy level admin group zabbix mode 664
+          - maxconn 20
+
+      haproxy_frontends:
+        - name: default_https
+          bind: 0.0.0.0:80 
+          extras:
+            # Misc
+            - maxconn 20000
+          default_backend: web
+
+      haproxy_backends:
+        - name: web
+          balance: roundrobin
+          ansible_servers:
+            - name: web
+              port: 80
+              iface: eth0
+              params:
+                - check
+                - maxconn 2000
+          extras:
+            - default-server inter 2s fastinter 1s downinter 5s slowstart 60s rise 2 fall 5 weight 30
+            - option httpchk GET /status.php HTTP/1.1\r\nHost:\ {{ domain }}
