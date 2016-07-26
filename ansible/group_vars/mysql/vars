@@ -333,7 +333,7 @@ percona_server_etc_my_cnf:
       - name: innodb_buffer_pool_dump_at_shutdown
         value: '1'
       - name: innodb_buffer_pool_load_at_startup
-        value: 60
+        value: 'On'
       - name: innodb_fake_changes
         value: 'Off'
 
@@ -349,5 +349,5 @@ percona_server_etc_my_cnf:
       - name: innodb_monitor_enable
         value: "'%'"
       - name: innodb_adaptive_hash_index_partitions
-        value: 65
+        value: 64
 
