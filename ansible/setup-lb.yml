@@ -1,0 +1,8 @@
+---
+#
+# Setup the LB servers
+#
+
+- hosts: lb
+  roles:
+    - role: wcl-haproxy

@@ -1,0 +1,10 @@
+---
+#
+# Setup the web servers
+#
+
+- hosts: db
+  roles:
+    - role: wcl-percona
+    - role: wcl-redis
+    - role: wcl-memcached

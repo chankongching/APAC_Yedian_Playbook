@@ -1,0 +1,9 @@
+---
+#
+# Setup the web servers
+#
+
+- hosts: web
+  roles:
+    - role: wcl-nginx
+    - role: wcl-php-fom
