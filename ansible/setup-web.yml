@@ -5,5 +5,64 @@
 
 - hosts: web
   roles:
+    # Install PHP 
+    - role: wcl-php
+      release: '5.5'
+
+    # Install PHP-FPM service
+    - role: wcl-php-fpm
+      php_fpm_pools:
+        - name: "yedian"
+          user: "www-data"
+          group: "www-data"
+          listen: "127.0.0.1:9000"
+          chdir: /
+          slowlog: /var/log/php-fpm/yedian-slowlog
+          request_slowlog_timeout: "1"
+          request_terminate_timeout: "30"
+          ping.path: /ping
+          ping.response: pong
+
+    # Install NginX 
     - role: wcl-nginx
-    - role: wcl-php-fom
+      nginx_http_params:
+        - sendfile on
+        - server_tokens off
+        - access_log /var/log/nginx/access.log
+        - error_log /var/log/nginx/error.log
+        - types_hash_max_size 2048
+        - server_name_in_redirect on
+        - port_in_redirect off
+        - server_names_hash_bucket_size 64
+        - gzip on
+        - gzip_disable msie6
+        - gzip_proxied any
+        - gzip_comp_level 6
+        - gzip_buffers 16 8k
+        - gzip_http_version 1.1
+        - gzip_types text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml font/ttf font/opentype
+
+      nginx_sites:
+        status:
+          - listen 127.0.0.1:8001
+          - location /nginx_status { stub_status on; access_log off; }
+
+        yedian:
+          - listen {{ nginx_listen }}
+          - index index.php
+          - server_name {{ domain }}
+          - root {{ webroot }}
+          - error_page 404 /404.html
+          - error_page 500 403 =404 /404.html
+          - add_header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+          # Security relative locations
+          - location ~ ^/(_app|_config|_cache|_content|_logs|_storage) { return 404; }
+          - location ~ \.(yml|yaml|git) { return 404; }
+          # Serve static assets
+          - location ~* \.(?:xml|ogg|mp3|mp4|ogv|svg|svgz|eot|otf|woff|ttf|css|js|jpg|jpeg|gif|png|ico)$ { try_files $uri $core =404; expires max; access_log off; add_header Pragma public; add_header Cache-Control "public, must-revalidate, proxy-revalidate"; add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";}
+          - location / { try_files $uri $uri/ /index.php?$args; }
+          - location ~ \.php$ { fastcgi_intercept_errors on; add_header X-Frame-Options DENY; add_header Strict-Transport-Security "max-age=31536000; includeSubDomains"; fastcgi_split_path_info ^(.+?\.php)(/.*)$; fastcgi_pass app; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; }
+
+      nginx_configs:
+        upstream:
+          - upstream app { server 127.0.0.1:9000; }
