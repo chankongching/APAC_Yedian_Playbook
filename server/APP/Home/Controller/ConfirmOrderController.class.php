@@ -114,65 +114,77 @@ class ConfirmOrderController extends CommonController {
 						die(json_encode($result_array));
 					}
 
-				}
+                } elseif ($order_id_info['type'] == 'jaycn' && session('ktvid') == 229) {
+                    $order_info = M('jaycn_event_order', 'ac_')->where(array('id' => $order_id_info['orderid']))->find();
+                    $roominfo = M('jaycn_event','ac_')->where(array('id'=>$order_info['roomid']))->find();
+                    $roominfo['dates'] = $roominfo['date'] == 23 ? '2016-07-23' : '2016-07-24';
+                    if ($order_info != null) {
+                        $result_array['msg'] = 'scan success';
+                        $result_array['result'] = '0';
+                        $result_array['order_info']=$order_info;
+                        $result_array['room_info']=$roominfo;
+                        $result_array['order_type']='jaycn';
+                        die(json_encode($result_array));
+                    }
+                }
 
 			}
 		}
 	}
 
-	public function getResultByQrUrl() {
-		if (IS_POST) {
-			// echo 'sdf';
-			$url = I('post.url');
-			// echo $url;
-			$ss = explode('/wechatshangjia/', $url);
-			// var_dump($ss);
-			$order_qrcode_info = M('qr_service', 'ydsjb_')->where(array('file' => $ss[1]))->find();
-			if ($order_qrcode_info != null) {
-				$order_id_info = json_decode($order_qrcode_info['content'], true);
-				if ($order_id_info['type'] == 'order') {
-					$order_info = M('order', 'ac_')->where(array('id' => $order_id_info['order_id']))->field('id,time,roomtype,ktvid,userid,starttime,endtime,members,couponid,roomtypeid,taocantype,taocanid,price')->find();
-					if ($order_info != null) {
-						if ($this->getKtvName($order_info['ktvid'], 'id') == session('ktvid')) {
-							if ($order_info['taocantype'] == 0) {
-								$order_info['roomtype'] = $this->getTaocanInfo($order_info['taocanid']);
-								$order_info['taocan_desc'] = $this->getTaocanInfo($order_info['taocanid'], 'description');
-							} else {
-								$order_info['roomtype'] = $this->getRoomType($order_info['roomtypeid']);
-							}
-							$order_info['time'] = date("Y-m-d H:i:s", $order_info['time']);
-							$order_info['starttime'] = date("Y-m-d H:i:s", $order_info['starttime']);
-							$order_info['endtime'] = date("Y-m-d H:i:s", $order_info['endtime']);
-							$order_info['ktvid'] = $this->getKtvName($order_info['ktvid']);
-							$order_info['userinfo'] = $this->getUserInfo($order_info['userid']);
-							$result_array['msg'] = 'scan success';
-							$result_array['result'] = '0';
-							$result_array['order_data'] = $order_info;
-							if ($order_info['couponid'] > 0) {
-								$coupon_info = M('coupon', 'ac_')->where(array('id' => $order_info['couponid']))->find();
-								if ($coupon_info != NULL) {
-									$coupon_info_type = M('coupon_type', 'ac_')->where(array('id' => $coupon_info['type']))->find();
-									$result_array['coupon_info_data'] = array('name' => $coupon_info_type['name'], 'count' => $coupon_info_type['count']);
-								}
-							} else {
-								$result_array['coupon_info_data'] = array('name' => '无', 'count' => 0);
-							}
-						} else {
-							$result_array['msg'] = 'KTV信息错误';
-							$result_array['result'] = 1;
-						}
-						die(json_encode($result_array));
-					} else {
-						$result_array['msg'] = '订单不存在';
-						$result_array['result'] = 1;
-						die(json_encode($result_array));
-					}
+	// public function getResultByQrUrl() {
+	// 	if (IS_POST) {
+	// 		// echo 'sdf';
+	// 		$url = I('post.url');
+	// 		// echo $url;
+	// 		$ss = explode('/wechatshangjia/', $url);
+	// 		// var_dump($ss);
+	// 		$order_qrcode_info = M('qr_service', 'ydsjb_')->where(array('file' => $ss[1]))->find();
+	// 		if ($order_qrcode_info != null) {
+	// 			$order_id_info = json_decode($order_qrcode_info['content'], true);
+	// 			if ($order_id_info['type'] == 'order') {
+	// 				$order_info = M('order', 'ac_')->where(array('id' => $order_id_info['order_id']))->field('id,time,roomtype,ktvid,userid,starttime,endtime,members,couponid,roomtypeid,taocantype,taocanid,price')->find();
+	// 				if ($order_info != null) {
+	// 					if ($this->getKtvName($order_info['ktvid'], 'id') == session('ktvid')) {
+	// 						if ($order_info['taocantype'] == 0) {
+	// 							$order_info['roomtype'] = $this->getTaocanInfo($order_info['taocanid']);
+	// 							$order_info['taocan_desc'] = $this->getTaocanInfo($order_info['taocanid'], 'description');
+	// 						} else {
+	// 							$order_info['roomtype'] = $this->getRoomType($order_info['roomtypeid']);
+	// 						}
+	// 						$order_info['time'] = date("Y-m-d H:i:s", $order_info['time']);
+	// 						$order_info['starttime'] = date("Y-m-d H:i:s", $order_info['starttime']);
+	// 						$order_info['endtime'] = date("Y-m-d H:i:s", $order_info['endtime']);
+	// 						$order_info['ktvid'] = $this->getKtvName($order_info['ktvid']);
+	// 						$order_info['userinfo'] = $this->getUserInfo($order_info['userid']);
+	// 						$result_array['msg'] = 'scan success';
+	// 						$result_array['result'] = '0';
+	// 						$result_array['order_data'] = $order_info;
+	// 						if ($order_info['couponid'] > 0) {
+	// 							$coupon_info = M('coupon', 'ac_')->where(array('id' => $order_info['couponid']))->find();
+	// 							if ($coupon_info != NULL) {
+	// 								$coupon_info_type = M('coupon_type', 'ac_')->where(array('id' => $coupon_info['type']))->find();
+	// 								$result_array['coupon_info_data'] = array('name' => $coupon_info_type['name'], 'count' => $coupon_info_type['count']);
+	// 							}
+	// 						} else {
+	// 							$result_array['coupon_info_data'] = array('name' => '无', 'count' => 0);
+	// 						}
+	// 					} else {
+	// 						$result_array['msg'] = 'KTV信息错误';
+	// 						$result_array['result'] = 1;
+	// 					}
+	// 					die(json_encode($result_array));
+	// 				} else {
+	// 					$result_array['msg'] = '订单不存在';
+	// 					$result_array['result'] = 1;
+	// 					die(json_encode($result_array));
+	// 				}
 
-				}
+	// 			}
 
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// }
 
 	public function order_Confirm() {
 		if (IS_POST && IS_AJAX) {
@@ -216,7 +228,8 @@ class ConfirmOrderController extends CommonController {
 						$result_array['result'] = 0;
 						$result_array['msg'] = 'Order Confirm Success';
 						$CouponContr = new CouponController();
-						if ($CouponContr->getCouponByConfirmOrder($order_info['userid'], 5)) {
+						//送新的酒券 由6瓶改成3瓶
+						if ($CouponContr->getCouponByConfirmOrder($order_info['userid'], 31)) {
 							$result_array['new_coupon'] = array('msg' => 'Get Success New Coupon', 'result' => 0);
 						}
 						if ($order_info['roomtypeid'] == 0) {
@@ -358,33 +371,58 @@ class ConfirmOrderController extends CommonController {
 		return $this->http_post($url, array('uid' => $uid, 'msg' => $content));
 	}
 
-	private function http_post($url, $param, $post_file = false) {
-		$oCurl = curl_init();
-		if (stripos($url, "https://") !== FALSE) {
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-		}
-		if (is_string($param) || $post_file) {
-			$strPOST = $param;
-		} else {
-			$aPOST = array();
-			foreach ($param as $key => $val) {
-				$aPOST[] = $key . "=" . urlencode($val);
-			}
-			$strPOST = join("&", $aPOST);
-		}
-		curl_setopt($oCurl, CURLOPT_URL, $url);
-		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($oCurl, CURLOPT_POST, true);
-		curl_setopt($oCurl, CURLOPT_POSTFIELDS, $strPOST);
-		$sContent = curl_exec($oCurl);
-		$aStatus = curl_getinfo($oCurl);
-		curl_close($oCurl);
-		if (intval($aStatus["http_code"]) == 200) {
-			return $sContent;
-		} else {
-			return false;
-		}
-	}
+    private function http_post($url, $param, $post_file = false)
+    {
+        $oCurl = curl_init();
+        if (stripos($url, "https://") !== FALSE) {
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
+        }
+        if (is_string($param) || $post_file) {
+            $strPOST = $param;
+        } else {
+            $aPOST = array();
+            foreach ($param as $key => $val) {
+                $aPOST[] = $key . "=" . urlencode($val);
+            }
+            $strPOST = join("&", $aPOST);
+        }
+        curl_setopt($oCurl, CURLOPT_URL, $url);
+        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($oCurl, CURLOPT_POST, true);
+        curl_setopt($oCurl, CURLOPT_POSTFIELDS, $strPOST);
+        $sContent = curl_exec($oCurl);
+        $aStatus = curl_getinfo($oCurl);
+        curl_close($oCurl);
+        if (intval($aStatus["http_code"]) == 200) {
+            return $sContent;
+        } else {
+            return false;
+        }
+    }
+
+    public function jaycn_Confirm(){
+        if(IS_POST){
+            $orderid = I('post.jaycnid');
+            $status = M('jaycn_event_order','ac_')->where(array('id'=>$orderid))->save(array('status'=>1));
+            $order_info = M('jaycn_event_order','ac_')->where(array('id'=>$orderid))->find();
+            $userinfo = M('platform_user','ac_')->where(array('openid'=>$order_info['openid']))->find();
+            if($status>0){
+                M('coupon','ac_')->add(array('type'=>31,'userid'=>$userinfo['id'],'status'=>0,'create_time'=>date('Y-m-d H:i:s'),'expire_time'=>(time()+60*24*60*14)));
+                $this->sendmsg($userinfo['id'],
+                    '看不见你的笑我怎么睡的着～
+
+K歌达人小夜欢迎您来到周董演唱会前的杰迷K房派对！
+
+感谢您对夜点的支持！一张免费夜点兑酒券已经放入您的账户，请到【个人中心】－【我的兑酒券】中查看！
+
+祝您玩的开心！');
+                die(json_encode(array('result'=>0,'msg'=>'queren OK'),true));
+            }else{
+                die(json_encode(array('result'=>1,'msg'=>'queren OK'),true));
+            }
+
+        }
+    }
 }

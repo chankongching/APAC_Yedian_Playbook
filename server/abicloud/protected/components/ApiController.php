@@ -48,6 +48,7 @@ class ApiController extends CController implements HttpResponse {
 	const PAD_AUTH_TYPE = 'KTVPAD';
 	const STAFF_AUTH_TYPE = 'KTVSTAFF';
 	const PHONE_AUTH_TYPE = 'PHONE';
+	const WEBAPP_AUTH_TYPE = 'WEBAPP';
 
 	/**
 	 * 10 minutes
@@ -55,7 +56,7 @@ class ApiController extends CController implements HttpResponse {
 	const USER_VALID_TIME = 10;
 	const USER_IDLE_TIME = 600;
 
-	public $_other_auth_types = array(self::TABLE_AUTH_TYPE, self::PAD_AUTH_TYPE, self::STAFF_AUTH_TYPE, self::PHONE_AUTH_TYPE);
+	public $_other_auth_types = array(self::TABLE_AUTH_TYPE, self::PAD_AUTH_TYPE, self::STAFF_AUTH_TYPE, self::PHONE_AUTH_TYPE, self::WEBAPP_AUTH_TYPE);
 
 	/**
 	 *
@@ -123,7 +124,8 @@ class ApiController extends CController implements HttpResponse {
 		'booking/roomlist', 'booking/submitorder', 'booking/updateorder', 'booking/orderlist', 'feedback/feedback', 'feedback/comment', 'booking/addcollection', 'booking/cancelcollection', 'gift/giftlist', 'gift/orderreal', 'gift/ordervirtual', 'gift/giftorderlist', 'user/PointAdd',
 		'gift/OrderRealCXY', 'user/bindwechat', 'gift/giftdetail', 'booking/deleteorder', 'user/addcollection',
 		'user/delcollection', 'user/collectionlist', 'booking/xktvcoords', 'gift/giftorderlistnew', 'gift/orderdetail', 'tongji/click', 'tongji/browse', 'tongji/errorreport',
-		'gift/testbytoken', 'coupon/list', 'coupon/detail', 'coupon/checkstatus', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new',
+		'gift/testbytoken', 'coupon/list', 'coupon/detail', 'coupon/checkstatus', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new', 'app/baseinfo', 'user/loginbywebapp', 'user/registerwebapp', 'booking/CityList',
+        'feedback/commentapp','coupon/getcouponbyshare',
 	);
 
 	/**
@@ -141,6 +143,7 @@ class ApiController extends CController implements HttpResponse {
 		'booking/addcollection', 'booking/cancelcollection', 'gift/giftorderlist', 'gift/orderreal', 'gift/ordervirtual', 'user/bindwechat', 'booking/deleteorder',
 		'user/addcollection', 'user/delcollection', 'user/collectionlist', 'gift/giftorderlistnew', 'gift/orderdetail', 'tongji/click', 'tongji/browse',
 		'gift/testbytoken', 'feedback/feedback', 'feedback/comment', 'coupon/list', 'coupon/detail', 'coupon/checkstatus', 'tongji/errorreport', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new',
+        'feedback/commentapp'
 	);
 
 	/**

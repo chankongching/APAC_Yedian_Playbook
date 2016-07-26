@@ -195,40 +195,57 @@ class TaocanContent extends PSActiveRecord {
 	public function getTaocanInfoById($value = '') {
 		if ($value != '') {
 			$info = $this->findByPk($value);
-			$taocaninfo = array(
-				'name' => $info->desc,
-				'roomtype' => $info->roomtype,
-				'price_yd' => $info->yd_price,
-			);
-			return $taocaninfo;
+			if ($info != null) {
+				$taocaninfo = array(
+					'name' => $info->desc,
+					'roomtype' => $info->roomtype,
+					'price_yd' => $info->yd_price,
+                    'price_yd_online' => $info->yd_price_online,
+				);
+				return $taocaninfo;
+			} else {
+				return null;
+			}
+
 		}
 	}
 	protected function getTaocanInfo($value = '') {
 		if ($value != '') {
 			$typeinfo = $this->getTypeinfo($value['id']);
-			return array(
-				// 'name' => $value['name'],
-				'name' => $value['desc'] . '（可使用兑酒券）',
-				'id' => intval($value['id']),
-				'price' => intval($value['price']),
-				'price_yd' => intval($value['yd_price']),
-				'show' => intval($value['shouye']),
-				'type' => $typeinfo['type'],
-				'longtime' => $typeinfo['longtime'],
-				'pre_txt' => $typeinfo['type'] > 0 ? '欢唱' . $typeinfo['longtime'] . '小时，' : '全时段欢唱，',
-				// 'roomtype' => $typeinfo['roomtype'],
-			);
+			if ($typeinfo != null) {
+				return array(
+					// 'name' => $value['name'],
+					'name' => $value['desc'] . '（可使用兑酒券）',
+					'id' => intval($value['id']),
+					'price' => intval($value['price']),
+					'price_yd' => intval($value['yd_price']),
+                  'price_yd_online' => intval($value['yd_price_online']),
+					'show' => intval($value['shouye']),
+					'type' => $typeinfo['type'],
+					'longtime' => $typeinfo['longtime'],
+					'pre_txt' => $typeinfo['type'] > 0 ? '欢唱' . $typeinfo['longtime'] . '小时，' : '全时段欢唱，',
+					// 'roomtype' => $typeinfo['roomtype'],
+				);
+			} else {
+				return null;
+			}
+
 		}
 	}
 
 	protected function getTypeinfo($value = '') {
 		if ($value != '') {
 			$info = $this->findByPk($value);
-			if ($info->shichang == 0) {
-				return array('type' => 0, 'longtime' => 0);
+			if ($info != null) {
+				if ($info->shichang == 0) {
+					return array('type' => 0, 'longtime' => 0);
+				} else {
+					return array('type' => 1, 'longtime' => intval($info->shichang));
+				}
 			} else {
-				return array('type' => 1, 'longtime' => intval($info->shichang));
+				return null;
 			}
+
 		}
 	}
 

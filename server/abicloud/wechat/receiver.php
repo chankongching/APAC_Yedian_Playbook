@@ -277,6 +277,8 @@ class WeixinCallbackApi {
                                 $content[] = $resp['news'];
                                 
                                 unset($info, $param);
+                            } elseif(stristr($url, '20160715_') !== false) {
+                                $content = htmlspecialchars("看不见你的笑我怎么睡得着~\n\n欢迎加入夜点K歌大军,我是KTV达人小 夜~\n\n见周董前的杰迷K房派对火热报名中中,点击左下角<a href=\"http://letsktv.chinacloudapp.cn/dist/#!/ktv/\">【立即预订】</a>后点击<a href=\"http://letsktv.chinacloudapp.cn/dist/jaycnparty/\">【Jay式情歌之杰迷狂欢派对】</a>即可参与报名!\n\n一场属于杰迷的百人K房派对等你来参加!");
                             }
                         }
                     }
@@ -478,6 +480,8 @@ class WeixinCallbackApi {
                             $content[] = $resp['news'];
                             
                             unset($info, $param, $__openid, $__url);
+                        } elseif(stristr($url, '20160715_') !== false) {
+                            $content = htmlspecialchars("看不见你的笑我怎么睡得着~\n\n欢迎加入夜点K歌大军,我是KTV达人小 夜~\n\n见周董前的杰迷K房派对火热报名中中,点击左下角<a href=\"http://letsktv.chinacloudapp.cn/dist/#!/ktv/\">【立即预订】</a>后点击<a href=\"http://letsktv.chinacloudapp.cn/dist/jaycnparty/\">【Jay式情歌之杰迷狂欢派对】</a>即可参与报名!\n\n一场属于杰迷的百人K房派对等你来参加!");
                         }
                     }
                 }

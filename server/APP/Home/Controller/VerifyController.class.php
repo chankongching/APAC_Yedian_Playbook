@@ -55,19 +55,18 @@ class VerifyController extends CommonController {
 	protected function checkSubMit($weihexiao_count) {
 
 		if ($weihexiao_count > 24) {
-			if ((date('d', time()) > 24 && date('d', time()) <= 31) || (date('d', time()) > 9 && date('d', time()) <= 15)) {
-				// $startday = date('Y-m-24');
-				// $endday = date('Y-m-d', strtotime($startday) + 3600 * 24 * 6);
-
-				$startday = date('Y-m-25');
+			if (date('d', time()) > 19 && date('d', time()) <= 25) {
+				$startday = date('Y-m-20');
 				$endday = date('Y-m-d', strtotime($startday) + 3600 * 24 * 7);
-				$startday_1 = date('Y-m-25');
-				$endday_1 = date('Y-m-d', strtotime($startday_1) + 3600 * 24 * 7);
-				// echo M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'create_time' => array('BETWEEN', array($startday, $endday))))->count();
-				// echo M()->getlastsql();die();
 				if (M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'type' => 0, 'create_time' => array('BETWEEN', array($startday, $endday))))->count() < 1) {
-					// if (M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'type' => 0, 'create_time' => array('BETWEEN', array($startday_1, $endday_1))))->count() < 1) {
-					// echo M()->getlastsql();die();
+					return true;
+				} else {
+					return false;
+				}
+			} elseif (date('d', time()) > 4 && date('d', time()) <= 10) {
+				$startday = date('Y-m-5');
+				$endday = date('Y-m-d', strtotime($startday) + 3600 * 24 * 7);
+				if (M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'type' => 0, 'create_time' => array('BETWEEN', array($startday, $endday))))->count() < 1) {
 					return true;
 				} else {
 					return false;
@@ -83,12 +82,11 @@ class VerifyController extends CommonController {
 
 	public function shenqing() {
 		$this->max_counts = $this->getMaxCount();
-		// $this->max_count = $this->max_count == null ? 0 : $this->max_count;
 		$this->display();
 	}
 
 	public function lishi() {
-		$history = M('songjiushenqing')->where(array('ktvid' => session('ktvid')))->select();
+		$history = M('songjiushenqing')->where(array('ktvid' => session('ktvid')))->field('sj_type,count,create_time,status')->select();
 		if ($history != null) {
 			foreach ($history as $key => $value) {
 				$history[$key]['type'] = $this->getTypeName($value['sj_type']);
@@ -130,18 +128,6 @@ class VerifyController extends CommonController {
 					}
 				}
 				$this->success('申请成功', 'MakeVerify');
-				// die();
-				// $n_count = intval(I('post.need_count'));
-				// if ($n_count == null || $n_count == '' || $n_count == 0) {
-				// 	$this->error('请正确填写数量');
-				// }
-				// if ($this->checkMaxCount($n_count)) {
-				// 	if ($SongJiuShenQing->add(array('ktvid' => session('ktvid'), 'count' => $n_count * 24, 'create_time' => date("Y-m-d H:i:s", time()), 'update_time' => date("Y-m-d H:i:s", time()))) > 0) {
-				// 		$this->success('申请成功', 'MakeVerify');
-				// 	}
-				// } else {
-				// 	$this->error('请求数量错误');
-				// }
 			} else {
 				$this->error('申请不成功,请勿重复提交');
 			}
@@ -149,71 +135,75 @@ class VerifyController extends CommonController {
 	}
 
 	protected function getMaxCount() {
-		$coupon_type_ids = M('coupon_type', 'ac_')->field('id')->select();
-		$MaxCounts = array();
-		foreach ($coupon_type_ids as $key => $value) {
-			if ($value['id'] == 1) {
-				$total_count = M('sj_record')->where(array('ktvid' => session('ktvid'), 'coupon_type' => $value['id']))->sum('count');
-				$has_hexiao_count = M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'sj_type' => $value['id']))->sum('count');
-				if ($total_count - $has_hexiao_count > 24) {
-					$MaxCounts[$value['id']] = array('name' => $this->getTypeName($value['id']), 'type' => $value['id'], 'count' => floor(($total_count - $has_hexiao_count) / 24));
-				}
-			} else {
-				$total_count = M('sj_record')->where(array('ktvid' => session('ktvid'), 'coupon_type' => $value['id']))->sum('count');
-				$has_hexiao_count = M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'sj_type' => $value['id']))->sum('count');
-//				if ($total_count - $has_hexiao_count > 24) {
-				if ($MaxCounts[2] != null) {
-					$MaxCounts[2]['count'] += $total_count - $has_hexiao_count;
-				} else {
-					$MaxCounts[2] = array('name' => $this->getTypeName($value['id']), 'type' => 2, 'count' => $total_count - $has_hexiao_count);
-				}
+		$ktvid = session('ktvid');
+		$total_MaxCount = M()->query("select
+			sum(ydsjb_sj_record.`count`) as count,
+			ac_beer_type.id as beer_type_id,
+			ac_beer_type.name as beer_name
+			from `ydsjb_sj_record`
+			left join `ac_coupon_type` on `ac_coupon_type`.id=`ydsjb_sj_record`.`coupon_type`
+			left join `ac_beer_type` on `ac_beer_type`.id=ac_coupon_type.`beer_type`
+			where ktvid=" . $ktvid . "  group by ac_beer_type.id");
 
-//				}
+		$total_has_hexiao_count = M()->query("select sj_type as type
+											,sum(count) as total_count
+											from `ydsjb_songjiushenqing` where ktvid=" . $ktvid . " group by sj_type");
+		$has_hexiao_count_arr = array();
+		foreach ($total_has_hexiao_count as $key => $value) {
+			$has_hexiao_count_arr[$value['type']] = $value['total_count'];
+		}
+		// var_dump($total_MaxCount);
+		// var_dump($has_hexiao_count_arr);
+		$MaxCounts = array();
+		foreach ($total_MaxCount as $key => $value) {
+			// echo $value['beer_type_id'] . '--';
+			if ($has_hexiao_count_arr[$value['beer_type_id']] != null) {
+				$now_count = $value['count'] - $has_hexiao_count_arr[$value['beer_type_id']];
+			} else {
+				$now_count = $value['count'];
+			}
+			if ($now_count > 24) {
+				$MaxCounts[$value['beer_type_id']] = array('count' => floor($now_count / 24), 'name' => $value['beer_name'], 'type' => $value['beer_type_id']);
 			}
 
 		}
-		$MaxCounts[2]['count'] = floor($MaxCounts[2]['count'] / 24);
+		// var_dump($MaxCounts);die();
 		return $MaxCounts;
-		// $total_count = M('sj_record')->where(array('ktvid' => session('ktvid')))->sum('count');
-		// $has_hexiao_count = M('songjiushenqing')->where(array('ktvid' => session('ktvid')))->sum('count');
-		// echo $total_count - $has_hexiao_count;
 
 	}
 
 	protected function getTypeName($id) {
-		if ($id == 1) {
-			return '铝瓶';
-		} elseif ($id == 2) {
-			return '罐装';
-		} elseif ($id == 5) {
-			return '罐装';
-		} elseif ($id == 7) {
-			return '罐装';
-		} elseif ($id == 8) {
-			return '罐装';
-		} elseif ($id == 9) {
-			return '罐装';
-		}
+		// $coupontype = M('coupon_type', 'ac_')->where(array('id' => $id))->find();
+		$beerType = M('beer_type', 'ac_')->where(array('id' => $id))->find();
+		return $beerType;
 	}
 
 	protected function checkMaxCount($subcount, $type) {
-		if ($type == 1) {
-			$total_count = M('sj_record')->where(array('ktvid' => session('ktvid'), 'coupon_type' => $type))->sum('count');
-			$has_hexiao_count = M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'sj_type' => $type))->sum('count');
-			if ($total_count - $has_hexiao_count >= 24 * $subcount) {
+		$ktvid = session('ktvid');
+		$total_MaxCount = M()->query("select
+			sum(ydsjb_sj_record.`count`) as count,
+			ac_beer_type.id as beer_type_id,
+			ac_beer_type.name as beer_name
+			from `ydsjb_sj_record`
+			left join `ac_coupon_type` on `ac_coupon_type`.id=`ydsjb_sj_record`.`coupon_type`
+			left join `ac_beer_type` on `ac_beer_type`.id=ac_coupon_type.`beer_type`
+			where ktvid=" . $ktvid . " and `ac_beer_type`.id=" . $type . "  group by ac_beer_type.id");
+
+		$total_has_hexiao_count = M()->query("select sj_type as type
+											,sum(count) as total_count
+											from `ydsjb_songjiushenqing` where ktvid=" . $ktvid . " and sj_type=" . $type . " group by sj_type");
+		if (count($total_has_hexiao_count) > 0) {
+			if ($total_MaxCount[0]['count'] - $total_has_hexiao_count[0]['total_count'] >= 24 * $subcount) {
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			$total_count = M('sj_record')->where(array('ktvid' => session('ktvid'), 'coupon_type' => array('neq', 1)))->sum('count');
-			$has_hexiao_count = M('songjiushenqing')->where(array('ktvid' => session('ktvid'), 'sj_type' => 2))->sum('count');
-			if ($total_count - $has_hexiao_count >= 24 * $subcount) {
+			if ($total_MaxCount[0]['count'] >= 24 * $subcount) {
 				return true;
 			} else {
 				return false;
 			}
 		}
-
 	}
 }

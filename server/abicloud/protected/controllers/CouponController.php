@@ -153,7 +153,6 @@ class CouponController extends ApiController {
 		$result_array = array(
 			'result' => self::BadRequest,
 			'msg' => Yii::t('user', 'Request method illegal!'),
-			'session' => $_SESSION,
 		);
 		// Check request type
 		$request_type = Yii::app()->request->getRequestType();
@@ -225,6 +224,106 @@ class CouponController extends ApiController {
 			$result_array['msg'] = 'not has coupon';
 			$result_array['coupon'] = $getresult['coupon'];
 		}
+		$this->sendResults($result_array);
+	}
+
+	private function is_subscribe($openid) {
+		$url = 'http://letsktv.chinacloudapp.cn/wechat_ktv/Home/Event/is_subcribe/openid/' . $openid;
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		$data = curl_exec($ch);
+		// $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		$sub_info = json_decode($data, true);
+		if ($sub_info['result'] == 0) {
+			return 1;
+		} else {
+			return 0;
+		}
+
+	}
+
+	public function actiongetcouponbyshare() {
+		$result_array = array(
+			'result' => self::BadRequest,
+			'is_subscribe' => 0,
+			'is_guoqi' => 0,
+			'is_lingguo' => 0,
+			'is_lingguang' => 0,
+			'coupon_status' => array(),
+			'coupon' => array(),
+			'msg' => Yii::t('user', 'Request method illegal!'),
+		);
+		$request_type = Yii::app()->request->getRequestType();
+		if ('POST' != $request_type) {
+			$this->sendResults($result_array, self::BadRequest);
+			die();
+		}
+		$post_data = Yii::app()->request->getPost('GetCouponByshareRequest');
+		if (empty($post_data)) {
+			$post_data = file_get_contents("php://input");
+		}
+		$post_array = json_decode($post_data, true);
+		$_code = isset($post_array['code']) ? trim($post_array['code']) : 0;
+		$_openid = isset($post_array['openid']) ? trim($post_array['openid']) : 0;
+		if ($_code === 0 || $_openid === 0) {
+			$result_array['msg'] = 'params errors';
+			$this->sendResults($result_array);
+		} else {
+			$result_array['is_subscribe'] = $this->is_subscribe($_openid);
+			$hashContent = UrlHash::model()->getContentByCode($_code);
+			if ($hashContent != null) {
+				$couponinfo = json_decode($hashContent, true);
+			} else {
+				$result_array['msg'] = 'code error';
+				$this->sendResults($result_array);
+			}
+			$sharecouponid = $couponinfo['sharecouponid'];
+			$couponshareinfo = CouponShare::model()->getInfoByid($sharecouponid);
+			if ($couponshareinfo != null) {
+				if ($couponshareinfo['expire_time'] <= time()) {
+					$result_array['is_guoqi'] = 1;
+				}
+
+				if ($couponshareinfo['share_count'] >= 10) {
+					$result_array['is_lingguang'] = 1;
+				}
+				$userid = PlatformUser::model()->findUserByOpenid($_openid);
+				if ($userid != null) {
+					$has_coupon = Coupon::model()->findbyuidandsource($userid, $sharecouponid);
+					if ($has_coupon['status'] != 0) {
+						$coupon = $has_coupon['coupon'];
+						$result_array['coupon'] = $coupon;
+						$result_array['coupon_status'] = CouponShare::model()->getcouponstatus($sharecouponid);
+						$result_array['is_lingguo'] = 1;
+						$result_array['result'] = self::Success;
+						$result_array['msg'] = 'has owned this coupon ';
+
+					} elseif ($has_coupon['status'] == 0 && $result_array['is_lingguang'] != 1 && $result_array['is_lingguo'] != 1 && $result_array['is_guoqi'] != 1) {
+						$coupon_new = Coupon::model()->getNewCouponByShareCoupon($userid, $sharecouponid);
+						if ($coupon_new['result'] == 0) {
+							$result_array['coupon'] = $coupon_new['coupon'];
+							$result_array['coupon_status'] = CouponShare::model()->getcouponstatus($sharecouponid);
+							$result_array['msg'] = 'get coupon success';
+							$result_array['result'] = self::Success;
+						} else {
+							$result_array['msg'] = 'get New Coupon Failed';
+						}
+					}
+				} else {
+					$result_array['msg'] = 'openid error';
+				}
+
+			} else {
+				$result_array['msg'] = 'share coupon code error';
+			}
+
+		}
+		$result_array['result'] = self::Success;
 		$this->sendResults($result_array);
 	}
 

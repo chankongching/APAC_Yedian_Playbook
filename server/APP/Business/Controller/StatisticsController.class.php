@@ -279,76 +279,288 @@ class StatisticsController extends CommonController {
 		return false;
 	}
 
-	public function OrderListAll() {
-		$query = "select
-ac_order.id,
-FROM_UNIXTIME(ac_order.time) as xdsj,
- CASE ac_order.status
-  WHEN 3 THEN '有房'
-  WHEN 4 THEN '无房'
-  WHEN 5 THEN '到店确认'
-  WHEN 7 THEN '取消'
-  WHEN 14 THEN '过期'
-   ELSE 'more' END as ddzt,
-ac_xktv.name as ktvname,
-if(ac_xktv.type=2,'商家版','Call Center') as qd,
-CASE `ac_coupon`.`status`
-    WHEN 0 THEN '已确认'
-    WHEN 1 THEN '已兑酒'
-    WHEN 2 THEN '已过期'
-    WHEN 3 THEN '未确认'
-    WHEN 4 THEN '已失效'
-    ELSE '' END
-    as jqzt,
-`ac_coupon_type`.`count` as sjs,
-`ac_coupon_type`.`name` as sjsm,
-ydsjb_sj_record.`emp_openid` as fwyopenid,
-ydsjb_sj_record.`create_time` as scan_time,
-ydsjb_ktvemp.name as fwyname,
-ac_platform_user.openid as yhopenid,
-ydsjb_orderhistory.`create_time` as clsj,
-ac_order.`update_time` as zhclsj,
-ac_bd.name as 'BDname',
-FROM_UNIXTIME(ac_order.starttime) as 'ksss'
+	// public function OrderListAll() {
+	// 	if (IS_GET) {
+	// 		$this->display();
+	// 	} elseif (IS_POST) {
+	// 		$starttime = I('post.starttime');
+	// 		$endtime = I('post.endtime');
+	// 		$query = "select
+	// 					ac_order.id as id,
+	// 					FROM_UNIXTIME(ac_order.time) as xdsj,
+	// 					CASE ac_order.status
+	// 					WHEN 1 THEN '未处理'
+	// 					WHEN 3 THEN '有房'
+	// 					WHEN 4 THEN '无房'
+	// 					WHEN 5 THEN '到店确认'
+	// 					WHEN 7 THEN '取消'
+	// 					WHEN 14 THEN '过期'
+	// 					ELSE '' END as ddzt,
+	// 					ac_xktv.name as ktvname,
+	// 					if(ac_xktv.type=2,'商家版','Call Center') as qd,
+	// 					case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+	// 					case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+	// 					case ac_order.status when 5 then `ac_coupon_type`.`name` else '' end as sjsm,
+	// 					case ac_order.status when 5 then ydsjb_sj_record.`emp_openid` else '' end as fwyopenid,
+	// 					case ac_order.status when 5 then ydsjb_sj_record.`create_time` else '' end as scan_time,
+	// 					case ac_order.status when 5 then ifnull(ydsjb_ktvemp.name,'KTV经理') else '' end as fwyname,
+	// 					ac_platform_user.openid as yhopenid,
+	// 					ydsjb_orderhistory.`create_time` as clsj,
+	// 					ac_order.`update_time` as zhclsj,
+	// 					ac_bd.name as bdname,
+	// 					FROM_UNIXTIME(ac_order.starttime) as ksss,
+	// 					case stat_user_info.source
+	// 					when 0 then '促销员'
+	// 					when 1 then '物料扫码'
+	// 					else '其他' end as ly
 
-from ac_order
-left join ac_xktv on ac_xktv.xktvid=ac_order.ktvid
-left join ac_coupon on `ac_order`.id=`ac_coupon`.`orderid`
-left join ac_coupon_type on ac_coupon.`type`=ac_coupon_type.id
-left join `ydsjb_sj_record` on ydsjb_sj_record.`couponid`=ac_coupon.id
-left join `ydsjb_ktvemp` on ydsjb_ktvemp.`openid`=ydsjb_sj_record.emp_openid
-left join `ac_platform_user` on ac_platform_user.id=ac_order.`userid`
-left join `ydsjb_orderhistory` on ydsjb_orderhistory.oid=ac_order.id
-left join `ac_bd_ktv` on ac_bd_ktv.`ktvid`=ac_xktv.id
-left join ac_bd on ac_bd.`id`=ac_bd_ktv.`bdid`
-where ac_xktv.id <> 229
-order by ac_order.id";
-		$result = M()->query($query);
-		$this->assign('list_data', $result);
-		header("Content-Type:application/vnd.ms-excel; charset=gb2312");
-		header("Content-Disposition:attachment;filename=abc.xls"); //File name extension was wrong
-		header("Expires:0");
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		header("Cache-Control: private", false);
-		echo '<meta charset="gb2312">
-<table>';
-		foreach ($result as $key => $vo) {
-			echo '<tr><td>' . $vo['id'] . '</td>
-			<td>' . $vo['xdsj'] . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['ddzt']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['jqzt']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['sjs']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['sjsm']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['fwyopenid']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['scan_time']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['fwyname']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['yhopenid']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['clsj']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['zhclsj']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['BDname']) . '</td>
-			<td>' . iconv("UTF-8", "GBK", $vo['ksss']) . '</td></tr>';
+	// 					from ac_order
+	// 					left join ac_xktv on ac_xktv.xktvid=ac_order.ktvid
+	// 					left join ac_coupon on `ac_order`.couponid=`ac_coupon`.`id`
+	// 					left join ac_coupon_type on ac_coupon.`type`=ac_coupon_type.id
+	// 					left join `ydsjb_sj_record` on ydsjb_sj_record.`couponid`=ac_coupon.id
+	// 					left join `ydsjb_ktvemp` on ydsjb_ktvemp.`openid`=ydsjb_sj_record.emp_openid
+	// 					left join `ac_platform_user` on ac_platform_user.id=ac_order.`userid`
+	// 					left join `ydsjb_orderhistory` on ydsjb_orderhistory.oid=ac_order.id
+	// 					left join `ac_bd_ktv` on ac_bd_ktv.`ktvid`=ac_xktv.id
+	// 					left join ac_bd on ac_bd.`id`=ac_bd_ktv.`bdid`
+	// 					left join stat_user_info on stat_user_info.openid = ac_platform_user.openid
+	// 					where ac_xktv.id<>229 and ac_order.`create_time` between '" . $starttime . "' and '" . $endtime . "' group by ac_order.id
+	// 					order by ac_order.id";
+	// 		$result = M()->query($query);
+	// 		// $this->assign('list_data', $result);
+	// 		header("Content-Type:application/vnd.ms-excel; charset=gb2312");
+	// 		header("Content-Disposition:attachment;filename=" . $endtime . ".xls"); //File name extension was wrong
+	// 		header("Expires:0");
+	// 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	// 		header("Cache-Control: private", false);
+	// 		echo '<meta charset="gb2312"><table>';
+	// 		echo iconv("UTF-8", "GBK", '<tr><th>订单ID</th><th>下单时间</th><th>订单状态</th><th>KTV名称</th><th>渠道</th><th>送酒数</th><th>送酒说明</th><th>服务员OPENID</th><th>扫码时间</th><th>服务员姓名</th><th>用户OPENID</th><th>处理时间</th><th>最后处理时间</th><th>BD姓名</th><th>开始时间</th><th>来源</th></tr>');
+	// 		foreach ($result as $key => $vo) {
+
+	// 			echo '<tr><td>' . $vo['id'] . '</td>
+	// 				<td>' . $vo['xdsj'] . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['ddzt']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['ktvname']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['qd']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['sjs']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['sjsm']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['fwyopenid']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['scan_time']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['fwyname']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['yhopenid']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['clsj']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['zhclsj']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['bdname']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['ksss']) . '</td>
+	// 				<td>' . iconv("UTF-8", "GBK", $vo['ly']) . '</td></tr>';
+	// 		}
+	// 		echo '</table>';
+	// 	}
+
+	// }
+
+	public function OrderListAll() {
+		if (IS_GET) {
+			$this->display();
+		} elseif (IS_POST) {
+			$starttime = I('post.starttime');
+			$endtime = I('post.endtime');
+			$query = "select
+						ac_order.id as id,
+						FROM_UNIXTIME(ac_order.time) as xdsj,
+						CASE ac_order.status
+						WHEN 1 THEN '未处理'
+						WHEN 3 THEN '有房'
+						WHEN 4 THEN '无房'
+						WHEN 5 THEN '到店确认'
+						WHEN 7 THEN '取消'
+						WHEN 14 THEN '过期'
+						ELSE '' END as ddzt,
+						ac_xktv.name as ktvname,
+						if(ac_xktv.type=2,'商家版','Call Center') as qd,
+						case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+						case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+						case ac_order.status when 5 then `ac_coupon_type`.`name` else '' end as sjsm,
+						case ac_order.status when 5 then ydsjb_sj_record.`emp_openid` else '' end as fwyopenid,
+						case ac_order.status when 5 then ydsjb_sj_record.`create_time` else '' end as scan_time,
+						case ac_order.status when 5 then ifnull(ydsjb_ktvemp.name,'KTV经理') else '' end as fwyname,
+						ac_platform_user.openid as yhopenid,
+						ydsjb_orderhistory.`create_time` as clsj,
+						ac_order.`update_time` as zhclsj,
+						ac_bd.name as bdname,
+						FROM_UNIXTIME(ac_order.starttime) as ksss,
+						case stat_user_info.source
+						when 0 then '促销员'
+						when 1 then '物料扫码'
+						else '其他' end as ly
+
+						from ac_order
+						left join ac_xktv on ac_xktv.xktvid=ac_order.ktvid
+						left join ac_coupon on `ac_order`.couponid=`ac_coupon`.`id`
+						left join ac_coupon_type on ac_coupon.`type`=ac_coupon_type.id
+						left join `ydsjb_sj_record` on ydsjb_sj_record.`couponid`=ac_coupon.id
+						left join `ydsjb_ktvemp` on ydsjb_ktvemp.`openid`=ydsjb_sj_record.emp_openid
+						left join `ac_platform_user` on ac_platform_user.id=ac_order.`userid`
+						left join `ydsjb_orderhistory` on ydsjb_orderhistory.oid=ac_order.id
+						left join `ac_bd_ktv` on ac_bd_ktv.`ktvid`=ac_xktv.id
+						left join ac_bd on ac_bd.`id`=ac_bd_ktv.`bdid`
+						left join stat_user_info on stat_user_info.openid = ac_platform_user.openid
+						where ac_xktv.id<>229 and ac_order.`create_time` between '" . $starttime . "' and '" . $endtime . "' group by ac_order.id
+						order by ac_order.id";
+			$result = M()->query($query);
+			vendor('PHPExcel.PHPExcel');
+			$objPHPExcel = new \PHPExcel();
+			$objPHPExcel->getProperties()->setCreator("Runnable.com");
+			$objPHPExcel->getProperties()->setLastModifiedBy("Runnable.com");
+			$objPHPExcel->getProperties()->setTitle("Office 2007 XLSX Test Document");
+			$objPHPExcel->getProperties()->setSubject("Office 2007 XLSX Test Document");
+			$objPHPExcel->getProperties()->setDescription("Test document for Office 2007 XLSX,generated using PHP classes.");
+			// var_dump($objPHPExcel);
+			// Set the active Excel worksheet to sheet 0
+			// $objPHPExcel->setActiveSheetIndex(0);
+			// Initialise the Excel row number
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', '订单ID')
+				->setCellValue('B1', '下单时间')
+				->setCellValue('C1', '订单状态')
+				->setCellValue('D1', 'KTV名称')
+				->setCellValue('E1', '渠道')
+				->setCellValue('F1', '送酒数')
+				->setCellValue('G1', '送酒说明')
+				->setCellValue('H1', '服务员OPENID')
+				->setCellValue('I1', '扫码时间')
+				->setCellValue('J1', '服务员姓名')
+				->setCellValue('K1', '用户OPENID')
+				->setCellValue('L1', '处理时间')
+				->setCellValue('M1', '最后处理时间')
+				->setCellValue('N1', 'BD姓名')
+				->setCellValue('O1', '开始时间')
+				->setCellValue('P1', '来源');
+			for ($i = 2; $i < count($result); $i++) {
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue('A' . $i, $result[$i]['id'])
+					->setCellValue('B' . $i, $result[$i]['xdsj'])
+					->setCellValue('C' . $i, $result[$i]['ddzt'])
+					->setCellValue('D' . $i, $result[$i]['ktvname'])
+					->setCellValue('E' . $i, $result[$i]['qd'])
+					->setCellValue('F' . $i, $result[$i]['sjs'])
+					->setCellValue('G' . $i, $result[$i]['sjsm'])
+					->setCellValue('H' . $i, $result[$i]['fwyopenid'])
+					->setCellValue('I' . $i, $result[$i]['scan_time'])
+					->setCellValue('J' . $i, $result[$i]['fwyname'])
+					->setCellValue('K' . $i, $result[$i]['yhopenid'])
+					->setCellValue('L' . $i, $result[$i]['clsj'])
+					->setCellValue('M' . $i, $result[$i]['zhclsj'])
+					->setCellValue('N' . $i, $result[$i]['bdname'])
+					->setCellValue('O' . $i, $result[$i]['ksss'])
+					->setCellValue('P' . $i, $result[$i]['ly']);
+			}
+			$objPHPExcel->getActiveSheet()->setTitle('orderdata');
+			$objPHPExcel->setActiveSheetIndex(0);
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="' . $endtime . '.xls"');
+			header('Cache-Control: max-age=0');
+			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter->save('php://output');
+			exit;
 		}
-		echo '</table>';
-		// $this->display();
+
+	}
+
+	public function OrderListAll3() {
+		if (IS_GET) {
+			$this->display('OrderListAll');
+		} elseif (IS_POST) {
+			$starttime = I('post.starttime');
+			$endtime = I('post.endtime');
+			$query = "select
+						ac_order.id as id,
+						FROM_UNIXTIME(ac_order.time) as xdsj,
+						CASE ac_order.status
+						WHEN 1 THEN '未处理'
+						WHEN 3 THEN '有房'
+						WHEN 4 THEN '无房'
+						WHEN 5 THEN '到店确认'
+						WHEN 7 THEN '取消'
+						WHEN 14 THEN '过期'
+						ELSE '' END as ddzt,
+						ac_xktv.name as ktvname,
+						if(ac_xktv.type=2,'商家版','Call Center') as qd,
+						case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+						case ac_order.status when 5 then `ac_coupon_type`.`count` else '' end as sjs,
+						case ac_order.status when 5 then `ac_coupon_type`.`name` else '' end as sjsm,
+						case ac_order.status when 5 then ydsjb_sj_record.`emp_openid` else '' end as fwyopenid,
+						case ac_order.status when 5 then ydsjb_sj_record.`create_time` else '' end as scan_time,
+						case ac_order.status when 5 then ifnull(ydsjb_ktvemp.name,'KTV经理') else '' end as fwyname,
+						ac_platform_user.openid as yhopenid,
+						ydsjb_orderhistory.`create_time` as clsj,
+						ac_order.`update_time` as zhclsj,
+						ac_bd.name as bdname,
+						FROM_UNIXTIME(ac_order.starttime) as ksss,
+						case stat_user_info.source
+						when 0 then '促销员'
+						when 1 then '物料扫码'
+						else '其他' end as ly
+
+						from ac_order
+						left join ac_xktv on ac_xktv.xktvid=ac_order.ktvid
+						left join ac_coupon on `ac_order`.couponid=`ac_coupon`.`id`
+						left join ac_coupon_type on ac_coupon.`type`=ac_coupon_type.id
+						left join `ydsjb_sj_record` on ydsjb_sj_record.`couponid`=ac_coupon.id
+						left join `ydsjb_ktvemp` on ydsjb_ktvemp.`openid`=ydsjb_sj_record.emp_openid
+						left join `ac_platform_user` on ac_platform_user.id=ac_order.`userid`
+						left join `ydsjb_orderhistory` on ydsjb_orderhistory.oid=ac_order.id
+						left join `ac_bd_ktv` on ac_bd_ktv.`ktvid`=ac_xktv.id
+						left join ac_bd on ac_bd.`id`=ac_bd_ktv.`bdid`
+						left join stat_user_info on stat_user_info.openid = ac_platform_user.openid
+						where ac_xktv.id<>229 and ac_order.`create_time` between '" . $starttime . "' and '" . $endtime . "' group by ac_order.id
+						order by ac_order.id";
+			$result = M()->query($query);
+			header('Content-Type: application/vnd.ms-excel;charset=gbk');
+			header('Content-Disposition: attachment;filename="' . $endtime . '.csv"');
+			header('Cache-Control: max-age=0');
+			$fp = fopen('php://output', 'a');
+			$head = array('订单ID', '下单时间', '订单状态', 'KTV名称', '渠道', '送酒数', '送酒说明', '服务员OPENID', '扫码时间', '服务员姓名', '用户OPENID', '处理时间', '最后处理时间', 'BD姓名', '开始时间', '来源');
+			// foreach ($head as $i => $v) {
+			// 	// CSV的Excel支持GBK编码，一定要转换，否则乱码
+			// 	$head[$i] = iconv('utf-8', 'gbk', $v);
+			// }
+			fputcsv($fp, $head);
+			// 计数器
+			$cnt = 0;
+			// 每隔$limit行，刷新一下输出buffer，节约资源
+			$limit = 100000;
+			foreach ($result as $key => $value) {
+				$cnt++;
+				if ($limit == $cnt) {
+					//刷新一下输出buffer，防止由于数据过多造成问题
+					ob_flush();
+					flush();
+					$cnt = 0;
+				}
+
+				// foreach ($row as $i => $v) {
+				// 	$row[$i] = iconv('utf-8', 'gbk', $v);
+				// }
+				$row['id'] = $result[$key]['id'];
+				$row['xdsj'] = $result[$key]['xdsj'];
+				$row['ddzt'] = $result[$key]['ddzt'];
+				$row['ktvname'] = $result[$key]['ktvname'];
+				$row['qd'] = $result[$key]['qd'];
+				$row['sjs'] = $result[$key]['sjs'];
+				$row['sjsm'] = $result[$key]['sjsm'];
+				$row['fwyopenid'] = $result[$key]['fwyopenid'];
+				$row['scan_time'] = $result[$key]['scan_time'];
+				$row['fwyname'] = $result[$key]['fwyname'];
+				$row['yhopenid'] = $result[$key]['yhopenid'];
+				$row['clsj'] = $result[$key]['clsj'];
+				$row['zhclsj'] = $result[$key]['zhclsj'];
+				$row['bdname'] = $result[$key]['bdname'];
+				$row['ksss'] = $result[$key]['ksss'];
+				$row['ly'] = $result[$key]['ly'];
+				fputcsv($fp, $row);
+			}
+		}
+
 	}
 }

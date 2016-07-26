@@ -9,7 +9,10 @@ class OneYuanController extends CommonController {
 		header("Content-Type: $_contentType", true);
 		header("Access-Control-Allow-Origin: *");
 		header("Access-Control-Allow-Headers: Accept, Content-Type, X-KTV-Application-Name, X-KTV-Vendor-Name, X-KTV-Application-Platform, X-KTV-User-Token");
-		$this->actid = 4;
+		$this->actid = 8;
+		$this->starttime = strtotime('2016-07-28 21:00:00');
+		$this->disallow_openid = array(
+			'okwyOwpZ3bJevyZW2fhOir6FMDyA', 'okwyOwnSvHSGSXl0k5OJewPxWr_s', 'okwyOwvx1gSZqqTB_MKBFlgCL_bI', 'okwyOwgpPNmak7xaiIIihhKGhrh4', 'okwyOwpcDggyjcUnLZ4v7wUfZtF8', 'okwyOwscJocqRGNv6PUoH8C0f4Bk', 'okwyOwoZ1K4i5oWeVqeK_GkD4RPA', 'okwyOwjjJC814KcZE9OtmoMMN74E', 'okwyOwsr6FEBP6qqC5Or0aNAEU9M', 'okwyOwri0E5_Ux5m0-1MsFdgt_dg');
 	}
 
 	protected function getActiveStatus() {
@@ -29,6 +32,14 @@ class OneYuanController extends CommonController {
 
 	public function getzige() {
 		if (IS_POST) {
+			if (time() < $this->starttime) {
+				$result_array = array('msg' => 'act is not start', 'result' => 1);
+				die(json_encode($result_array, true));
+			}
+			if ($this->is_over == 1) {
+				$result_array = array('msg' => 'act is over', 'result' => 1);
+				die(json_encode($result_array, true));
+			}
 			$uid = I('post.uid');
 			if (empty($uid)) {
 				$post_data = file_get_contents("php://input");
@@ -43,10 +54,16 @@ class OneYuanController extends CommonController {
 		die(json_encode($result_array, true));
 	}
 	protected function is_zhongjiang($uid) {
+
 		$this->record($uid);
+		if (in_array($uid, $this->disallow_openid)) {
+			return array('zhongjiang' => 0, 'uid' => $uid);
+		}
 		M('oneyuan_event', 'ac_')->where('`status`=1 and `mobile`="" and TIMESTAMPDIFF(SECOND,`create_time`,NOW())>300 and actid=' . $this->actid)->save(array('status' => 0, 'userid' => '', 'actid' => $this->actid));
 		// echo M()->getLastSql();
-		$hasown = M('oneyuan_event', 'ac_')->where(array('userid' => $uid, 'actid' => $this->actid))->find();
+		// 限制获奖用户再次获奖
+		// $hasown = M('oneyuan_event', 'ac_')->where(array('userid' => $uid, 'actid' => $this->actid))->find();
+		$hasown = M('oneyuan_event', 'ac_')->where(array('userid' => $uid))->find();
 		if ($hasown != null) {
 			return array('zhongjiang' => 0, 'uid' => $uid);
 		} else {

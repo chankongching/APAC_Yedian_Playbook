@@ -174,7 +174,7 @@ class Coupon extends PSActiveRecord {
 		$_coupon_list = array();
 		foreach ($_list as $key => $coupon) {
 			$ttime = mktime(23, 59, 59, date('m', strtotime($coupon['create_time'])), date('d', strtotime($coupon['create_time'])), date('Y', strtotime($coupon['create_time'])));
-			if ($coupon['type'] == 5) {
+			if ($coupon['type'] == 5 || $coupon['type'] == 31) {
 				if (time() >= $ttime) {
 					$_coupon_list[] = $this->getCouponInfo($coupon);
 				}
@@ -411,7 +411,8 @@ class Coupon extends PSActiveRecord {
 
 	protected function SetcouponTypes() {
 		// $this->couponTypes = array(13, 14, 14, 14, 14, 15, 15, 15, 15, 15);
-		$this->couponTypes = array(16, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 20, 20, 20, 20, 21, 21, 21, 21, 21, 22, 23, 23, 23, 23, 24, 24, 24, 24, 24);
+		// $this->couponTypes = array(19, 20, 20, 20, 20, 21, 21, 21, 21, 21);
+		$this->couponTypes = array(19, 19, 19, 19, 20, 20, 20, 21, 21, 21);
 		$a_length = count($this->couponTypes) - 1;
 		$this->typeidnum = rand(0, $a_length);
 	}
@@ -443,7 +444,7 @@ class Coupon extends PSActiveRecord {
 		if ($userid != '') {
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('userid=' . $userid);
-			$criteria->addCondition('is_available=0');
+			// $criteria->addCondition('is_available=0');
 			$criteria->addCondition("DATEDIFF(update_time,NOW())=0");
 			$coupons = $this->findAll($criteria);
 			// return $coupons;
@@ -451,6 +452,35 @@ class Coupon extends PSActiveRecord {
 				return true;
 			} else {
 				return false;
+			}
+
+		}
+
+	}
+
+	public function findbyuidandsource($uid, $source) {
+		$coupon = $this->findByAttributes(array('userid' => $uid, 'source' => $source));
+		if ($coupon != null) {
+			return array('status' => 1, 'coupon' => array('name' => $this->getCouponTypeInfo($coupon['type'], 'name'), 'count' => $this->getCouponTypeInfo($coupon['type'], 'count'), 'beer_type' => 2));
+		}
+		return array('status' => 0);
+	}
+
+	public function getNewCouponByShareCoupon($userid, $sharecouponid) {
+		$couponTypes = array(28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39);
+		$coupon = new Coupon();
+		$coupon->userid = $userid;
+		$coupon->expire_time = time() + 24 * 60 * 60 * 14;
+		$coupon->source = $sharecouponid;
+		$coupon->status = 0;
+		$coupon->available = 1;
+		$coupon->is_available = 1;
+		$coupon->type = $couponTypes[rand(0, 11)];
+		if ($coupon->save()) {
+			$add_status = CouponShare::model()->sharecountadd($sharecouponid);
+			if ($add_status['status'] == 0) {
+//                $couponinfo = CouponType::model()->getbyID($coupon->type,'name');
+				return array('result' => 0, 'coupon' => array('name' => $this->getCouponTypeInfo($coupon->type, 'name'), 'count' => $this->getCouponTypeInfo($coupon->type, 'count'), 'beer_type' => $this->getCouponTypeInfo($coupon->type, 'beer_type')));
 			}
 
 		}

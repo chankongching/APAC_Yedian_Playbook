@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Bootstrap Admin App + jQuery">
+    <meta name="keywords" content="app, responsive, jquery, bootstrap, dashboard, admin">
+    <title>Ktv订单-礼品管理系统</title>
+    <!-- =============== VENDOR STYLES ===============-->
+    <!-- FONT AWESOME-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/fontawesome/css/font-awesome.min.css">
+    <!-- SIMPLE LINE ICONS-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/simple-line-icons/css/simple-line-icons.css">
+    <!-- ANIMATE.CSS-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/animate.css/animate.min.css">
+    <!-- WHIRL (spinners)-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/whirl/dist/whirl.css">
+    <!-- =============== PAGE VENDOR STYLES ===============-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/datatables-colvis/css/dataTables.colVis.css">
+    <link rel="stylesheet" href="__PUBLIC__/Admin/vendor/datatable-bootstrap/css/dataTables.bootstrap.css">
+    <!-- =============== BOOTSTRAP STYLES ===============-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/css/bootstrap.css" id="bscss">
+    <!-- =============== APP STYLES ===============-->
+    <link rel="stylesheet" href="__PUBLIC__/Admin/css/app.css" id="maincss">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- top navbar-->
+        <header class="topnavbar-wrapper">
+            <!-- START Top Navbar-->
+            <include file="Public/header" />
+            <!-- END Top Navbar-->
+        </header>
+        <!-- sidebar-->
+        <include file="Public/left" />
+        <!-- offsidebar-->
+        <include file="Public/right" />
+        <!-- Main section-->
+        <section>
+            <!-- Page content-->
+            <div class="content-wrapper">
+                <div class="content-heading">
+                    <button type="button" class="btn btn-primary pull-right" id="importdata">
+                        <em class="fa fa-plus-circle fa-fw mr-sm"></em>导入数据</button>订单列表</div>
+                <div class="table-responsive b0">
+                    <table id="ktvordertable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px">
+                                    <strong>序号</strong>
+                                </th>
+                                <th>
+                                    <strong>状态</strong>
+                                </th>
+                                <th>
+                                    <strong>下单时间</strong>
+                                </th>
+                                <th>
+                                    <strong>KTv名称</strong>
+                                </th>
+                                <th >
+                                    <strong>用户ID</strong>
+                                </th>
+                                <th class="text-center">
+                                    <strong>操作</strong>
+                                </th>
+                            </tr>
+                        </thead>
+
+                    </table>
+                </div>
+            </div>
+        </section>
+        <!-- Main section-->
+        <!-- Page footer-->
+        <include file="Public/footer" />
+    </div>
+    <!-- =============== VENDOR SCRIPTS ===============-->
+    <!-- MODERNIZR-->
+    <script src="__PUBLIC__/Admin/vendor/modernizr/modernizr.js"></script>
+    <!-- JQUERY-->
+    <script src="__PUBLIC__/Admin/vendor/jquery/dist/jquery.js"></script>
+    <!-- BOOTSTRAP-->
+    <script src="__PUBLIC__/Admin/vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- STORAGE API-->
+    <script src="__PUBLIC__/Admin/vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+    <!-- JQUERY EASING-->
+    <script src="__PUBLIC__/Admin/vendor/jquery.easing/js/jquery.easing.js"></script>
+    <!-- ANIMO-->
+    <script src="__PUBLIC__/Admin/vendor/animo.js/animo.js"></script>
+    <!-- SLIMSCROLL-->
+    <script src="__PUBLIC__/Admin/vendor/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- SCREENFULL-->
+    <script src="__PUBLIC__/Admin/vendor/screenfull/dist/screenfull.js"></script>
+    <!-- LOCALIZE-->
+    <script src="__PUBLIC__/Admin/vendor/jquery-localize-i18n/dist/jquery.localize.js"></script>
+    <!-- RTL demo-->
+    <script src="__PUBLIC__/Admin/js/demo/demo-rtl.js"></script>
+    <!-- =============== PAGE VENDOR SCRIPTS ===============-->
+    <!-- DATATABLES-->
+    <script src="__PUBLIC__/Admin/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="__PUBLIC__/Admin/vendor/datatables-colvis/js/dataTables.colVis.js"></script>
+    <script src="__PUBLIC__/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrap.js"></script>
+    <script src="__PUBLIC__/Admin/vendor/datatable-bootstrap/js/dataTables.bootstrapPagination.js"></script>
+    <script src="__PUBLIC__/Admin/js/demo/demo-datatable.js"></script>
+    <!-- =============== APP SCRIPTS ===============-->
+    <script src="__PUBLIC__/Admin/js/app.js"></script>
+    <script>
+        $('#importdata').on('click',function(){
+            $.ajax({
+                'type':'post',
+                'data':'',
+                'url':'{:U('importData')}',
+                'success':function (data) {
+                        console.log(data);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

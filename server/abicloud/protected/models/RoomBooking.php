@@ -186,6 +186,8 @@ class RoomBooking extends PSActiveRecord {
 			7 => Yii::t('RoomBooking', 'Canceled'),
 			3 => Yii::t('RoomBooking', 'Confirmed'),
 			14 => Yii::t('RoomBooking', 'Expired'),
+			21 => Yii::t('RoomBooking', 'Refunding'),
+			22 => Yii::t('RoomBooking', 'refunded'),
 		);
 		return (isset($status_array[$status]) ? $status_array[$status] : Yii::t('RoomBooking', 'unknown'));
 	}
@@ -215,6 +217,7 @@ class RoomBooking extends PSActiveRecord {
 			$order->save();
 		}
 	}
+
 	public function getOrdersbyUid($userid, $ktvid) {
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('userid=' . $userid);
@@ -230,9 +233,22 @@ class RoomBooking extends PSActiveRecord {
 	public function getStatus($_userid, $order_code) {
 		$orderinfo = $this->findByAttributes(array('userid' => $_userid, 'code' => $order_code));
 		if ($orderinfo != null) {
-			return $orderinfo['status'];
+			if ($orderinfo['status'] != 5) {
+				return array('status' => $orderinfo['status']);
+			} else {
+				return array('status' => $orderinfo['status'], 'ss' => $orderinfo['id'], 'coupon_share' => $this->GetShareCouponKey($orderinfo['id']));
+			}
 		} else {
 			return null;
+		}
+	}
+
+	protected function GetShareCouponKey($orderid = 0) {
+		if ($orderid != 0) {
+			$ShareCoupon = CouponShare::model()->getInfoByOrderid($orderid);
+			return $ShareCoupon;
+		} else {
+			return false;
 		}
 	}
 
@@ -257,6 +273,21 @@ class RoomBooking extends PSActiveRecord {
 			$order->save();
 		}
 
+	}
+
+	public function updateRatingStatus($orderid = 0) {
+		if ($orderid != 0) {
+			$order = $this->findByAttributes(array('code' => $orderid));
+			if ($order != null) {
+				$order->is_pingjia = 1;
+				if ($order->save()) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+
+		}
 	}
 
 }

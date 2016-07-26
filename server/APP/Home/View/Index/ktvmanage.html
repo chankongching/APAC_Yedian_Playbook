@@ -27,6 +27,7 @@
   					<div class="panel-heading">管理服务员</div>
   					<div class="panel-body">
   						<p>当前共有{$emplcount}名服务员</p>
+              <p>当前可用的验证码为：<volist name='yzm_avail' id='vo'>{$vo.yanzhengma},</volist></p>
   					</div>
 
   					<!-- List group -->
@@ -34,8 +35,13 @@
   						<volist name="employ" id="vo">
   							<li class="list-group-item">
   								姓名：{$vo.name} <br>
-  								电话：{$vo.phone}
-  								<button class="btn-block btn btn-default dropdown-toggle" id='{$vo.id}' class="zhuxiao" data-toggle="modal" data-target="#zhuxiao{$vo.id}">注销</button></li>
+  								电话：{$vo.phone} <br>
+                  验证码：{$vo.yzm}
+                  <if condition='$vo.status eq 0'>
+  								<button class="btn-block btn btn-default dropdown-toggle" id='{$vo.id}' class="zhuxiao" >已注销</button></li>
+                  <else/>
+                  <button class="btn-block btn btn-default dropdown-toggle" id='{$vo.id}' class="zhuxiao" data-toggle="modal" data-target="#zhuxiao{$vo.id}">注销</button></li>
+                  </if>
   								<!-- Modal -->
   								<div class="modal fade" id="zhuxiao{$vo.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   									<div class="modal-dialog" role="document">

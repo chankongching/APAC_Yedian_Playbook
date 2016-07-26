@@ -381,4 +381,27 @@ class PlatformUser extends PSActiveRecord {
 		return $this->authtype_options;
 	}
 
+    public function findUserByOpenid($openid)
+    {
+        if ($openid != null) {
+            $userinfo = $this->findByAttributes(array('openid' => $openid));
+            if ($userinfo != null) {
+                return $userinfo['id'];
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public function getUserOpenid($userid){
+        $userinfo = $this->findByPk($userid);
+        if($userinfo!=null){
+            return $userinfo['openid'];
+        }else{
+            return null;
+        }
+    }
+
 }

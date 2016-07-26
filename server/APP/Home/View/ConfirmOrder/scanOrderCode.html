@@ -101,30 +101,45 @@
                                         'data': {
                                             'key': result
                                         },
-                                        'success': function(ardata) {
-                                            // alert(ardata);
+                                        'success': function (ardata) {
+//                                            alert(ardata);
                                             var scanContent = JSON.parse(ardata);
                                             if (scanContent.result === '0') {
-                                                $('.duihuan').data('orderid', scanContent.order_data.id);
-                                                var html_content = '<ul class="list-group">';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">订单房型</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.roomtype + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">下单时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.time + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">KTV名称</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.ktvid + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">用户昵称</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.userinfo.display_name + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">预定电话</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.userinfo.mobile + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">开始时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.starttime + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">结束时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.endtime + '</div></div></li>';
-                                                // html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">唱K人数</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.members + '</div></div></li>';
-                                                if(scanContent.order_data.taocantype==0){
-                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">价格信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.price + '</div></div></li>';
-                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">套餐信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.taocan_desc + '</div></div></li>';
+                                                if(scanContent.order_type==='jaycn'){
+                                                    $('.duihuan').data('jaycnid', scanContent.order_info.id);
+                                                    var html_content = '<ul class="list-group">';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">订单类型</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">杰迷活动</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">姓名</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_info.name + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">电话</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_info.mobile + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">下单时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_info.create_time + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">小组</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.room_info.name + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">预定日期</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.room_info.dates + '</div></div></li>';
+                                                    html_content += '</ul>';
+                                                    $('.ordercontent').html(html_content);
+                                                    $('#querenjqinfo').modal('show');
+                                                }else {
+                                                    $('.duihuan').data('orderid', scanContent.order_data.id);
+                                                    var html_content = '<ul class="list-group">';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">订单房型</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.roomtype + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">下单时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.time + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">KTV名称</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.ktvid + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">用户昵称</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.userinfo.display_name + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">预定电话</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.userinfo.mobile + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">开始时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.starttime + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">结束时间</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.endtime + '</div></div></li>';
+                                                    // html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">唱K人数</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.members + '</div></div></li>';
+                                                    if (scanContent.order_data.taocantype == 0) {
+                                                        html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">价格信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.price + '</div></div></li>';
+                                                        html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">套餐信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.order_data.taocan_desc + '</div></div></li>';
+                                                    }
+
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">酒券信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.coupon_info_data.name + '</div></div></li>';
+                                                    html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">送酒数量</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.coupon_info_data.count + '</div></div></li>';
+                                                    html_content += '</ul>';
+                                                    $('.ordercontent').html(html_content);
+                                                    $('#querenjqinfo').modal('show');
                                                 }
 
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">酒券信息</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.coupon_info_data.name + '</div></div></li>';
-                                                html_content += '<li class="list-group-item"><div class="row"><div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">送酒数量</div><div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">' + scanContent.coupon_info_data.count + '</div></div></li>';
-                                                html_content += '</ul>';
-                                                $('.ordercontent').html(html_content);
-                                                $('#querenjqinfo').modal('show');
                                             } else {
                                                 alert(scanContent.msg);
                                             }
@@ -138,31 +153,54 @@
                     }
 
                     scanQR();
-                    $('.duihuan').on('click', function() {
-                        //alert($('.duihuan').data('couponid'));
-                        // $('.duihuan').off('click');
-                        $.ajax({
-                            'data': {
-                                'orderid': $('.duihuan').data('orderid')
-                            },
-                            'url': "{:U('order_Confirm')}",
-                            'type': 'post',
-                            'success': function(rsdata) {
-                                // alert(rsdata);
-                                var resContent = JSON.parse(rsdata);
-                                if (resContent.result === 0) {
-                                    alert('订单确认成功');
-                                    wx.closeWindow();
-                                } else {
-                                	if(resContent.msg=='Order Status Error'){
-                                		alert('此订单已经确认过');
-                                	}else if(resContent.msg=='Time error'){
-                                		alert('未到开始时间');
-                                	}
-                                    wx.closeWindow();
+                    $('.duihuan').on('click', function () {
+                        if($('.duihuan').data('orderid')==undefined){
+                            $.ajax({
+                                'url':"{:U('jaycn_Confirm')}",
+                                'data':{
+                                    'jaycnid':$('.duihuan').data('jaycnid'),
+                                },
+                                'type':'post',
+                                'success':function (rdata) {
+                                    var resContent = JSON.parse(rdata);
+                                    if(resContent.result==0){
+                                        alert('订单确认成功');
+                                        wx.closeWindow();
+                                    }else if(resContent.result==1){
+                                        alert('订单已经确认');
+                                        wx.closeWindow();
+                                    }else{
+                                        alert('订单确认失败');
+                                        wx.closeWindow();
+                                    }
                                 }
-                            }
-                        });
+                            });
+//
+                        }else{
+                            $.ajax({
+                                'data': {
+                                    'orderid': $('.duihuan').data('orderid')
+                                },
+                                'url': "{:U('order_Confirm')}",
+                                'type': 'post',
+                                'success': function (rsdata) {
+                                    // alert(rsdata);
+                                    var resContent = JSON.parse(rsdata);
+                                    if (resContent.result === 0) {
+                                        alert('订单确认成功');
+                                        wx.closeWindow();
+                                    } else {
+                                        if (resContent.msg == 'Order Status Error') {
+                                            alert('此订单已经确认过');
+                                        } else if (resContent.msg == 'Time error') {
+                                            alert('未到开始时间');
+                                        }
+                                        wx.closeWindow();
+                                    }
+                                }
+                            });
+                        }
+
 
                     });
                 });

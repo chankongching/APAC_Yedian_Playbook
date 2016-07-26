@@ -300,11 +300,12 @@ class IndexController extends CommonController {
 				}
 			}),
 			array('db' => 'sj_type', 'dt' => 'sj_type', 'formatter' => function ($d, $row) {
-				if ($d == 1) {
-					return '铝瓶';
-				} elseif ($d == 2) {
-					return '罐装';
-				}
+				return $this->getTypeOfBeer($d);
+				// if ($d == 1) {
+				// 	return '铝瓶';
+				// } elseif ($d == 2) {
+				// 	return '罐装';
+				// }
 			}),
 		);
 
@@ -407,11 +408,57 @@ class IndexController extends CommonController {
 		return $maninfo['openid'];
 	}
 
-	protected function getTypeOfBeer($id = '') {
-		if ($id == 1) {
-			return '铝罐';
-		} elseif ($id == 2) {
-			return '罐装';
+	protected function getTypeOfBeer($id = '', $name = 'name') {
+		$beerType = M('beer_type', 'ac_')->where(array('id' => $id))->find();
+		return $beerType[$name];
+	}
+
+	protected function AddHXRecord($ktvid = '') {
+		if ($ktvid != '') {
+			$total_MaxCount = M()->query("select
+			sum(ydsjb_sj_record.`count`) as count,
+			ac_beer_type.id as beer_type_id,
+			ac_beer_type.name as beer_name
+			from `ydsjb_sj_record`
+			left join `ac_coupon_type` on `ac_coupon_type`.id=`ydsjb_sj_record`.`coupon_type`
+			left join `ac_beer_type` on `ac_beer_type`.id=ac_coupon_type.`beer_type`
+			where ktvid=" . $ktvid . "  group by ac_beer_type.id");
+
+			$total_has_hexiao_count = M()->query("select sj_type as type
+											,sum(count) as total_count
+											from `ydsjb_songjiushenqing` where ktvid=" . $ktvid . " group by sj_type");
+			$has_hexiao_count_arr = array();
+			foreach ($total_has_hexiao_count as $key => $value) {
+				$has_hexiao_count_arr[$value['type']] = $value['total_count'];
+			}
+			// var_dump($total_MaxCount);
+			// var_dump($has_hexiao_count_arr);
+			$MaxCounts = array();
+			foreach ($total_MaxCount as $key => $value) {
+				// echo $value['beer_type_id'] . '--';
+				if ($has_hexiao_count_arr[$value['beer_type_id']] != null) {
+					$now_count = $value['count'] - $has_hexiao_count_arr[$value['beer_type_id']];
+				} else {
+					$now_count = $value['count'];
+				}
+				if ($now_count > 24) {
+					$MaxCounts[$value['beer_type_id']] = array('count' => floor($now_count / 24), 'name' => $value['beer_name'], 'type' => $value['beer_type_id']);
+				}
+
+			}
+			return $MaxCounts;
+		}
+	}
+	public function addrecord() {
+		// echo 'sdfsdfsdf';die();
+		if (IS_GET) {
+			$ktvid = I('get.ktvid');
+			$result = $this->AddHXRecord($ktvid);
+			// var_dump($result);
+			foreach ($result as $key => $value) {
+				M('songjiushenqing', 'ydsjb_')->add(array('ktvid' => $ktvid, 'count' => $value['count'] * 24, 'sj_type' => $value['type'], 'type' => 1, 'create_time' => date('Y-m-d H:i:s')));
+			}
+			echo "OK";
 		}
 	}
 

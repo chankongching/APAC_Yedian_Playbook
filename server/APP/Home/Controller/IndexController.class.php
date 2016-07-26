@@ -189,9 +189,12 @@ class IndexController extends CommonController {
 	}
 
 	public function ktvmanageNew() {
-		$employ = M('ktvemp')->where(array('ktvid' => session('ktvid'), 'status' => '1'))->select();
+		// $employ = M('ktvemp')->where(array('ktvid' => session('ktvid'), 'status' => '1'))->select();
+		$employ = M('ktvemp')->where(array('ktvid' => session('ktvid')))->order('status desc')->select();
+		$yzm = M('yzm', 'ydsjb_')->where(array('ktvid' => session('ktvid'), 'status' => 1))->select();
 		$this->assign('emplcount', count($employ));
 		$this->assign('employ', $employ);
+		$this->assign('yzm_avail', $yzm);
 		$this->display('ktvmanage');
 	}
 

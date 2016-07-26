@@ -1712,6 +1712,98 @@ $res = $sendSms->send();
 		$this->sendResults($result_array);
 	}
 
+	public function actionregisterwebapp() {
+		// Response format data
+		$result_array = array(
+			'result' => self::BadRequest,
+			'msg' => Yii::t('user', 'Request method illegal!'),
+			'token' => '',
+			'display_name' => '',
+		);
+		// Check request type
+		$request_type = Yii::app()->request->getRequestType();
+		if ('POST' != $request_type) {
+			$this->sendResults($result_array, self::BadRequest);
+		}
+		// Get post data
+		$post_data = Yii::app()->request->getPost('RegisterRequest');
+		if (empty($post_data)) {
+			$post_data = file_get_contents("php://input");
+		}
+		// log
+		Yii::trace('Register: ' . print_r($post_data, TRUE));
+		// Decode post data
+		$post_array = json_decode($post_data, true);
+		if (is_null($post_array)) {
+			$result_array['msg'] = Yii::t('user', 'Request parameter error!');
+			$this->sendResults($result_array);
+		}
+		$user_name = isset($post_array['mobile']) ? $post_array['mobile'] : '';
+		$pass_word = isset($post_array['password']) ? $post_array['password'] : '';
+		$user_nickname = isset($post_array['display_name']) ? $post_array['display_name'] : '';
+		$user_type = isset($post_array['type']) ? $post_array['type'] : '';
+		// $verify_code = isset($post_array['verifycode']) ? $post_array['verifycode'] : '';
+		$cid = isset($post_array['cid']) ? $post_array['cid'] : '';
+
+		// TODO check verify code
+		// $curtime = time();
+		// $_verifycode = SmsVerify::model()->find('mobile=:mobile', array(':mobile' => $user_name));
+		// if (null !== $_verifycode) {
+		// 	$_curCodeArray = explode(':', $_verifycode->code);
+		// 	if (is_array($_curCodeArray) && isset($_curCodeArray[2])) {
+		// 		$_time = intval($_curCodeArray[0]);
+		// 		$_mobile = $_curCodeArray[1];
+		// 		$_code = $_curCodeArray[2];
+		// 		if ($_mobile != $user_name) {
+		// 			$result_array['msg'] = '验证手机号错误';
+		// 			$this->sendResults($result_array);
+		// 		}
+		// 		if ($_code != $verify_code) {
+		// 			$result_array['msg'] = '验证码错误';
+		// 			$this->sendResults($result_array);
+		// 		}
+		// 		$_time_wait = self::VALID_CODE_TIME - ($curtime - $_time);
+		// 		if ($_time_wait < 0) {
+		// 			$result_array['msg'] = '验证码过期，请重新获取验证码';
+		// 			$this->sendResults($result_array);
+		// 		}
+		// 	} else {
+		// 		$result_array['msg'] = '验证码错误';
+		// 		$this->sendResults($result_array);
+		// 	}
+		// } else {
+		// 	$result_array['msg'] = '验证手机号错误';
+		// 	$this->sendResults($result_array);
+		// }
+
+		// now try to register user
+		try {
+			$_user = $this->userRegister(array('username' => $user_name, 'password' => $pass_word, 'display_name' => $user_nickname, 'type' => $user_type, 'cid' => $cid), TRUE);
+		} catch (Exception $ex) {
+			self::log('User Register and Log in error: ' . $user_name . ' | ' . $pass_word, CLogger::LEVEL_ERROR, $this->id);
+			$result_array['msg'] = $ex->getMessage();
+			// Set response information
+			$this->sendResults($result_array);
+		}
+		if (!is_null($_user)) {
+			if (strtoupper($user_type) == 'PHONE') {
+				$_user->mobile = $user_name;
+				$_user->password_changed = false;
+				$_user->save();
+			}
+			// Login success
+			$result_array['result'] = self::Success;
+			$result_array['msg'] = Yii::t('user', 'User {name} registered success!', array('{name}' => $user_name));
+			$result_array['token'] = session_id();
+		} else {
+			self::log('User Register and Log in error: ' . $user_name . ' | ' . $pass_word, CLogger::LEVEL_ERROR, $this->id);
+			$result_array['msg'] = Yii::t('user', 'User {name} registered failed!', array('{name}' => $user_name));
+		}
+
+		// Set response information
+		$this->sendResults($result_array);
+	}
+
 	public function actionRegister() {
 		// echo time();
 		// die();
@@ -1868,6 +1960,74 @@ $res = $sendSms->send();
 					$_profile = unserialize($_user->profile_data);
 				}
 				$_profile['cid'] = $cid;
+				$_user->saveAttributes(array(
+					'profile_data' => serialize($_profile),
+				));
+			} catch (Exception $ex) {
+
+			}
+		} else {
+			self::log('User Logged in error: ' . $user_name . ' | ' . $pass_word, CLogger::LEVEL_ERROR, $this->id);
+			$result_array['msg'] = Yii::t('user', 'User {name} logged in failed!', array('{name}' => $user_name));
+		}
+
+		// Set response information
+		$this->sendResults($result_array);
+	}
+
+	// webapp登录代码
+	public function actionLoginbywebapp() {
+		// Response format data
+		$result_array = array(
+			'result' => self::BadRequest,
+			'msg' => Yii::t('user', 'Request method illegal!'),
+			'token' => '',
+			'display_name' => '',
+		);
+		// Check request type
+		$request_type = Yii::app()->request->getRequestType();
+		if ('POST' != $request_type) {
+			$this->sendResults($result_array, self::BadRequest);
+		}
+		// Get post data
+		$post_data = Yii::app()->request->getPost('LoginRequest');
+		if (empty($post_data)) {
+			$post_data = file_get_contents("php://input");
+		}
+		// log
+		self::log(print_r($post_data, TRUE), 'trace', $this->id);
+		// Decode post data
+		$post_array = json_decode($post_data, true);
+		// $user_name = isset($post_array['mobile']) ? $post_array['mobile'] : '';
+		$user_name = isset($post_array['username']) ? $post_array['username'] : '';
+		$pass_word = isset($post_array['password']) ? $post_array['password'] : '';
+		$user_type = isset($post_array['type']) ? $post_array['type'] : '';
+		// $cid = isset($post_array['cid']) ? $post_array['cid'] : '';
+
+		$_oauth_type = self::WEBAPP_AUTH_TYPE;
+
+		if (!empty($user_type)) {
+			if (in_array(strtoupper($user_type), $this->_other_auth_types)) {
+				$_oauth_type = strtoupper($user_type);
+			}
+		}
+		$_user = $this->userLogin($user_name, $pass_word, 0, true, $_oauth_type);
+		if (!is_null($_user)) {
+			// Login success
+			$result_array['result'] = self::Success;
+			$result_array['msg'] = Yii::t('user', 'User {name} logged in success!', array('{name}' => $user_name));
+			//$result_array['type'] = intval($_user->type);
+			//$result_array['openid'] = $_user->openid;
+			$result_array['token'] = session_id();
+			$result_array['display_name'] = empty($_user->display_name) ? $user_name : $_user->display_name;
+			//$result_array['avatar_url'] = $_user->avatar_url;
+			// update user cid
+			try {
+				$_profile = array();
+				if (!empty($_user->profile_data)) {
+					$_profile = unserialize($_user->profile_data);
+				}
+				// $_profile['cid'] = $cid;
 				$_user->saveAttributes(array(
 					'profile_data' => serialize($_profile),
 				));

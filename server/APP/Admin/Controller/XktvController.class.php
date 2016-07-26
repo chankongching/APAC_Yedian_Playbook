@@ -94,6 +94,8 @@ class XktvController extends CommonController {
 				$this->areas = M('area', 'ac_')->where(array('pid' => '440100'))->select();
 				$this->assign('shangjia', $shangjia);
 				$ktvemps = M('ktvemp', 'ydsjb_')->where(array('ktvid' => $kid))->select();
+				$yzm_avail = M('yzm', 'ydsjb_')->where(array('ktvid' => $kid, 'status' => 1))->select();
+				$this->assign('yzm_avail', $yzm_avail);
 				$this->assign('ktvemps', $ktvemps);
 //				}
 				$this->assign('typeids', M('coupon_type')->where(array('status' => 1))->select());
@@ -555,5 +557,24 @@ class XktvController extends CommonController {
 		} else {
 			return '未修改过';
 		}
+	}
+
+	public function addyzm() {
+		if (IS_POST && IS_AJAX) {
+			// echo I('post.ktvid');
+			$ktvid = I('post.ktvid');
+			$yzm = $this->getYZM();
+			$result = M('yzm', 'ydsjb_')->add(array('yanzhengma' => $yzm, 'ktvid' => $ktvid, 'status' => 1));
+			if ($result > 0) {
+				die(json_encode(array('result' => 0, 'yzm' => $yzm)));
+			} else {
+				die(json_encode(array('result' => 1)));
+			}
+
+		}
+	}
+	protected function getYZM() {
+		$yzm = rand(100000, 999999);
+		return $yzm;
 	}
 }

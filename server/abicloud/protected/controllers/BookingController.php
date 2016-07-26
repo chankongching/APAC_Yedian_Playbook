@@ -611,6 +611,7 @@ class BookingController extends ApiController {
 		$_couponid = isset($post_array['couponid']) ? intval($post_array['couponid']) : 0;
 		$_taocantype = isset($post_array['taocantype']) ? intval($post_array['taocantype']) : 0;
 		$_taocanid = isset($post_array['taocanid']) ? intval($post_array['taocanid']) : 0;
+		$_onlinepay = isset($post_array['onlinepay']) ? intval($post_array['onlinepay']) : 0;
 
 		if (empty($_ktvid)) {
 			$result_array['msg'] = 'Must provide parameter of ktvid!';
@@ -623,13 +624,15 @@ class BookingController extends ApiController {
 			$smallpicurl = $this->getRoomPicUrl($xktv->smallpicurl, 0);
 			$bigpicurl = $this->getRoomPicUrl($xktv->bigpicurl);
 			$booking = new RoomBooking;
-			$booking->status = self::ORDER_PENDING_STATUS;
 			$booking->invoice = uniqid('RO-');
 			$booking->code = uniqid('RBC');
 			$booking->ktvid = $_ktvid;
 			$booking->userid = $this->user_id;
 			$booking->time = time();
 			$booking->couponid = $_couponid;
+			$booking->is_pay_online = $_onlinepay;
+
+			$booking->status = $booking->is_pay_online == 1 ? 17 : self::ORDER_PENDING_STATUS;
 
 			if ($_taocantype == 0) {
 				// 黄金档套餐
@@ -729,7 +732,10 @@ class BookingController extends ApiController {
 		$_userid = Yii::app()->user->getID();
 		$orderStatus = RoomBooking::model()->getStatus($_userid, $_order_code);
 		if ($orderStatus != null) {
-			$result_array['status'] = intval($orderStatus);
+			$result_array['status'] = intval($orderStatus['status']);
+			if ($result_array['status'] == 5) {
+//				$result_array['ShareCoupon'] = array('code' => $orderStatus['coupon_share']['hash_url'], 'share_count' => $orderStatus['coupon_share']['share_count']);
+			}
 			$result_array['msg'] = Yii::t('booking', 'Get Order Status Success');
 			$result_array['result'] = self::Success;
 		} else {
@@ -982,11 +988,51 @@ class BookingController extends ApiController {
 		if (!is_null($booking_list) && !empty($booking_list)) {
 			$result_array['result'] = self::Success;
 			$result_array['msg'] = Yii::t('user', 'Room order list got success!');
-			$result_array['total'] = count($booking_list);
+//            $result_array['total'] = count($booking_list);
+			$jayorder = JaycnEventOrder::model()->getJayOrder($_userid);
+			if ($jayorder != null) {
+				$roominfo = JaycnEvent::model()->findByPk($jayorder['roomid']);
+				$result_array['jaycn'] = array('status' => 1);
+				$result_array['list'][] = array(
+					'special' => 1,
+					"order_invoice" => 'RO-578b46d61b615',
+					"order_code" => 'RBC578b46d61b6f5',
+					"order_status" => $jayorder['status'] == 0 ? 3 : 5,
+					"order_time" => time(),
+					'roomtypeid' => '',
+					'room_name' => $roominfo['name'],
+					'taocan_info' => null,
+					"description" => 'k-party量贩式KTV比邻广州塔这座广州地标性的建筑，占地过万平方米,拥有100多间不同类型的K歌包房，自助餐含各种特色美食近200个品种。',
+					"smallpicurl" => '/uploads/room/Kparty_small1.jpg',
+					"bigpicurl" => '/uploads/room/Kparty_big1.jpg',
+					"starttime" => $roominfo['date'] == 23 ? 1469253600 : 1469340000,
+					"endtime" => $roominfo['date'] == 23 ? 1469264400 : 1469350800,
+					'ktvinfo' => array(
+						"xktvid" => 'XKTV00173',
+						"xktvname" => 'KPARTY量贩式KTV(赤岗店) ',
+						"area_id" => '440105',
+						"telephone" => '020-89663388',
+						"openhours" => '10:30-04:30',
+						"piclist" => array(
+							array(
+								'smallpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_small1.jpg",
+								'bigpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_big1.jpg"),
+						),
+						"lat" => 23.093114,
+						"lng" => 113.331858,
+						"rate" => 5.0,
+						"address" => '江海大道生物工程大厦(近地铁赤岗站)',
+					),
+					'rating' => 5.0,
+					'display_name' => $jayorder['name'],
+					'mobile' => $jayorder['mobile'],
+				);
+			}
 
 			foreach ($booking_list as $key => $_order) {
 				// $roomname = array(1 => '大包', 2 => '中包', 3 => '小包');
 				$xktv = Xktv::model()->findByAttributes(array('xktvid' => $_order->ktvid));
+				$order_info = array();
 				if (!is_null($xktv) && !empty($xktv)) {
 
 					$description = $xktv->description;
@@ -1017,9 +1063,9 @@ class BookingController extends ApiController {
 						"order_code" => $_order->code,
 						"order_status" => intval($orderstatus),
 						"order_time" => intval($_order->time),
-						'roomtypeid' => $order_info["roomtypeid"],
-						'room_name' => $order_info["room_name"],
-						'taocan_info' => $order_info["taocan_info"],
+						'roomtypeid' => isset($order_info["roomtypeid"]) ? $order_info["roomtypeid"] : null,
+						'room_name' => isset($order_info["room_name"]) ? $order_info["room_name"] : null,
+						'taocan_info' => isset($order_info["taocan_info"]) ? $order_info["taocan_info"] : null,
 						"description" => $description,
 						"smallpicurl" => $smallpicurl,
 						"bigpicurl" => $bigpicurl,
@@ -1048,6 +1094,7 @@ class BookingController extends ApiController {
 					$result_array['msg'] = Yii::t('user', 'No available room for booking!');
 				}
 			}
+			$result_array['total'] = count($result_array['list']);
 		} else {
 			$result_array['result'] = self::ListNull;
 			$result_array['msg'] = Yii::t('user', 'No available room booking orders!');
@@ -1085,6 +1132,10 @@ class BookingController extends ApiController {
 			"endtime" => 0,
 			"members" => 0,
 			'price' => 0,
+			'is_pingjia' => array('status' => 0),
+			'payendtime' => 0,
+			'now' => time(),
+			'is_pay_online' => 0,
 		);
 
 		// Check request type
@@ -1105,8 +1156,59 @@ class BookingController extends ApiController {
 		} else {
 			$userid = $this->user_id;
 		}
-		$order_detail = RoomBooking::model()->findByAttributes(array('userid' => $userid, 'code' => $_ordercode));
-		// }
+		if ($_ordercode == 'RBC578b46d61b6f5') {
+			$jayorder = JaycnEventOrder::model()->getJayOrder($_userid);
+			if ($jayorder != null) {
+				$roominfo = JaycnEvent::model()->findByPk($jayorder['roomid']);
+				$result_array['ktvinfo'] = array(
+					"xktvid" => 'XKTV00173',
+					"xktvname" => 'KPARTY量贩式KTV(赤岗店)',
+					"area_id" => '440105',
+					"telephone" => '020-89663388',
+					"openhours" => '10:30-04:30',
+					"piclist" => array(
+						array(
+							'smallpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_small1.jpg",
+							'bigpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_big1.jpg"),
+					),
+					"lat" => 23.093114,
+					"lng" => 113.331858,
+					"rate" => 5.0,
+					"address" => '江海大道生物工程大厦(近地铁赤岗站)',
+				);
+				$result_array['special'] = 1;
+				$result_array["order_invoice"] = 'RO-578b46d61b615';
+				$result_array["order_code"] = 'RBC578b46d61b6f5';
+				$result_array["order_status"] = $jayorder['status'] == 0 ? 3 : 5;
+				$result_array["order_time"] = time();
+				$result_array['rating'] = 5.0;
+				$result_array['taocantype'] = 0;
+				$result_array["description"] = 'k-party量贩式KTV比邻广州塔这座广州地标性的建筑，占地过万平方米,拥有100多间不同类型的K歌包房，自助餐含各种特色美食近200个品种。';
+				if ($roominfo['date'] == 23) {
+					$result_array["starttime"] = 1469253600;
+					$result_array["endtime"] = 1469264400;
+				} else {
+					$result_array["starttime"] = 1469340000;
+					$result_array["endtime"] = 1469350800;
+				}
+//
+				//            $result_array["starttime"] = intval($order_detail->starttime);
+				//            $result_array["endtime"] = intval($order_detail->endtime);
+				//              杰迷专属欢唱套餐
+				$result_array['qrcode'] = $jayorder['order_qr_code'];
+				$result_array['taocan_info'] = array('name' => '杰迷专属欢唱套餐', 'price_yd' => 30);
+				$result_array["mobile"] = $jayorder['mobile'];
+				$result_array['room_name'] = $roominfo['name'];
+				$result_array["display_name"] = $jayorder['name'];
+				$result_array['price'] = 30;
+				$result_array['result'] = self::Success;
+				$this->sendResults($result_array);
+			}
+
+//
+		} else {
+			$order_detail = RoomBooking::model()->findByAttributes(array('userid' => $userid, 'code' => $_ordercode));
+		}
 
 		if (!is_null($order_detail) && !empty($order_detail)) {
 			$result_array['result'] = self::Success;
@@ -1153,6 +1255,13 @@ class BookingController extends ApiController {
 				$result_array["mobile"] = $User_info->mobile;
 				$result_array["display_name"] = $User_info->display_name;
 				$result_array['price'] = $order_detail->price;
+				$result_array['is_pay_online'] = intval($order_detail->is_pay_online);
+				$result_array['payendtime'] = $result_array['is_pay_online'] == 1 ? intval($order_detail->time) + 900 : 0;
+				if ($order_detail->is_pingjia == 0) {
+					$result_array['is_pingjia'] = array('status' => intval($order_detail->is_pingjia));
+				} else {
+					$result_array['is_pingjia'] = array('status' => intval($order_detail->is_pingjia), 'appRating' => Comment::model()->getAppRating($order_detail->id));
+				}
 
 				// TODO add ktv information
 				$_xktv_info = Xktv::model()->getKtvInfo($xktv);
@@ -1204,10 +1313,6 @@ class BookingController extends ApiController {
 	// $this->sendResults($result_array, self::BadRequest);
 	// }
 	// // Get post data
-	// $post_data = Yii::app()->request->getPost('BookingSubmitRequest');
-	// if (empty($post_data)) {
-	// $post_data = file_get_contents("php://input");
-	// }
 	// // log
 	// self::log('Room booking data: ' . print_r($post_data, TRUE), 'trace', $this->id);
 	// //Yii::trace(print_r($post_data, TRUE));
@@ -1646,6 +1751,13 @@ class BookingController extends ApiController {
 									"name": "如有其它费用，以KTV实际情况为准。"
 								}]', true);
 			}
+			$taocaninfo['tiaokuan_online'] = json_decode('
+                                [{"id": 10015,
+                                    "name": "这是在线付的条款1。"
+                                }, {
+                                    "id": 10016,
+                                    "name": "这是在线付的条款2。"
+                                }]', true);
 			$taocaninfo['days'] = $this->getDays($detail['lastofjiedan']);
 			$detail['taocaninfo'] = $taocaninfo;
 		}
@@ -1728,7 +1840,9 @@ class BookingController extends ApiController {
 			$this->sendResults($result_array, self::BadRequest);
 		}
 		$result_array['msg'] = Yii::t('user', 'No XKTV data!');
-		$search_array = Xktv::model()->getXktvcoodsList();
+		$_city = Yii::app()->request->getQuery('city');
+		$_city = empty($_city) ? 440100 : intval($_city);
+		$search_array = Xktv::model()->getXktvcoodsList($_city);
 		if (!empty($search_array)) {
 			$result_array['result'] = self::Success;
 			$result_array['msg'] = Yii::t('user', 'Get XKTVcoods list success!');
@@ -1753,6 +1867,16 @@ class BookingController extends ApiController {
 		);
 		// Check request type
 		$request_type = Yii::app()->request->getRequestType();
+		$event_node = array(
+			'link' => 'http://letsktv.chinacloudapp.cn/dist/jaycnparty/',
+			'ktvid' => 'XKTV00173',
+			'ktvname' => 'KPARTY量贩式KTV(赤岗店) ',
+			'event_name' => '见周董前的杰迷K房派对（KPARTY）',
+			'lat' => 23.093114,
+			'lng' => 113.331858,
+			'address' => '江海大道生物工程大厦(近地铁赤岗站)',
+			'pic' => '/uploads/room/Kparty_small1.jpg',
+			'rating' => 5.0);
 		if ('GET' != $request_type) {
 			if ('POST' == $request_type) {
 				$post_data = Yii::app()->request->getPost('XktvlistRequest');
@@ -1770,6 +1894,7 @@ class BookingController extends ApiController {
 				$_sjq = empty($post_array['sjq']) ? '' : trim($post_array['sjq']);
 				$_ydzs = empty($post_array['ydzs']) ? '' : trim($post_array['ydzs']);
 				$_taocan = empty($post_array['taocan']) ? '' : trim($post_array['taocan']);
+				$_city = empty($post_array['city']) ? 440100 : intval($post_array['city']);
 				if ($_ordertype == '0') {
 					$_order = $_best . ' desc';
 				} else {
@@ -1800,6 +1925,7 @@ class BookingController extends ApiController {
 					if ($_taocan == '1') {
 						$criteria->addCondition('taocan>0');
 					}
+					$criteria->addCondition('city=' . $_city);
 //
 					if ($_best == 'distance') {
 						$criteria->order = 'field(`xktvid`,"' . implode('","', $_xktvs) . '")';
@@ -1812,6 +1938,7 @@ class BookingController extends ApiController {
 						$result_array['result'] = self::Success;
 						$result_array['msg'] = Yii::t('user', 'Get XKTV list success!');
 						$result_array['list'] = $xktvlist_array;
+						// $result_array['event'] = $event_node;
 						$result_array['total'] = count($xktvlist_array);
 						$result_array['now'] = time();
 					} else {
@@ -1836,6 +1963,7 @@ class BookingController extends ApiController {
 		$_sjf = Yii::app()->request->getQuery('sjf');
 		$_sjq = Yii::app()->request->getQuery('sjq');
 		$_ydzs = Yii::app()->request->getQuery('ydzs');
+		$_city = Yii::app()->request->getQuery('city');
 		$_type = empty($_type) ? '' : trim($_type);
 		$_parent = empty($_parent) ? '' : trim($_parent);
 		$_offset = empty($_offset) ? 0 : intval($_offset);
@@ -1846,6 +1974,7 @@ class BookingController extends ApiController {
 		$_sjq = empty($_sjq) ? '0' : trim($_sjq);
 		$_ydzs = empty($_ydzs) ? '0' : trim($_ydzs);
 		$_taocan = empty($_taocan) ? '0' : trim($_taocan);
+		$_city = empty($_city) ? 440100 : intval($_city);
 		if ($_ordertype == '0') {
 			$_order = $_best . ' desc';
 		} else {
@@ -1856,7 +1985,7 @@ class BookingController extends ApiController {
 		// Search district list
 		//$xktv_array = require(YII::app()->basePath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'XKTVData.php');
 		// $search_array = $this->getXKTVList($xktv_array, $_parent);
-		$search_array = Xktv::model()->getXktvList($_parent, $_offset, $_limit, $_order, $_type, $_ydzs, $_sjq, $_sjf, $_taocan);
+		$search_array = Xktv::model()->getXktvList($_parent, $_offset, $_limit, $_order, $_type, $_ydzs, $_sjq, $_sjf, $_taocan, $_city);
 
 		// foreach ($search_array as $_k => $_v) {
 		// 	// get user information
@@ -1895,6 +2024,7 @@ class BookingController extends ApiController {
 			$result_array['result'] = self::Success;
 			$result_array['msg'] = Yii::t('user', 'Get XKTV list success!');
 			$result_array['list'] = $search_array;
+			// $result_array['event'] = $event_node;
 			$result_array['total'] = count($search_array);
 			$result_array['now'] = time();
 		} else {
@@ -1923,6 +2053,7 @@ class BookingController extends ApiController {
 
 		// Get query data
 		$_name = Yii::app()->request->getQuery('name');
+		$_city = Yii::app()->request->getQuery('city');
 		$_address = Yii::app()->request->getQuery('address');
 		$_telephone = Yii::app()->request->getQuery('telephone');
 		$_offset = Yii::app()->request->getQuery('offset');
@@ -1937,6 +2068,7 @@ class BookingController extends ApiController {
 		$_limit = empty($_limit) ? 100 : intval($_limit);
 		$_rate = empty($_rate) ? 0 : intval($_rate);
 		$_ponsetime = empty($_responsetime) ? 0 : intval($_responsetime);
+		$_city = empty($_city) ? 440100 : intval($_city);
 
 		$_xktvid = Yii::app()->request->getQuery('xktvid');
 		// var_dump($_xktvid);
@@ -1959,7 +2091,7 @@ class BookingController extends ApiController {
 		if (!empty($_lat) && !empty($_lng)) {
 			$search_array = Xktv::model()->searchXktvListByGPS($_name, $_lat, $_lng, $_offset, $_limit);
 		} else {
-			$search_array = Xktv::model()->searchXktvList($_name, $_address, $_telephone, $_responsetime, $_rate, $_offset, $_limit, $_xktvid);
+			$search_array = Xktv::model()->searchXktvList($_name, $_address, $_telephone, $_responsetime, $_rate, $_offset, $_limit, $_xktvid, $_city);
 		}
 
 		if (!empty($search_array)) {
@@ -2099,8 +2231,24 @@ class BookingController extends ApiController {
 		$this->sendResults($result_array);
 	}
 
-	public function actionmakesure() {
+	public function actionCityList() {
+		$result_array = array(
+			'result' => self::BadRequest,
+			'msg' => Yii::t('user', 'Request method illegal!'),
+		);
+		// Check request type
+		$request_type = Yii::app()->request->getRequestType();
+		if ('GET' != $request_type) {
+			$this->sendResults($result_array, self::BadRequest);
+		}
+		$cities = City::model()->getAllCities();
+		if ($cities != null) {
+			$result_array['lists'] = $cities;
+			$result_array['result'] = self::Success;
+			$result_array['msg'] = 'get city list success';
 
+		}
+		$this->sendResults($result_array);
 	}
 
 	public function utf8Unescape($str) {
@@ -2153,28 +2301,28 @@ class BookingController extends ApiController {
 
 	protected function checkExpiredOrders() {
 		/*
-			        $cur_time = time();
-			        $query_command = Yii::app()->getDb()->createCommand();
-			        $update_command = Yii::app()->getDb()->createCommand();
-			        $_update_sql = 'UPDATE {{order}} SET `status` = :exp_status WHERE `id` = :cur_id AND `status` = :new_status';
-			        $sql = 'SELECT `id`, `userid` FROM {{order}} WHERE `status` = ' . self::ORDER_PENDING_STATUS . ' AND time < ' . ($cur_time - self::ORDER_EXPIRED_TIME);
-			        $order_list = $query_command->setText($sql)->queryAll();
-			        if (!is_null($order_list) && !empty($order_list)) {
-			        foreach ($order_list as $key => $value) {
-			        $order_id = $value['id'];
-			        $user_id = $value['userid'];
-			        // send notify to userid
-			        // update order status = expired
-			        $update_command->setText($_update_sql)->execute(array(':exp_status' => self::ORDER_EXPIRED_STATUS, ':cur_id' => $order_id, ':new_status' => self::ORDER_PENDING_STATUS));
-			        $user = PlatformUser::model()->findByAttributes(array('id' => $user_id));
-			        if (!is_null($user) && !empty($user)) {
-			        $cid = $user->cid;
-			        $title = "您的订单已过期";
-			        $msg = "订单已经过期，请重新下单！";
-			        self::sendNotifyToUser($cid, $msg, $title);
-			        }
-			        }
-			        }
+			                                $cur_time = time();
+			                                $query_command = Yii::app()->getDb()->createCommand();
+			                                $update_command = Yii::app()->getDb()->createCommand();
+			                                $_update_sql = 'UPDATE {{order}} SET `status` = :exp_status WHERE `id` = :cur_id AND `status` = :new_status';
+			                                $sql = 'SELECT `id`, `userid` FROM {{order}} WHERE `status` = ' . self::ORDER_PENDING_STATUS . ' AND time < ' . ($cur_time - self::ORDER_EXPIRED_TIME);
+			                                $order_list = $query_command->setText($sql)->queryAll();
+			                                if (!is_null($order_list) && !empty($order_list)) {
+			                                foreach ($order_list as $key => $value) {
+			                                $order_id = $value['id'];
+			                                $user_id = $value['userid'];
+			                                // send notify to userid
+			                                // update order status = expired
+			                                $update_command->setText($_update_sql)->execute(array(':exp_status' => self::ORDER_EXPIRED_STATUS, ':cur_id' => $order_id, ':new_status' => self::ORDER_PENDING_STATUS));
+			                                $user = PlatformUser::model()->findByAttributes(array('id' => $user_id));
+			                                if (!is_null($user) && !empty($user)) {
+			                                $cid = $user->cid;
+			                                $title = "您的订单已过期";
+			                                $msg = "订单已经过期，请重新下单！";
+			                                self::sendNotifyToUser($cid, $msg, $title);
+			                                }
+			                                }
+			                                }
 		*/
 
 		// update expired order status

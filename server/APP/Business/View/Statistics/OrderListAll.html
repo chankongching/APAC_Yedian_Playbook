@@ -1,28 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title></title>
+	<meta charset="UTF-8">
+	<title>Document</title>
 </head>
 <body>
-	<table>
-		<volist name="list_data" id="vo">
-			<tr>
-				<td>{$vo.id}</td>
-				<td>{$vo.xdsj}</td>
-				<td>{$vo.ddzt}</td>
-				<td>{$vo.jqzt}</td>
-				<td>{$vo.sjs}</td>
-				<td>{$vo.sjsm}</td>
-				<td>{$vo.fwyopenid}</td>
-				<td>{$vo.scan_time}</td>
-				<td>{$vo.fwyname}</td>
-				<td>{$vo.yhopenid}</td>
-				<td>{$vo.clsj}</td>
-				<td>{$vo.zhclsj}</td>
-				<td>{$vo.BDname}</td>
-				<td>{$vo.ksss}</td>
-			</tr>
-		</volist>
-	</table>
+	<form action="__SELF__" method="POST">
+		<input type="text" name="starttime" />
+		<input type="text" name="endtime" />
+		<input type="submit">
+	</form>
 </body>
 </html>

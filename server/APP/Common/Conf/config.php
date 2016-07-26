@@ -1,7 +1,7 @@
 <?php
 return array(
 	//'配置项'=>'配置值'
-    'MODULE_ALLOW_LIST'    =>    array('Home','Admin','User','Business','Spr'),
+    'MODULE_ALLOW_LIST'    =>    array('Home','Admin','User','Business','Spr','SAdmin'),
     'DEFAULT_MODULE'       =>    'Home',
     'URL_MODEL'             =>  2, 
     //默认错误跳转对应的模板文件

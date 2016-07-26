@@ -197,6 +197,7 @@ class WeChatController extends CommonController {
 			"button" => array(
 				array('type' => 'view', 'name' => '立即预订', 'url' => C('server_host') . '/wechat_ktv/Home/WeChat/GoUrl/url/1'),
 				array('name' => '独享优惠', 'sub_button' => array(
+                    array('type' => 'view', 'name' => '杰迷派对', 'url' => C('server_host') . '/dist/jaycnparty'),
 					array('type' => 'view', 'name' => '免费KTV派对', 'url' => C('server_host') . '/wechat_ktv/Home/Event/hjd'),
 					array('type' => 'view', 'name' => '免费兑酒券', 'url' => C('server_host') . '/wechat_ktv/Home/Event/enter'),
 					array('type' => 'view', 'name' => '精彩内容', 'url' => C('server_host') . '/_tools/redirecttohistorymessage.php'),
@@ -257,14 +258,14 @@ class WeChatController extends CommonController {
 		header('Access-Control-Allow-Origin:*');
 		$result_array = array();
 		if (!IS_GET && !IS_AJAX) {
-			$result_array['status'] = '0';
+			$result_array['status'] = 0;
 			$result_array['msg'] = '方法错误';
 			echo json_encode($result_array, true);
 			return false;
 		}
 		$url = urldecode(I('get.url'));
 		$sign = $this->getJsSign(htmlspecialchars_decode($url), 0, '', 'wx90f8e48d4b4f5d8d');
-		$result_array['status'] = '1';
+		$result_array['status'] = 1;
 		$result_array['msg'] = '成功';
 		$result_array['sign'] = $sign;
 		echo json_encode($result_array, true);
@@ -284,7 +285,7 @@ class WeChatController extends CommonController {
 //				var_dump($userinfo);die();
 				//				echo json_encode($userinfo);die();
 
-				echo json_encode(array('msg' => 'get openid success', 'result' => '0', 'openid' => $openid, 'display_name' => $userinfo['nickname'],
+				echo json_encode(array('msg' => 'get openid success', 'result' => 0, 'openid' => $openid, 'display_name' => $userinfo['nickname'],
 					'avatar_url' => $userinfo['headimgurl'], 'sex' => $userinfo['sex'],
 				), true);
 			}
@@ -298,8 +299,8 @@ class WeChatController extends CommonController {
 	public function MakeEWM() {
 		$openid = $this->weObj->getRevFrom();
 		$res = M('ktvmanager')->where(array('openid' => $openid, 'status' => 1))->find();
-		$ecount = M('ktvemp')->where(array('status' => '1', 'ktvid' => $res['ktvid']))->Count('openid');
-		$ercount = M('yzm')->where(array('ktvid' => $res['ktvid'], 'is_cancel' => '0'))->Count('ktvid');
+		$ecount = M('ktvemp')->where(array('status' => 1, 'ktvid' => $res['ktvid']))->Count('openid');
+		$ercount = M('yzm')->where(array('ktvid' => $res['ktvid'], 'is_cancel' => 0))->Count('ktvid');
 		if ($ercount >= 5) {
 			$msg = '您的验证码数已经到达上限，如需申请更多员工账号，请联系夜点商务拓展人员';
 			return $msg;
@@ -316,7 +317,7 @@ class WeChatController extends CommonController {
 			$yz = M('yzm');
 			$yz->yanzhengma = $yzm;
 			$yz->ktvid = $res['ktvid'];
-			$yz->status = '1';
+			$yz->status = 1;
 			$yz->add();
 			$msg = '您已经生成了新的验证码[' . $yzm . ']';
 		}
@@ -405,7 +406,7 @@ class WeChatController extends CommonController {
 				),
 			);
 			$ktvemp = M('ktvemp');
-			$employees = $ktvemp->where(array('ktvid' => $ktvid, 'status' => '1'))->select();
+			$employees = $ktvemp->where(array('ktvid' => $ktvid, 'status' => 1))->select();
 			if ($employees != null) {
 				foreach ($employees as $key => $value) {
 					$dataM['touser'] = $value['openid'];
@@ -480,7 +481,7 @@ class WeChatController extends CommonController {
 				),
 			);
 			$ktvemp = M('ktvemp');
-			$employees = $ktvemp->where(array('ktvid' => $ktvid, 'status' => '1'))->select();
+			$employees = $ktvemp->where(array('ktvid' => $ktvid, 'status' => 1))->select();
 			if ($employees != null) {
 				foreach ($employees as $key => $value) {
 					$dataM['touser'] = $value['openid'];
