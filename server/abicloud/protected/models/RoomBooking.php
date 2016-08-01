@@ -275,18 +275,32 @@ class RoomBooking extends PSActiveRecord {
 
 	}
 
-	public function updateRatingStatus($orderid = 0) {
-		if ($orderid != 0) {
-			$order = $this->findByAttributes(array('code' => $orderid));
+	// public function updateRatingStatus($orderid = 0) {
+	// 	if ($orderid != 0) {
+	// 		$order = $this->findByAttributes(array('code' => $orderid));
+	// 		if ($order != null) {
+	// 			$order->is_pingjia = 1;
+	// 			if ($order->save()) {
+	// 				return true;
+	// 			}
+	// 		} else {
+	// 			return false;
+	// 		}
+
+	// 	}
+	// }
+
+	public function updateRatingStatus($code = '') {
+		if ($code != '') {
+			$order = $this->findByAttributes(array('code' => $code));
 			if ($order != null) {
 				$order->is_pingjia = 1;
 				if ($order->save()) {
-					return true;
+					return array('status' => 0);
+				} else {
+					return array('status' => 1);
 				}
-			} else {
-				return false;
 			}
-
 		}
 	}
 

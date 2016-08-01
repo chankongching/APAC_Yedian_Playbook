@@ -105,7 +105,8 @@ class EventController extends CommonController {
 			$openid = I('get.openid');
 			$mobile = I('get.mobile');
 			// $coupon_type = array(13, 14, 15);
-			$coupon_type = array(16, 17, 18, 19, 20, 21, 22, 23, 24);
+//			$coupon_type = array(16, 17, 18, 19, 20, 21, 22, 23, 24);
+            $coupon_type = array(44,45,46);
 			if (M('event_mobile', 'ac_')->add(array('mobile' => $mobile, 'openid' => $openid, 'create_time' => date('Y-m-d H:i:s'))) > 0) {
 				$userinfo = M('platform_user', 'ac_')->where(array('openid' => $openid))->find();
 				$coupon = M('coupon', 'ac_')->where(array('userid' => $userinfo['id'], 'available' => 0, 'type' => array('IN', $coupon_type)))->find();

@@ -126,20 +126,56 @@ class Coupon extends PSActiveRecord {
 		return array();
 	}
 
-	public function getAvailableCouponList($_userid, $_offset, $_limit) {
+//	public function getAvailableCouponList($_userid, $_offset, $_limit) {
+	//		$criteria = new CDbCriteria;
+	//		$criteria->addCondition('userid=' . $_userid);
+	//		$criteria->addInCondition('status', array(0));
+	//		$criteria->addCondition('available=1'); //判断是否在优惠券中心显示
+	//		$criteria->addCondition('is_available=1');
+	//		$criteria->limit = $_limit; //取1条数据，如果小于0，则不作处理
+	//		$criteria->offset = $_offset; //两条合并起来，则表示 limit 10 offset 1,或者代表了。limit 1,10
+	//		$criteria->order = 'update_time desc';
+	//		$_list = $this->findAll($criteria);
+	//		if (!empty($_list) && is_array($_list)) {
+	//			return $this->foreachAvailableCouponList($_list);
+	//		}
+	//		return array();
+	//	}
+	public function getAvailableCouponList($_userid = 0, $_offset = 0, $_limit = 10) {
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('userid=' . $_userid);
-		$criteria->addInCondition('status', array(0));
-		$criteria->addCondition('available=1'); //判断是否在优惠券中心显示
-		$criteria->addCondition('is_available=1');
+		$criteria->addCondition('status=0 or status=1');
 		$criteria->limit = $_limit; //取1条数据，如果小于0，则不作处理
 		$criteria->offset = $_offset; //两条合并起来，则表示 limit 10 offset 1,或者代表了。limit 1,10
 		$criteria->order = 'update_time desc';
 		$_list = $this->findAll($criteria);
-		if (!empty($_list) && is_array($_list)) {
-			return $this->foreachAvailableCouponList($_list);
+		if ($_list == null) {
+			return array('msg' => '暂无可用兑酒券', 'result' => 1);
+		} else {
+			return $this->getTodayAvailablelist($_list);
 		}
-		return array();
+	}
+
+	protected function getTodayAvailablelist($list) {
+		$_list = array();
+		$_list_not_is_available = array();
+		$today = strtotime(date('Y-m-d', time()));
+		$tomorrow = $today + 24 * 60 * 60;
+		foreach ($list as $key => $value) {
+			$update_time = strtotime($value['update_time']);
+			// if ($value['is_available'] == 0) {
+			if ($update_time > $today && $update_time < $tomorrow && $value['is_available'] == 0 && $value['update_time'] > $value['create_time']) {
+				$_list_not_is_available[] = $value;
+				// }
+			} else {
+				$_list[] = $value;
+			}
+		}
+		if (count($_list_not_is_available) > 0) {
+			return array('msg' => '超过今日使用上限', 'result' => 1, 'today' => $today, 'tomorrow' => $tomorrow, 'list_not_is_available' => $_list_not_is_available);
+		} else {
+			return array('msg' => '获取可用酒券列表成功', 'result' => 0, 'list' => $this->foreachAvailableCouponList($_list), 'today' => $today, 'tomorrow' => $tomorrow, 'list_not_is_available' => $_list_not_is_available);
+		}
 	}
 
 	public function getCouponCount($_userid) {
@@ -207,6 +243,8 @@ class Coupon extends PSActiveRecord {
 			'img' => $this->getCouponTypeInfo($coupon["type"], 'img'),
 			'count' => intval($this->getCouponTypeInfo($coupon["type"], 'count')),
 			'img_disable' => $this->getCouponTypeInfo($coupon["type"], 'img_disable'),
+			'update_time' => $coupon['update_time'],
+			//            'is_available' => $coupon['is_available'],
 		);
 		// echo $_coupon_info['status'];
 		return $_coupon_info;
@@ -263,6 +301,16 @@ class Coupon extends PSActiveRecord {
 		}
 	}
 
+	// protected function getCouponBeerType($typeid) {
+	// 	$couponType = $this->getCouponTypeInfo($typeid, 'beer_type');
+	// 	if ($couponType != null) {
+	// 		$beerType = BeerType::model()->getNamebyId();
+	// 		if($beerType!=null){
+	// 			return $beerType;
+	// 		}
+	// 	}
+
+	// }
 	protected function getCouponTypeInfo($typeid, $field = 'name') {
 		return CouponType::model()->getbyID($typeid, $field);
 	}
@@ -412,7 +460,8 @@ class Coupon extends PSActiveRecord {
 	protected function SetcouponTypes() {
 		// $this->couponTypes = array(13, 14, 14, 14, 14, 15, 15, 15, 15, 15);
 		// $this->couponTypes = array(19, 20, 20, 20, 20, 21, 21, 21, 21, 21);
-		$this->couponTypes = array(19, 19, 19, 19, 20, 20, 20, 21, 21, 21);
+		//		$this->couponTypes = array(19, 19, 19, 19, 20, 20, 20, 21, 21, 21);
+		$this->couponTypes = array(44, 44, 44, 44, 45, 45, 45, 46, 46, 46);
 		$a_length = count($this->couponTypes) - 1;
 		$this->typeidnum = rand(0, $a_length);
 	}
@@ -444,7 +493,7 @@ class Coupon extends PSActiveRecord {
 		if ($userid != '') {
 			$criteria = new CDbCriteria;
 			$criteria->addCondition('userid=' . $userid);
-			// $criteria->addCondition('is_available=0');
+			$criteria->addCondition('is_available=0');
 			$criteria->addCondition("DATEDIFF(update_time,NOW())=0");
 			$coupons = $this->findAll($criteria);
 			// return $coupons;
@@ -461,13 +510,18 @@ class Coupon extends PSActiveRecord {
 	public function findbyuidandsource($uid, $source) {
 		$coupon = $this->findByAttributes(array('userid' => $uid, 'source' => $source));
 		if ($coupon != null) {
-			return array('status' => 1, 'coupon' => array('name' => $this->getCouponTypeInfo($coupon['type'], 'name'), 'count' => $this->getCouponTypeInfo($coupon['type'], 'count'), 'beer_type' => 2));
+			$coupon_type = $coupon['type'];
+			$coupon_info = array(
+				'name' => $this->getCouponTypeInfo($coupon_type, 'name'),
+				'count' => $this->getCouponTypeInfo($coupon_type, 'count'),
+				'beer_type' => $this->getCouponTypeInfo($coupon_type, 'beer_type'));
+			return array('status' => 1, 'coupon' => $coupon_info);
 		}
 		return array('status' => 0);
 	}
 
 	public function getNewCouponByShareCoupon($userid, $sharecouponid) {
-		$couponTypes = array(28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39);
+		$couponTypes = array(32, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 37, 37, 37);
 		$coupon = new Coupon();
 		$coupon->userid = $userid;
 		$coupon->expire_time = time() + 24 * 60 * 60 * 14;
@@ -475,12 +529,15 @@ class Coupon extends PSActiveRecord {
 		$coupon->status = 0;
 		$coupon->available = 1;
 		$coupon->is_available = 1;
-		$coupon->type = $couponTypes[rand(0, 11)];
+		$coupon->type = $couponTypes[rand(0, 19)];
 		if ($coupon->save()) {
 			$add_status = CouponShare::model()->sharecountadd($sharecouponid);
 			if ($add_status['status'] == 0) {
-//                $couponinfo = CouponType::model()->getbyID($coupon->type,'name');
-				return array('result' => 0, 'coupon' => array('name' => $this->getCouponTypeInfo($coupon->type, 'name'), 'count' => $this->getCouponTypeInfo($coupon->type, 'count'), 'beer_type' => $this->getCouponTypeInfo($coupon->type, 'beer_type')));
+				$coupon_info = array(
+					'name' => $this->getCouponTypeInfo($coupon->type, 'name'),
+					'count' => $this->getCouponTypeInfo($coupon->type, 'count'),
+					'beer_type' => $this->getCouponTypeInfo($coupon->type, 'beer_type'));
+				return array('result' => 0, 'coupon' => $coupon_info);
 			}
 
 		}

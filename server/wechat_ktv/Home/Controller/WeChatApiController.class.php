@@ -55,6 +55,38 @@ class WeChatApiController extends CommonController {
 		$this->weObj->sendTemplateMessage($dataM);
 	}
 
+	protected function sendConfirmOrderMessage($info) {
+		$dataM = array();
+		$dataM['template_id'] = 'igSwgejww2ZKCpgZZp_nX1DnXyFWtnfCvHm5oSM8tBo';
+		$dataM['url'] = 'http://letsktv.chinacloudapp.cn/dist/';
+		$dataM['topcolor'] = '#FF0000';
+		$dataM['touser'] = $info['openid'];
+		$dataM['data'] = array(
+			'first' => array(
+				'value' => $info['title'],
+				'color' => '#000000',
+			),
+			'keyword1' => array(
+				'value' => $info['order_no'],
+				'color' => '#000000',
+			),
+			'keyword2' => array(
+				'value' => date("Y-m-d h:i"),
+				'color' => '#000000',
+			),
+			'remark' => array(
+				'value' => $info['remark'],
+				'color' => '#000000',
+			),
+		);
+		$this->weObj->sendTemplateMessage($dataM);
+	}
+
+	public function sendConfirmOrderMsg() {
+		$info = array('openid' => 'okwyOwpvP0WJfi0GhGxzQ5sDJMCY', 'order_no' => '20993', 'remark' => '你好，你的订单已经完成请点击查看详情', 'title' => '订单完成通知');
+		$this->sendConfirmOrderMessage($info);
+	}
+
 	public function PointChangMessage() {
 		if (IS_POST) {
 			$jifen = I("post.jifen");
@@ -237,6 +269,43 @@ class WeChatApiController extends CommonController {
 		} else {
 			return false;
 		}
+	}
+
+	public function sendConfirmCouponMsg() {
+		if (IS_GET) {
+			$openid = I('get.openid');
+			$code = I('get.code');
+			$coupon_share = M('coupon_share', 'ac_')->where(array('hash_url' => $code))->find();
+			if ($coupon_share != null) {
+				$order = M('order', 'ac_')->where(array('id' => $coupon_share['orderid']))->find();
+				if ($order != null) {
+					$result = $this->sendShareCouponMsg($openid, $code, $order['code']);
+				}
+
+				die(json_encode($result));
+			}
+		}
+	}
+
+	private function sendShareCouponMsg($openid, $code, $ordercode) {
+		// $openid = I('get.openid');
+		// $code = I('get.code');
+		$news = array();
+		$news[] = array(
+			'title' => '订单已成功完成，点击抢红包！',
+			'picurl' => 'https://mmbiz.qlogo.cn/mmbiz/TAQPDicjviavQSc0SYhTnHib3lkzuQvh5SZPmTWBibsPzBS1cSwqicRtTGj86ict0Uib1kWQ0CnDTRCff7mycDc48ibA3g/0?wx_fmt=jpeg',
+			'url' => 'http://letsktv.chinacloudapp.cn/dist/?#!/order/ktv/' . $ordercode . '?share=' . $code,
+		);
+		$data = array(
+			'touser' => $openid,
+			'msgtype' => 'news',
+			'news' => array(
+				'articles' => $news,
+			),
+		);
+
+		$result = $this->weObj->sendCustomMessage($data);
+		return $result;
 	}
 //	public function runspr(){
 	//		$orders = M('order','ac_')->where(array('status'=>5,'create_time'=>array('BETWEEN',array('2016-05-17 00:00:00','2016-05-23 00:00:00'))))->select();

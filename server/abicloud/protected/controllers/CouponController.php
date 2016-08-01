@@ -94,28 +94,48 @@ class CouponController extends ApiController {
 			die();
 		}
 		Coupon::model()->checkExpire($_userid);
-		if (Coupon::model()->hasusedtwocoupon($_userid)) {
+//		if (Coupon::model()->hasusedtwocoupon($_userid)) {
+		//			$result_array['msg'] = Yii::t('coupon', 'No Coupon data!');
+		//			$result_array['result'] = self::ListNull;
+		//			$result_array['wrong_msg'] = '超过今日使用上限';
+		//			$this->sendResults($result_array);
+		//			die();
+		//		} else {
+		//            $_list = Coupon::model()->getAvailableCouponList($_userid, $_offset, $_limit);
+		//
+		//            if ($_list == NULL) {
+		//                $result_array['msg'] = Yii::t('coupon', 'No Coupon data!');
+		//                $result_array['result'] = self::ListNull;
+		//                $result_array['wrong_msg'] = '暂无可用兑酒券';
+		//                $this->sendResults($result_array);
+		//                die();
+		//            }
+		//            $result_array['msg'] = Yii::t('coupon', 'Get Coupon List Success');
+		//            $result_array['result'] = self::Success;
+		//            $result_array['list'] = $_list;
+		//            $result_array['total'] = count($_list);
+		//            $this->sendResults($result_array);
+		//		}
+		$couponList = Coupon::model()->getAvailableCouponList($_userid, $_offset, $_limit);
+		if ($couponList['result'] == 0) {
+			$result_array['msg'] = Yii::t('coupon', 'Get Coupon List Success');
+			$result_array['result'] = self::Success;
+			$result_array['list'] = $couponList['list'];
+			$result_array['total'] = count($couponList['list']);
+			// $result_array['debug'] = $couponList['list_not_is_available'];
+			// $result_array['today'] = $couponList['today'];
+			// $result_array['tomorrow'] = $couponList['tomorrow'];
+			$this->sendResults($result_array);
+		} elseif ($couponList['result'] == 1) {
 			$result_array['msg'] = Yii::t('coupon', 'No Coupon data!');
 			$result_array['result'] = self::ListNull;
-			$result_array['wrong_msg'] = '超过今日使用上限';
+			$result_array['wrong_msg'] = $couponList['msg'];
+			// $result_array['debug'] = $couponList['list_not_is_available'];
+			// $result_array['today'] = $couponList['today'];
+			// $result_array['tomorrow'] = $couponList['tomorrow'];
 			$this->sendResults($result_array);
-			die();
-		} else {
 		}
-		$_list = Coupon::model()->getAvailableCouponList($_userid, $_offset, $_limit);
 
-		if ($_list == NULL) {
-			$result_array['msg'] = Yii::t('coupon', 'No Coupon data!');
-			$result_array['result'] = self::ListNull;
-			$result_array['wrong_msg'] = '暂无可用兑酒券';
-			$this->sendResults($result_array);
-			die();
-		}
-		$result_array['msg'] = Yii::t('coupon', 'Get Coupon List Success');
-		$result_array['result'] = self::Success;
-		$result_array['list'] = $_list;
-		$result_array['total'] = count($_list);
-		$this->sendResults($result_array);
 	}
 
 	public function actiondetail() {

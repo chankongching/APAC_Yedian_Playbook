@@ -143,7 +143,7 @@ class ApiController extends CController implements HttpResponse {
 		'booking/addcollection', 'booking/cancelcollection', 'gift/giftorderlist', 'gift/orderreal', 'gift/ordervirtual', 'user/bindwechat', 'booking/deleteorder',
 		'user/addcollection', 'user/delcollection', 'user/collectionlist', 'gift/giftorderlistnew', 'gift/orderdetail', 'tongji/click', 'tongji/browse',
 		'gift/testbytoken', 'feedback/feedback', 'feedback/comment', 'coupon/list', 'coupon/detail', 'coupon/checkstatus', 'tongji/errorreport', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new',
-        'feedback/commentapp'
+        'feedback/commentapp','booking/cancelpayorder',
 	);
 
 	/**
@@ -162,7 +162,7 @@ class ApiController extends CController implements HttpResponse {
 		'user/bindwechat', 'booking/deleteorder', 'user/addcollection', 'user/delcollection', 'user/collectionlist',
 		'gift/giftorderlistnew', 'gift/orderdetail', 'tongji/click', 'tongji/browse',
 		'gift/testbytoken', 'feedback/feedback', 'feedback/comment',
-		'coupon/list', 'coupon/detail', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new',
+		'coupon/list', 'coupon/detail', 'coupon/availablelist', 'booking/Orderdetail', 'booking/orderdetail', 'booking/checkstatus', 'coupon/getcouponbyevents', 'coupon/getcouponstatusbyevents', 'booking/gettaocaninfo', 'booking/gettaocanlist', 'booking/makesure', 'booking/Submitorder_new','booking/cancelpayorder',
 	);
 
 	/**

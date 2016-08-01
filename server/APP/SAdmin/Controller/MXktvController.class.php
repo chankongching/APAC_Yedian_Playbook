@@ -15,7 +15,8 @@ class MXktvController extends CommonController {
 			// $filepath = 'excel/Chongqing/chongqing.xlsx';
 			// $filepath = 'excel/Guangdong/shenshen.xlsx';
 			// $filepath = 'excel/Guangdong/dongdong.xlsx';
-			$filepath = 'excel/new/dongguan.xlsx';
+			// $filepath = 'excel/new/dongguan.xlsx';
+			$filepath = 'excel/city.xlsx';
 		} else {
 			$filepath = 'excel/dongdong1/' . $file . '.csv';
 		}
@@ -51,37 +52,37 @@ class MXktvController extends CommonController {
 			$erp_orders_id['area'] = $value->getTitle();
 			$keys = array();
 			for ($currentColumn = 0; $currentColumn <= $allColumnNum; $currentColumn++) {
-				if ($currentColumn == 'DecorationRating') {
-					$keys['decorationrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'SoundRating') {
-					$keys['soundrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'DecorationRating') {
-					$keys['decorationrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'ServiceRating') {
-					$keys['servicerating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'ConsumerRating') {
-					$keys['consumerrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'FoodRating') {
-					$keys['foodrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'WIFI') {
-					$keys['wifi'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'Themerooms') {
-					$keys['themerooms'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
-				} elseif ($currentColumn == 'WirelessMicrophones') {
-					$keys['wirelessmicrophones'] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
+				if ($currentColumn === 'DecorationRating') {
+					$keys['decorationrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'SoundRating') {
+					$keys['soundrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'DecorationRating') {
+					$keys['decorationrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'ServiceRating') {
+					$keys['servicerating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'ConsumerRating') {
+					$keys['consumerrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'FoodRating') {
+					$keys['foodrating'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'WIFI') {
+					$keys['wifi'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'Themerooms') {
+					$keys['themerooms'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
+				} elseif ($currentColumn === 'WirelessMicrophones') {
+					$keys['wirelessmicrophones'] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
 				} else {
-					$keys[$currentColumn] = $currentSheet->getCellByColumnAndRow($currentColumn, 2)->getValue();
+					$keys[$currentColumn] = $currentSheet->getCellByColumnAndRow($currentColumn, 1)->getValue();
 				}
 
 			}
 			// var_dump($keys);
 			/**从第二行开始输出，因为excel表中第一行为列名*/
-			for ($currentRow = 4; $currentRow <= $allRow; $currentRow++) {
+			for ($currentRow = 2; $currentRow <= $allRow; $currentRow++) {
 
 				/**从第A列开始输出*/
 				for ($currentColumn = 0; $currentColumn <= $allColumnNum; $currentColumn++) {
 
-					$val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
+					$val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getCalculatedValue();
 					/**ord()将字符转为十进制数*/
 					if ($val != '') {
 						$erp_orders_id[$currentRow][$keys[$currentColumn]] = $val;
@@ -97,6 +98,19 @@ class MXktvController extends CommonController {
 		}
 
 		return $erp_orders_ids;
+	}
+
+	public function updateCity() {
+		$city = $this->import();
+		// var_dump($city);
+		foreach ($city as $kk => $vv) {
+			foreach ($city[$kk] as $key => $value) {
+				// echo $value['lng'] . '--' . $value['name'] . '--' . $value['lat'];
+				if (M('xktv', 'ac_')->where(array('xktvid' => $value['xktvid']))->data(array('lng' => $value['lng'], 'lat' => $value['lat']))) {
+					echo $value['name'];
+				}
+			}
+		}
 	}
 
 	public function dnew() {

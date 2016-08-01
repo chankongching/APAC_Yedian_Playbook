@@ -27,6 +27,7 @@ class ConfirmOrderController extends CommonController {
 			session('openid', $openid);
 		}
 	}
+
 	public function testopenid() {
 		session(null);
 		if (IS_GET && I('get.openid') != '') {
@@ -70,6 +71,7 @@ class ConfirmOrderController extends CommonController {
 		}
 		$this->display();
 	}
+
 	public function getResultBykey() {
 		if (IS_AJAX && IS_POST) {
 			$key = I('post.key');
@@ -214,6 +216,7 @@ class ConfirmOrderController extends CommonController {
 											'您好，您已经成功兑换' . $this->getCouponCount($coupon_info['type'], 'name') . '，
 兑换时间：' . date('Y-m-d H:i') . '，
 如有任何疑问，请联系客服电话400-650-7351');
+
 									} else {
 										$result_array['sj_record_msg'] = 'add record failed';
 									}
@@ -228,9 +231,13 @@ class ConfirmOrderController extends CommonController {
 						$result_array['result'] = 0;
 						$result_array['msg'] = 'Order Confirm Success';
 						$CouponContr = new CouponController();
-						//送新的酒券 由6瓶改成3瓶
-						if ($CouponContr->getCouponByConfirmOrder($order_info['userid'], 31)) {
-							$result_array['new_coupon'] = array('msg' => 'Get Success New Coupon', 'result' => 0);
+//						if ($CouponContr->getCouponByConfirmOrder($order_info['userid'], 5)) {
+						//							$result_array['new_coupon'] = array('msg' => 'Get Success New Coupon', 'result' => 0);
+						//						}
+						$shareCoupon = $CouponContr->getShareCouponByConfirmOrder($order_info['userid'], $order_info['id']);
+						if ($shareCoupon['result'] == 0) {
+							$result_array['new_coupon'] = array('msg' => 'Get Success New ShareCoupon', 'result' => 0);
+							$this->sendShareCouponMsg($order_info['userid'], $shareCoupon['hash_url']);
 						}
 						if ($order_info['roomtypeid'] == 0) {
 							$roomtype_name = $this->getTaocanInfo($order_info['taocanid']);
@@ -239,6 +246,7 @@ class ConfirmOrderController extends CommonController {
 
 						}
 						$this->sendmsg($order_info['userid'], '您好，您预订的' . $this->getKtvName($order_info['ktvid']) . '开始时间：' . date("Y-m-d H:i:s", $order_info['starttime']) . $roomtype_name . '确认成功。为了感谢您的支持，夜点赠送您一张新的兑酒券，次日可使用。祝您欢唱愉快！');
+
 						$spr_msg = $this->sendSprOpenid($order_info['userid'], $order_info['time'], time());
 						$result_array['spr_msg'] = array('info' => $spr_msg, 'userid' => $order_info['userid'], 'ordertime' => $order_info['time'], 'confirm' => time());
 					} else {
@@ -258,6 +266,33 @@ class ConfirmOrderController extends CommonController {
 			die(json_encode($result_array, true));
 		}
 	}
+
+	protected function sendShareCouponMsg($userid, $code) {
+		if ($userid != '' && $code != '') {
+			$userinfo = M('platform_user', 'ac_')->where(array('id' => $userid))->find();
+			if ($userinfo != null) {
+				$openid = $userinfo['openid'];
+				$url = 'http://letsktv.chinacloudapp.cn/wechat_ktv/Home/WeChatApi/sendConfirmCouponMsg/openid/' . $openid . '/code/' . $code;
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+				$data = curl_exec($ch);
+				// $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				curl_close($ch);
+				$sub_info = json_decode($data, true);
+				if ($sub_info['result'] == 0) {
+					return 1;
+				} else {
+					return 0;
+				}
+
+			}
+		}
+	}
+
 	protected function getCouponCount($typeid = '', $key = 'count') {
 		if ($typeid != '') {
 			$couponType = M('coupon_type', 'ac_')->where(array('id' => $typeid))->find();
@@ -371,36 +406,35 @@ class ConfirmOrderController extends CommonController {
 		return $this->http_post($url, array('uid' => $uid, 'msg' => $content));
 	}
 
-    private function http_post($url, $param, $post_file = false)
-    {
-        $oCurl = curl_init();
-        if (stripos($url, "https://") !== FALSE) {
-            curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
-        }
-        if (is_string($param) || $post_file) {
-            $strPOST = $param;
-        } else {
-            $aPOST = array();
-            foreach ($param as $key => $val) {
-                $aPOST[] = $key . "=" . urlencode($val);
-            }
-            $strPOST = join("&", $aPOST);
-        }
-        curl_setopt($oCurl, CURLOPT_URL, $url);
-        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($oCurl, CURLOPT_POST, true);
-        curl_setopt($oCurl, CURLOPT_POSTFIELDS, $strPOST);
-        $sContent = curl_exec($oCurl);
-        $aStatus = curl_getinfo($oCurl);
-        curl_close($oCurl);
-        if (intval($aStatus["http_code"]) == 200) {
-            return $sContent;
-        } else {
-            return false;
-        }
-    }
+	private function http_post($url, $param, $post_file = false) {
+		$oCurl = curl_init();
+		if (stripos($url, "https://") !== FALSE) {
+			curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, FALSE);
+			curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
+		}
+		if (is_string($param) || $post_file) {
+			$strPOST = $param;
+		} else {
+			$aPOST = array();
+			foreach ($param as $key => $val) {
+				$aPOST[] = $key . "=" . urlencode($val);
+			}
+			$strPOST = join("&", $aPOST);
+		}
+		curl_setopt($oCurl, CURLOPT_URL, $url);
+		curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($oCurl, CURLOPT_POST, true);
+		curl_setopt($oCurl, CURLOPT_POSTFIELDS, $strPOST);
+		$sContent = curl_exec($oCurl);
+		$aStatus = curl_getinfo($oCurl);
+		curl_close($oCurl);
+		if (intval($aStatus["http_code"]) == 200) {
+			return $sContent;
+		} else {
+			return false;
+		}
+	}
 
     public function jaycn_Confirm(){
         if(IS_POST){

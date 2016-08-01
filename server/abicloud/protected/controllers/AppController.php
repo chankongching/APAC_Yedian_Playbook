@@ -234,13 +234,13 @@ class AppController extends ApiController {
 		);
 		$baseinfo = array(
 			'banner' => array('count' => 1, 'lists' => array(
-				// array('link' => 'http://letsktv.chinacloudapp.cn/dist/jaycnparty', 'pic' => '/uploads/event_img/banner/gdgmhbanner.png'),
+                array('link' => 'http://letsktv.chinacloudapp.cn/wechat_ktv/Home/WeChat/GoUrl/url/8', 'pic' => '/uploads/event_img/banner/gdgmhbanner.png'),
 				array('link' => 'http://letsktv.chinacloudapp.cn/dist/oneyuan', 'pic' => '/uploads/event_img/banner/20160623.jpg'),
 				array('link' => 'http://letsktv.chinacloudapp.cn/wechat_ktv/home/event/enter', 'pic' => '/uploads/event_img/banner/20160620.jpg'),
 			),
 			),
 			'poster' => array('count' => 5, 'lists' => array(
-				// array('link' => 'http://letsktv.chinacloudapp.cn/dist/jaycnparty/', 'pic' => '/uploads/event_img/poster/gdgmh.png'),
+                array('link' => 'http://letsktv.chinacloudapp.cn/wechat_ktv/Home/WeChat/GoUrl/url/8', 'pic' => '/uploads/event_img/poster/gdgmh.png'),
 				array('link' => 'http://letsktv.chinacloudapp.cn/dist/oneyuan/', 'pic' => '/uploads/event_img/poster/20160623.jpg'),
 				array('link' => 'http://letsktv.chinacloudapp.cn/wechat_ktv/home/event/enter', 'pic' => '/uploads/event_img/poster/20160620.jpg'),
 				array('link' => '#!/ktv?event=jq', 'pic' => '/uploads/event_img/poster/1.jpg'),

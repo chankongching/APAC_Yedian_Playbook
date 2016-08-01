@@ -734,7 +734,7 @@ class BookingController extends ApiController {
 		if ($orderStatus != null) {
 			$result_array['status'] = intval($orderStatus['status']);
 			if ($result_array['status'] == 5) {
-//				$result_array['ShareCoupon'] = array('code' => $orderStatus['coupon_share']['hash_url'], 'share_count' => $orderStatus['coupon_share']['share_count']);
+				$result_array['ShareCoupon'] = array('code' => $orderStatus['coupon_share']['hash_url'], 'share_count' => $orderStatus['coupon_share']['share_count']);
 			}
 			$result_array['msg'] = Yii::t('booking', 'Get Order Status Success');
 			$result_array['result'] = self::Success;
@@ -989,45 +989,48 @@ class BookingController extends ApiController {
 			$result_array['result'] = self::Success;
 			$result_array['msg'] = Yii::t('user', 'Room order list got success!');
 //            $result_array['total'] = count($booking_list);
-			$jayorder = JaycnEventOrder::model()->getJayOrder($_userid);
-			if ($jayorder != null) {
-				$roominfo = JaycnEvent::model()->findByPk($jayorder['roomid']);
-				$result_array['jaycn'] = array('status' => 1);
-				$result_array['list'][] = array(
-					'special' => 1,
-					"order_invoice" => 'RO-578b46d61b615',
-					"order_code" => 'RBC578b46d61b6f5',
-					"order_status" => $jayorder['status'] == 0 ? 3 : 5,
-					"order_time" => time(),
-					'roomtypeid' => '',
-					'room_name' => $roominfo['name'],
-					'taocan_info' => null,
-					"description" => 'k-party量贩式KTV比邻广州塔这座广州地标性的建筑，占地过万平方米,拥有100多间不同类型的K歌包房，自助餐含各种特色美食近200个品种。',
-					"smallpicurl" => '/uploads/room/Kparty_small1.jpg',
-					"bigpicurl" => '/uploads/room/Kparty_big1.jpg',
-					"starttime" => $roominfo['date'] == 23 ? 1469253600 : 1469340000,
-					"endtime" => $roominfo['date'] == 23 ? 1469264400 : 1469350800,
-					'ktvinfo' => array(
-						"xktvid" => 'XKTV00173',
-						"xktvname" => 'KPARTY量贩式KTV(赤岗店) ',
-						"area_id" => '440105',
-						"telephone" => '020-89663388',
-						"openhours" => '10:30-04:30',
-						"piclist" => array(
-							array(
-								'smallpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_small1.jpg",
-								'bigpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_big1.jpg"),
-						),
-						"lat" => 23.093114,
-						"lng" => 113.331858,
-						"rate" => 5.0,
-						"address" => '江海大道生物工程大厦(近地铁赤岗站)',
-					),
-					'rating' => 5.0,
-					'display_name' => $jayorder['name'],
-					'mobile' => $jayorder['mobile'],
-				);
-			}
+            if($_status==0){
+                $jayorder = JaycnEventOrder::model()->getJayOrder($_userid);
+                if ($jayorder != null) {
+                    $roominfo = JaycnEvent::model()->findByPk($jayorder['roomid']);
+                    $result_array['jaycn'] = array('status' => 1);
+                    $result_array['list'][] = array(
+                        'special' => 1,
+                        "order_invoice" => 'RO-578b46d61b615',
+                        "order_code" => 'RBC578b46d61b6f5',
+                        "order_status" => $jayorder['status'] == 0 ? 3 : 5,
+                        "order_time" => time(),
+                        'roomtypeid' => '',
+                        'room_name' => $roominfo['name'],
+                        'taocan_info' => null,
+                        "description" => 'k-party量贩式KTV比邻广州塔这座广州地标性的建筑，占地过万平方米,拥有100多间不同类型的K歌包房，自助餐含各种特色美食近200个品种。',
+                        "smallpicurl" => '/uploads/room/Kparty_small1.jpg',
+                        "bigpicurl" => '/uploads/room/Kparty_big1.jpg',
+                        "starttime" => $roominfo['date'] == 23 ? 1469253600 : 1469340000,
+                        "endtime" => $roominfo['date'] == 23 ? 1469264400 : 1469350800,
+                        'ktvinfo' => array(
+                            "xktvid" => 'XKTV00173',
+                            "xktvname" => 'KPARTY量贩式KTV(赤岗店) ',
+                            "area_id" => '440105',
+                            "telephone" => '020-89663388',
+                            "openhours" => '10:30-04:30',
+                            "piclist" => array(
+                                array(
+                                    'smallpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_small1.jpg",
+                                    'bigpicurl' => "http://letsktv.chinacloudapp.cn/uploads/room/Kparty_big1.jpg"),
+                            ),
+                            "lat" => 23.093114,
+                            "lng" => 113.331858,
+                            "rate" => 5.0,
+                            "address" => '江海大道生物工程大厦(近地铁赤岗站)',
+                        ),
+                        'rating' => 5.0,
+                        'display_name' => $jayorder['name'],
+                        'mobile' => $jayorder['mobile'],
+                    );
+                }
+            }
+
 
 			foreach ($booking_list as $key => $_order) {
 				// $roomname = array(1 => '大包', 2 => '中包', 3 => '小包');
@@ -1260,7 +1263,7 @@ class BookingController extends ApiController {
 				if ($order_detail->is_pingjia == 0) {
 					$result_array['is_pingjia'] = array('status' => intval($order_detail->is_pingjia));
 				} else {
-					$result_array['is_pingjia'] = array('status' => intval($order_detail->is_pingjia), 'appRating' => Comment::model()->getAppRating($order_detail->id));
+					$result_array['is_pingjia'] = array('status' => intval($order_detail->is_pingjia), 'appRating' => Comment::model()->getAppRating($order_detail->code));
 				}
 
 				// TODO add ktv information
@@ -2251,6 +2254,22 @@ class BookingController extends ApiController {
 		$this->sendResults($result_array);
 	}
 
+	public function actioncancelpayorder() {
+		$result_array = array(
+			'result' => self::BadRequest,
+			'msg' => Yii::t('user', 'Request method illegal!'),
+		);
+		// Check request type
+		$request_type = Yii::app()->request->getRequestType();
+		if ('GET' != $request_type) {
+			$this->sendResults($result_array, self::BadRequest);
+		}
+		$_code = Yii::app()->request->getQuery('ordercode');
+		$result_array['result'] = self::Success;
+		$result_array['msg'] = 'Request a refund success';
+		$this->sendResults($result_array);
+	}
+
 	public function utf8Unescape($str) {
 		if (empty($str)) {
 			return $str;
@@ -2327,6 +2346,20 @@ class BookingController extends ApiController {
 
 		// update expired order status
 		//RoomBooking::model()->updateAll(array('status' => self::ORDER_EXPIRED_STATUS), 'status = :cur_status AND time < :exp_end_time', array(':cur_status' => self::ORDER_PENDING_STATUS, ':exp_end_time' => ($cur_time - self::ORDER_EXPIRED_TIME)));
+	}
+
+	public function updateRatingStatus($code = '') {
+		if ($code != '') {
+			$order = $this->findByAttributes(array('code' => $code));
+			if ($order != null) {
+				$order->is_pingjia = 1;
+				if ($order->save()) {
+					return array('status' => 0);
+				} else {
+					return array('status' => 1);
+				}
+			}
+		}
 	}
 
 }

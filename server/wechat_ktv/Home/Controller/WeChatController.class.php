@@ -197,7 +197,7 @@ class WeChatController extends CommonController {
 			"button" => array(
 				array('type' => 'view', 'name' => '立即预订', 'url' => C('server_host') . '/wechat_ktv/Home/WeChat/GoUrl/url/1'),
 				array('name' => '独享优惠', 'sub_button' => array(
-                    array('type' => 'view', 'name' => '杰迷派对', 'url' => C('server_host') . '/dist/jaycnparty'),
+                    array('type' => 'view', 'name' => '杰迷派对', 'url' => C('server_host') . '/wechat_ktv/Home/WeChat/GoUrl/url/8'),
 					array('type' => 'view', 'name' => '免费KTV派对', 'url' => C('server_host') . '/wechat_ktv/Home/Event/hjd'),
 					array('type' => 'view', 'name' => '免费兑酒券', 'url' => C('server_host') . '/wechat_ktv/Home/Event/enter'),
 					array('type' => 'view', 'name' => '精彩内容', 'url' => C('server_host') . '/_tools/redirecttohistorymessage.php'),
@@ -231,7 +231,9 @@ class WeChatController extends CommonController {
 				header('Location:' . C('server_host') . '/dist/#!/store');
 			} elseif ($url == 7) {
 				header('Location:' . C('server_host') . '/games/20160128__Lucky_Draw/index/');
-			}
+			} elseif ($url == 8) {
+                header('Location:http://mp.weixin.qq.com/s?__biz=MzI2NDA4OTIzNQ==&mid=503794411&idx=1&sn=ca7217d3fb2194f9585848a0e32d2b2c&scene=0#wechat_redirect');
+            }
 		}
 	}
 
@@ -604,5 +606,26 @@ class WeChatController extends CommonController {
 		$id = I('get.qrcode');
 		$qrcode = $this->weObj->getQRCode($id, 1);
 		var_dump($qrcode);
+	}
+
+	public function sendtestMsg() {
+		$openid = I('get.openid');
+		$news = array();
+		$news[] = array(
+			'title' => '订单已成功完成，点击抢红包！',
+			'picurl' => 'https://mmbiz.qlogo.cn/mmbiz/TAQPDicjviavQSc0SYhTnHib3lkzuQvh5SZPmTWBibsPzBS1cSwqicRtTGj86ict0Uib1kWQ0CnDTRCff7mycDc48ibA3g/0?wx_fmt=jpeg',
+			'url' => 'http://wechat.fusionmaster.net/dist/',
+			// 'description' => 'dfdfdfdf',
+		);
+		$data = array(
+			'touser' => $openid,
+			'msgtype' => 'news',
+			'news' => array(
+				'articles' => $news,
+			),
+		);
+
+		$result = $this->sendCustomMessage($data);
+		var_dump($result);
 	}
 }
