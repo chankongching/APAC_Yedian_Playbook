@@ -4,9 +4,10 @@ The architecture of the YeDian platform allows scaling in and out.
 
 Below are the steps to run to either increase or decrease the capacity of the platform.
 
-**Note**: the details in this document are ISP agnostic and would be the same no matter if using Azure, QingCloud, or any other cloud provider. 
-
-What this means is also that we are not taking benefit of whatever feature is available on those cloud provider. Alternerative to the approach described below are possible and may be mentioned, but won't be detailed.
+**Note**: 
+- The details in this document are ISP agnostic and would be the same no matter if using Azure, QingCloud, or any other cloud provider. 
+- We are not taking benefit of whatever feature is available on those cloud provider. Alternerative to the approach described below are possible and may be mentioned, but won't be detailed.
+- It is assumed that you are familiar with the cloud provider you are using, and know how to configure 1. network, 2. access / SSH, 3. security groups, 4. DNS, etc.
 
 ## Web Servers
 
