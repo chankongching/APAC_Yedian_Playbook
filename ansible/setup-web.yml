@@ -18,9 +18,9 @@
     - name: Ensure the hosts are all addressable
       lineinfile:
         path=/etc/hosts
-        line="db {{ hostvars[groups['mysql'][0]]ansible_eth0.ipv4.address }}"'
+        line="db {{ hostvars[groups['mysql'][0]]ansible_eth0.ipv4.address }}"
         state=present
-        
+
 
 - hosts: web
   roles:
