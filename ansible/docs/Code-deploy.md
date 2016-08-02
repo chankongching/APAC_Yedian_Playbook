@@ -40,16 +40,16 @@ Found config files are:
 ./APP/Home/Conf/config.php
 ./APP/Business/Conf/config.php
 ./abicloud/letsktv_biz/promo_girls/admin/_/_inc.php 
-./callcenter/_/_inc.php
-./games/GUESS_SONG/_/_inc.php
-./visual-data/_/_inc.php
-./letsktv_biz/_wechat/_inc.php
-./letsktv_biz/promo_girls/admin/_/_inc.php
-./letsktv_biz/promo_girls/_/_inc.php
-./letsktv_biz/promo_girls_old/_/_inc.php
-./fusionway/_wechat/_inc.php
-./fusionway/promo_girls/_/_inc.php
-./wechat/_inc.php
+./abicloud/callcenter/_/_inc.php
+./abicloud/games/GUESS_SONG/_/_inc.php
+./abicloud/visual-data/_/_inc.php
+./abicloud/letsktv_biz/_wechat/_inc.php
+./abicloud/letsktv_biz/promo_girls/admin/_/_inc.php
+./abicloud/letsktv_biz/promo_girls/_/_inc.php
+./abicloud/letsktv_biz/promo_girls_old/_/_inc.php
+./abicloud/fusionway/_wechat/_inc.php
+./abicloud/fusionway/promo_girls/_/_inc.php
+./abicloud/wechat/_inc.php
 ```
 
 Those config files need to be updated to use the correct backend DB.
