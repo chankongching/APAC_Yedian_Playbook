@@ -1,2 +1,14 @@
 ---
 domain: staging-yedian.chinacloudapp.cn
+
+db_website_user: website
+db_website_pass: '{{ vault_db_website_pass }}'
+db_letsktv_user: letsktv
+db_letsktv_pass: '{{ vault_db_letsktv_pass }}'
+db_letsktv_biz_user: 'letsktv_biz
+db_letsktv_biz_pass: '{{ vault_db_letsktv_biz_pass }}'
+db_fusionway_user: fusionway
+db_fusionway_pass: '{{ vault_db_fusionway_pass }}'
+
+wechat_appid: '{{ vault_wechat_appid }}'
+wechat_appsecret: '{{ vault_wechat_appsecret }}'

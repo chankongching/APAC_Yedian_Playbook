@@ -41,6 +41,7 @@
           request_terminate_timeout: "30"
           ping.path: /ping
           ping.response: pong
+          env: "{{ env_yedian }}"
 
     # Install NginX 
     - role: wcl-nginx

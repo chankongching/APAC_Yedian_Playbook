@@ -23,3 +23,36 @@ php_packages:
 
 pecl_packages: []
 
+env_yedian:
+    #
+    # Additional vars
+    #
+    WECHAT_APPID: '{{ wechat_appid }}'
+    WECHAT_APPSECRET: '{{ wechat_appsecret }}'
+
+    #
+    # Define the hosts -- could use IP / Hostname and update on the fly
+    #
+    DB_HOST: db
+    MEMCACHE_HOST: memcache
+    REDIS_HOST: redis
+
+    #
+    # Misc DB Users
+    #
+    DB_WEBSITE_USER: '{{ db_website_user }}'
+    DB_WEBSITE_PASS: '{{ db_website_pass }}'
+    DB_LETSKTV_USER: '{{ db_letsktv_user }}'
+    DB_LETSKTV_PASS: '{{ db_letsktv_pass }}'
+    DB_LETSKTV_BIZ_USER: '{{ db_letsktv_biz_user }}'
+    DB_LETSKTV_BIZ_PASS: '{{ db_letsktv_biz_pass }}'
+    DB_FUSIONWAY_USER: '{{ db_fusionway_user }}'
+    DB_FUSIONWAY_PASS: '{{ db_fusionway_pass }}'
+
+    #
+    # Various databases + prefix
+    #
+    # DB_PROMOGIRLS_NAME: fusionway_promo_girls
+    # DB_FUSIONWAY_PFIX: promogirls_
+    # Currently assumed to be hardcoded
+
