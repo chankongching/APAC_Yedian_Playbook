@@ -22,7 +22,7 @@
           - maxconn 20
 
       haproxy_frontends:
-        - name: default_https
+        - name: default_http
           bind: 0.0.0.0:80 
           extras:
             # Misc
