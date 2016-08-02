@@ -85,3 +85,21 @@
       nginx_configs:
         upstream:
           - upstream app { server 127.0.0.1:9000; }
+
+  tasks:
+    - name: Change /etc/php5/fpm/php.ini, session.save_handler
+      ini_file:
+        dest=/etc/php5/fpm/php.ini
+        section=Session
+        option=session.save_handler
+        value=redis
+      notify: restart php-fpm
+    - name: Change /etc/php5/fpm/php.ini, session.save_path
+      ini_file:
+        dest=/etc/php5/fpm/php.ini
+        section=Session
+        option=session.save_path
+        value=tcp://redis:6379
+      notify: restart php-fpm
+
+
