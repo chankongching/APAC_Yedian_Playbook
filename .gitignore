@@ -102,3 +102,9 @@ server/abicloud/assets/
 server/abicloud/avatar/
 server/abicloud/wechatshangjia/Public/qrcode/
 
+# For Ansible
+*.retry
+ansible/roles/*
+!ansible/roles/yedian-*
+!.gitignore
+!.placeholder

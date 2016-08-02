@@ -1,0 +1,23 @@
+---
+#
+# Setup the db servers
+#
+
+- hosts: mysql
+  tasks:
+    - name: Install mysql dependencies
+      apt:
+        name={{ item }}
+        state=present
+      with_items:
+        - numactl
+
+
+- hosts: db
+  roles:
+    # Check group_vars/redis/vars for defaults
+    - role: wcl-redis
+    # Check group_vars/memcached/vars for defaults
+    - role: memcached
+    # Check group_vars/mysql/vars for defaults
+    - role: percona

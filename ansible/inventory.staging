@@ -1,0 +1,56 @@
+#
+# Run the code base and serves the end users
+#
+
+[lb]
+staging-yedian-lb-1
+
+[web]
+staging-yedian-web-1
+staging-yedian-web-2
+
+[mysql]
+staging-yedian-db-1
+
+[redis]
+staging-yedian-db-1
+
+[memcached]
+staging-yedian-db-1
+
+#
+# Tools
+# 
+
+[admin]
+staging-yedian-admin-1
+
+[zabbix]
+staging-yedian-admin-1
+
+[tools:children]
+admin
+zabbix
+
+
+#
+# Misc groups
+#
+
+[db:children]
+mysql
+redis
+memcached
+
+
+#
+# Shared group to get platform specific vars
+#
+
+[staging:children]
+lb
+web
+db
+redis
+memcached
+tools

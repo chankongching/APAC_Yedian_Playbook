@@ -1,0 +1,15 @@
+---
+#
+# Main playbook file to provision and deploy YeDian platform
+#
+
+# Base setup:
+#  - users
+#  - default packages
+#  - etc.
+- include: setup-base.yml
+
+# Server specific setup
+- include: setup-db.yml
+- include: setup-web.yml
+- include: setup-lb.yml

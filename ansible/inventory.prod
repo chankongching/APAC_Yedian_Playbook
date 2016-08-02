@@ -1,0 +1,56 @@
+#
+# Run the code base and serves the end users
+#
+
+[lb]
+prod-yedian-lb-1
+
+[web]
+prod-yedian-web-1
+prod-yedian-web-2
+
+[mysql]
+prod-yedian-db-1
+
+[redis]
+prod-yedian-db-1
+
+[memcached]
+prod-yedian-db-1
+
+#
+# Tools
+# 
+
+[admin]
+prod-yedian-admin-1
+
+[zabbix]
+prod-yedian-admin-1
+
+[tools:children]
+admin
+zabbix
+
+#
+# Misc groups
+#
+
+[db:children]
+mysql
+redis
+memcached
+
+
+
+#
+# Shared group to get platform specific vars
+#
+
+[prod:children]
+lb
+web
+db
+redis
+memcached
+tools
