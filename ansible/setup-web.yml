@@ -80,6 +80,10 @@
           - location ~ \.(yml|yaml|git) { return 404; }
           # Serve static assets
           - location ~* \.(?:xml|ogg|mp3|mp4|ogv|svg|svgz|eot|otf|woff|ttf|css|js|jpg|jpeg|gif|png|ico)$ { try_files $uri =404; expires max; access_log off; add_header Pragma public; add_header Cache-Control "public, must-revalidate, proxy-revalidate"; add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";}
+          # Inner apps require custom rewrites
+          - location ~ ^/(wechatshangjia|Verify|wechat_ktv)/ { try_files $uri $uri/ @inner_app; }
+          - location @inner_app { rewrite ^/([^\/]*)/(.*) /$1/index.php?s=$2 last; }
+          # Defaults PHP handlers
           - location / { try_files $uri $uri/ /index.php?$args; }
           - location ~ \.php$ { fastcgi_intercept_errors on; add_header X-Frame-Options DENY; add_header Strict-Transport-Security "max-age=31536000; includeSubDomains"; fastcgi_split_path_info ^(.+?\.php)(/.*)$; fastcgi_pass app; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; }
 
