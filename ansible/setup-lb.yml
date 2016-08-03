@@ -41,4 +41,4 @@
                 - maxconn 2000
           extras:
             - default-server inter 2s fastinter 1s downinter 5s slowstart 60s rise 2 fall 5 weight 30
-            - option httpchk GET /status.php HTTP/1.1\r\nHost:\ {{ domain }}
+            - option httpchk GET /status HTTP/1.1\r\nHost:\ {{ domain }}
