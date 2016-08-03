@@ -93,14 +93,14 @@
         dest=/etc/php5/fpm/php.ini
         section=Session
         option=session.save_handler
-        value=redis
+        value=memcache
       notify: restart php-fpm
     - name: Change /etc/php5/fpm/php.ini, session.save_path
       ini_file:
         dest=/etc/php5/fpm/php.ini
         section=Session
         option=session.save_path
-        value=tcp://redis:6379
+        value=tcp://memcache:11211
       notify: restart php-fpm
 
 
