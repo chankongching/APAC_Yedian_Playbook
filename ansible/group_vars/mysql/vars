@@ -18,6 +18,51 @@ mysql_slow_query_log_file: /var/lib/mysql/slow.log
 
 mysql_innodb_buffer_pool_size: 8G
 
+#
+# Define MySQL users & hosts
+#
+percona_server_users_present_hosts:
+  - '%'
+
+percona_server_users_present:
+  - name: website
+    password: '{{ db_website_pass }}'
+    privs:
+      - 'abicloud.*:ALL'
+  - name: fusionway
+    password: '{{ db_fusionway_pass }}'
+    privs:
+      - 'fusionway_%.*:ALL'
+  - name: letsktv
+    password: '{{ db_letsktv_pass }}'
+    privs:
+      - 'letsktv_%.*:ALL'
+  - name: letsktv_biz
+    password: '{{ db_letsktv_biz_pass }}'
+    privs:
+      - 'letsktv_biz_%.*:ALL'
+  - name: june
+    password: '{{ db_june_pass }}'
+    privs:
+      - 'abicloud.*:SELECT'
+  - name: share
+    password: '{{ db_share_pass }}'
+    privs:
+      - 'abicloud.*:SELECT'
+      - 'letsktv_biz_promogirls.*:SELECT'
+      - 'abicloud.ac_order:SELECT'
+      - 'abicloud.ac_tongji_browse_statistics:SELECT'
+      - 'abicloud.ac_tongji_browse:SELECT'
+      - 'abicloud.ac_xktv:SELECT'
+      - 'abicloud.ac_tongji_click:SELECT'
+      - 'letsktv_wechat.letsktv_logs_subscribe_statistics:SELECT'
+      - 'abicloud.ac_tongji_click_statistics:SELECT'
+  - name: mysqltop
+    password: '{{ db_mysqltop_pass }}'
+    privs:
+      - '*.*:RELOAD,PROCESS'
+
+
 
 #
 # Use the variables from above to build the mysql / percona object 

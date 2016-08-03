@@ -10,5 +10,15 @@ db_letsktv_biz_pass: '{{ vault_db_letsktv_biz_pass }}'
 db_fusionway_user: fusionway
 db_fusionway_pass: '{{ vault_db_fusionway_pass }}'
 
+db_june_user: june
+db_june_pass: '{{ vault_db_june_pass }}'
+db_share_user: share
+db_share_pass: '{{ vault_db_share_pass }}'
+db_mysqltop_user: mysqltop
+db_mysqltop_pass: ''
+
+#
+# Misc other vars that should be configured and not hardcoded
+# 
 wechat_appid: '{{ vault_wechat_appid }}'
 wechat_appsecret: '{{ vault_wechat_appsecret }}'
