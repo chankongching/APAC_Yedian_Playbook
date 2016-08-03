@@ -50,6 +50,7 @@ Found config files are:
 ./abicloud/fusionway/_wechat/_inc.php
 ./abicloud/fusionway/promo_girls/_/_inc.php
 ./abicloud/wechat/_inc.php
+./abicloud/protected/config/main.php
 ```
 
 Those config files need to be updated to use the correct backend DB.
