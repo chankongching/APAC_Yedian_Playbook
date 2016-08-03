@@ -72,8 +72,8 @@
           - index index.php
           - server_name {{ domain }}
           - root {{ webroot }}
-          - error_page 404 /404.html
-          - error_page 500 403 =404 /404.html
+          # - error_page 404 /404.html
+          # - error_page 500 403 =404 /404.html
           - add_header Strict-Transport-Security "max-age=31536000; includeSubDomains"
           # Security relative locations
           - location ~ ^/(_app|_config|_cache|_content|_logs|_storage) { return 404; }
