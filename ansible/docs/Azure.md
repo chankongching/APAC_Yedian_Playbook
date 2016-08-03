@@ -62,27 +62,3 @@ Creation process:
 
 It is critical that you connect the server to the correct cloud service, or it won't be able to communicate with the other servers from your architecture.
 
-# Current servers & Access
-
-Only the Staging environment has been created.
-
-- Admin:
-  - name: staging-admin-1 
-  - access: `ssh -l user staging-yedian.chinacloudapp.cn -p 22`
-- LB: 
-  - name: staging-lb-1
-  - size: A2 - 2Core, 3.5GB RAM
-  - access: 
-    - (public) `ssh -l user staging-yedian.chinacloudapp.cn -p 50422`
-    - (internal) `ssh -l user staging-lb-1`
-- Web:
-  - name: staging-web-1 / 2 
-  - size: A3 - 4Core, 7GB RAM
-  - access: 
-    - (public) `ssh -l user staging-yedian.chinacloudapp.cn -p 61063/57098`
-    - (internal) `ssh -l user staging-web-1 / 2`
-- DB:
-  - name: staging-db-1
-  - access: 
-    - (public) `ssh -l user staging-yedian.chinacloudapp.cn -p 56694`
-    - (internal) `ssh -l user staging-db-1`
