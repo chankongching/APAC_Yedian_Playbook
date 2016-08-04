@@ -23,8 +23,9 @@
       disable_firewall: yes
       handle_firewall: false
 
-#    - role: zabbix-agent
-#      agent_server: "{{ hostvars[groups['zabbix'][0]]['ansible_eth0']['ipv4']['address'] }},zabbix.service.wiredcraft.com,127.0.0.1"
-#      # Empty both interface and IP to listen to all
-#      agent_listeninterface:
-#      agent_listenip: 
+    - role: zabbix-agent
+      agent_server: "{{ hostvars[groups['zabbix'][0]]['ansible_eth0']['ipv4']['address'] }},zabbix.service.wiredcraft.com,127.0.0.1"
+      # Empty both interface and IP to listen to all
+      agent_listeninterface:
+      agent_listenip: 
+      zabbix_api_use: false
