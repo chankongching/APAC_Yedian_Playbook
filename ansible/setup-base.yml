@@ -14,8 +14,11 @@
         - name: ydadmin
           sudo: yes
           ssh: yes
-          authorized: []
-          # authorized: "{{ ydadmin_ssh_pub_keys }}"
+          authorized: "{{ ydadmin_ssh_pub_keys }}"
+        - name: ylytadmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ ylytadmin_ssh_pub_keys }}"
 
       disable_firewall: yes
       handle_firewall: false
