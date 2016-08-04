@@ -62,3 +62,8 @@ Creation process:
 
 It is critical that you connect the server to the correct cloud service, or it won't be able to communicate with the other servers from your architecture.
 
+## Update the host_vars
+
+You need to update the host vars to include the new access to those servers (TODO)
+
+Go check the `Cloud service` you just created, then on the right part, find the SSH ports being used to access the servers.

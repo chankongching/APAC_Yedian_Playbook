@@ -1,2 +1,3 @@
 ---
-ansible_ssh_host: 
+ansible_ssh_host: prod-yedian.chinacloudapp.cn
+ansible_ssh_port: 51560

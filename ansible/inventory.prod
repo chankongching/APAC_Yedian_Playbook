@@ -8,6 +8,7 @@ prod-yedian-lb-1
 [web]
 prod-yedian-web-1
 prod-yedian-web-2
+prod-yedian-web-3
 
 [mysql]
 prod-yedian-db-1
