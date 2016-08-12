@@ -69,7 +69,7 @@
 
         yedian:
           - listen {{ nginx_listen }}
-          - index index.php
+          - index index.php index.html
           - server_name {{ domain }}
           - root {{ webroot }}
           # - error_page 404 /404.html
