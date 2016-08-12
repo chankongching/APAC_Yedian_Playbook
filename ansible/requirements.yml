@@ -38,7 +38,7 @@
   name: wcl-php-fpm
   version: master
 
-# Maybe for latert
+# Maybe for later
 # - src: https://github.com/wiredcraft-ops/role-wcl-varnish.git
 #   name: wcl-varnish
 #   version: master

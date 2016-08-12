@@ -25,22 +25,25 @@ percona_server_users_present_hosts:
   - '%'
 
 percona_server_users_present:
-  - name: website
-    password: '{{ db_website_pass }}'
+  - name: '{{ mysql_yedian_user }}'
+    password: '{{ mysql_yedian_pswd }}'
     privs:
       - 'abicloud.*:ALL'
+  - name: '{{ mysql_letsktv_user }}'
+    password: '{{ mysql_letsktv_pswd }}'
+    privs:
+      - 'letsktv_%.*:ALL'
+  - name: '{{ mysql_letsktv_biz_user }}'
+    password: '{{ mysql_letsktv_biz_pswd }}'
+    privs:
+      - 'letsktv_biz_%.*:ALL'
+  #
+  # Extra MySQL users extracted from current prod env
+  #
   - name: fusionway
     password: '{{ db_fusionway_pass }}'
     privs:
       - 'fusionway_%.*:ALL'
-  - name: letsktv
-    password: '{{ db_letsktv_pass }}'
-    privs:
-      - 'letsktv_%.*:ALL'
-  - name: letsktv_biz
-    password: '{{ db_letsktv_biz_pass }}'
-    privs:
-      - 'letsktv_biz_%.*:ALL'
   - name: june
     password: '{{ db_june_pass }}'
     privs:

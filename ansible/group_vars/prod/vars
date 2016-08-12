@@ -1,15 +1,16 @@
 ---
 domain: letsktv.chinacloudapp.cn
+server_pub_domain: '{{ domain }}'
 
-db_website_user: website
-db_website_pass: '{{ vault_db_website_pass }}'
-db_letsktv_user: letsktv
-db_letsktv_pass: '{{ vault_db_letsktv_pass }}'
-db_letsktv_biz_user: letsktv_biz
-db_letsktv_biz_pass: '{{ vault_db_letsktv_biz_pass }}'
+# db_website_user: website
+# db_website_pass: '{{ vault_db_website_pass }}'
+# db_letsktv_user: letsktv
+# db_letsktv_pass: '{{ vault_db_letsktv_pass }}'
+# db_letsktv_biz_user: letsktv_biz
+# db_letsktv_biz_pass: '{{ vault_db_letsktv_biz_pass }}'
+
 db_fusionway_user: fusionway
 db_fusionway_pass: '{{ vault_db_fusionway_pass }}'
-
 db_june_user: june
 db_june_pass: '{{ vault_db_june_pass }}'
 db_share_user: share
@@ -17,8 +18,37 @@ db_share_pass: '{{ vault_db_share_pass }}'
 db_mysqltop_user: mysqltop
 db_mysqltop_pass: ''
 
-#
-# Misc other vars that should be configured and not hardcoded
-# 
-wechat_appid: '{{ vault_wechat_appid }}'
-wechat_appsecret: '{{ vault_wechat_appsecret }}'
+
+# WX FOR SJB
+wechat_sjb_appid: '{{ vault_wechat_sjb_appid }}'
+wechat_sjb_appsecret: '{{ vault_wechat_sjb_appsecret }}'
+wechat_sjb_token: '{{ vault_wechat_sjb_token }}'
+wechat_sjb_key: '{{ vault_wechat_sjb_key }}'
+
+# WX FOR YEDIAN
+wechat_yedian_appid: '{{ vault_wechat_yedian_appid }}'
+wechat_yedian_appsecret: '{{ vault_wechat_yedian_appsecret }}'
+wechat_yedian_token: '{{ vault_wechat_yedian_token }}'
+
+# WX FOR LETSKTV
+wechat_letsktv_appid: '{{ vault_wechat_letsktv_appid }}'
+wechat_letsktv_appsecret: '{{ vault_wechat_letsktv_appsecret }}'
+wechat_letsktv_token: '{{ vault_wechat_letsktv_token }}'
+
+# DB FOR SPR
+mysql_letsktv_biz_user: letsktv_biz
+mysql_letsktv_biz_pswd: '{{ vault_mysql_letsktv_biz_pswd }}'
+mysql_letsktv_biz_name: letsktv_biz_promogirls
+mysql_letsktv_biz_pfix: promogirls_
+
+# DB FOR LETSKTV
+mysql_letsktv_user: letsktv
+mysql_letsktv_pswd: '{{ vault_mysql_letsktv_pswd }}'
+mysql_letsktv_name: letsktv_wechat
+mysql_letsktv_pfix: letsktv_
+
+# DB FOR YeDian
+mysql_yedian_user: website
+mysql_yedian_pswd: '{{ vault_mysql_yedian_pswd }}'
+mysql_yedian_name: abicloud
+mysql_yedian_pfix: ac_

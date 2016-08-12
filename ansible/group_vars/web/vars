@@ -25,35 +25,52 @@ php_packages:
 pecl_packages: []
 
 env_yedian:
-    #
-    # Additional vars
-    #
-    WECHAT_APPID: '{{ wechat_appid }}'
-    WECHAT_APPSECRET: '{{ wechat_appsecret }}'
+    # PUBLIC DOMAIN
+    SERVER_PUB_DOMAIN: '{{ server_pub_domain }}'
 
-    #
-    # Define the hosts -- could use IP / Hostname and update on the fly
-    #
-    DB_HOST: db
-    MEMCACHE_HOST: memcache
-    REDIS_HOST: redis
-
-    #
-    # Misc DB Users
-    #
-    DB_WEBSITE_USER: '{{ db_website_user }}'
-    DB_WEBSITE_PASS: '{{ db_website_pass }}'
-    DB_LETSKTV_USER: '{{ db_letsktv_user }}'
-    DB_LETSKTV_PASS: '{{ db_letsktv_pass }}'
-    DB_LETSKTV_BIZ_USER: '{{ db_letsktv_biz_user }}'
-    DB_LETSKTV_BIZ_PASS: '{{ db_letsktv_biz_pass }}'
-    DB_FUSIONWAY_USER: '{{ db_fusionway_user }}'
-    DB_FUSIONWAY_PASS: '{{ db_fusionway_pass }}'
-
-    #
-    # Various databases + prefix
-    #
-    # DB_PROMOGIRLS_NAME: fusionway_promo_girls
-    # DB_FUSIONWAY_PFIX: promogirls_
-    # Currently assumed to be hardcoded
-
+    # MEMCACHE
+    MEMCACHED_HOST: memcache
+    MEMCACHED_PORT: 11211
+    
+    # WX FOR SJB
+    WECHAT_SJB_APPID: '{{ wechat_sjb_appid }}'
+    WECHAT_SJB_APPSECRET: '{{ wechat_sjb_appsecret }}'
+    WECHAT_SJB_TOKEN: '{{ wechat_sjb_token }}'
+    WECHAT_SJB_KEY: '{{ wechat_sjb_key }}'
+    
+    # WX FOR YEDIAN
+    WECHAT_YEDIAN_APPID: '{{ wechat_yedian_appid }}'
+    WECHAT_YEDIAN_APPSECRET: '{{ wechat_yedian_appsecret }}'
+    WECHAT_YEDIAN_TOKEN: '{{ wechat_yedian_token }}'
+    
+    # WX FOR LETSKTV
+    WECHAT_LETSKTV_APPID: '{{ wechat_letsktv_appid }}'
+    WECHAT_LETSKTV_APPSECRET: '{{ wechat_letsktv_appsecret }}'
+    WECHAT_LETSKTV_TOKEN: '{{ wechat_letsktv_token }}'
+    
+    # DB FOR SPR
+    MYSQL_LETSKTV_BIZ_HOST: db
+    MYSQL_LETSKTV_BIZ_USER: '{{ mysql_letsktv_biz_user }}'
+    MYSQL_LETSKTV_BIZ_PSWD: '{{ mysql_letsktv_biz_pswd }}'
+    MYSQL_LETSKTV_BIZ_NAME: '{{ mysql_letsktv_biz_name }}'
+    MYSQL_LETSKTV_BIZ_PFIX: '{{ mysql_letsktv_biz_pfix }}'
+    MYSQL_LETSKTV_BIZ_CHAR: utf8
+    MYSQL_LETSKTV_BIZ_PORT: 3306
+    
+    # DB FOR LETSKTV
+    MYSQL_LETSKTV_HOST: db
+    MYSQL_LETSKTV_USER: '{{ mysql_letsktv_user }}'
+    MYSQL_LETSKTV_PSWD: '{{ mysql_letsktv_pswd }}'
+    MYSQL_LETSKTV_NAME: '{{ mysql_letsktv_name }}'
+    MYSQL_LETSKTV_PFIX: '{{ mysql_letsktv_pfix }}'
+    MYSQL_LETSKTV_CHAR: utf8
+    MYSQL_LETSKTV_PORT: 3306
+    
+    # DB FOR YeDian
+    MYSQL_YEDIAN_HOST: db
+    MYSQL_YEDIAN_USER: '{{ mysql_yedian_user }}'
+    MYSQL_YEDIAN_PSWD: '{{ mysql_yedian_pswd }}'
+    MYSQL_YEDIAN_NAME: '{{ mysql_yedian_name }}'
+    MYSQL_YEDIAN_PFIX: '{{ mysql_yedian_pfix }}'
+    MYSQL_YEDIAN_CHAR: utf8
+    MYSQL_YEDIAN_PORT: 3306
