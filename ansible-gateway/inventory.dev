@@ -1,0 +1,9 @@
+[docker]
+dev-yedian-docker-1
+
+[db]
+dev-yedian-postgresql-1
+
+[all-dev:children]
+docker
+db
