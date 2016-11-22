@@ -7,6 +7,7 @@ This `README` file is meant to provide relevant information to whomever is gonna
 Need:
 
 - Ansible 2.1.0
+- docker-py (`pip install 'docker-py==1.9.0'` on target machine)  
 
 ## Installation
 

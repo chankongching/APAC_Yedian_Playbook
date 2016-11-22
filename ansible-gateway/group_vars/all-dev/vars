@@ -1,2 +1,7 @@
 ---
 db_kong_password: kong
+docker_kong_pg_host: 192.168.233.10
+docker_kong_pg_port: 5432
+docker_kong_pg_user: kong
+docker_kong_pg_password: kong
+docker_kong_pg_database: kong

@@ -6,11 +6,23 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
   config.ssh.private_key_path = '~/.vagrant.d/insecure_private_key'
 
-  config.vm.define 'gateway' do |machine|
+  config.vm.define 'db' do |machine|
     machine.vm.network 'private_network', ip: '192.168.233.10'
-    machine.vm.hostname = 'gateway.local'
+    machine.vm.hostname = 'db.local'
     machine.vm.provision 'ansible' do |ansible|
-      ansible.playbook = 'tests/main.yml'
+      ansible.playbook = 'tests/db.yml'
+      ansible.sudo = true
+      ansible.inventory_path = 'inventory.vagrant'
+      ansible.limit = 'all'
+      ansible.host_key_checking = false
+    end
+  end
+
+  config.vm.define 'docker' do |machine|
+    machine.vm.network 'private_network', ip: '192.168.233.20'
+    machine.vm.hostname = 'docker.local'
+    machine.vm.provision 'ansible' do |ansible|
+      ansible.playbook = 'tests/docker.yml'
       ansible.sudo = true
       ansible.inventory_path = 'inventory.vagrant'
       ansible.limit = 'all'
