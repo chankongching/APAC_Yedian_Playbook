@@ -1,0 +1,19 @@
+---
+- hosts: docker
+  tasks:
+    - name: ping
+      ping: {}
+    - name: Add docker-engine repo
+      raw: "curl -fsSL https://get.docker.com/ | sh"
+    - name: Start and Enable docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+    - name: Install pip
+      raw: "curl -fsSL https://bootstrap.pypa.io/get-pip.py | python"
+    - name: Install docker-py
+      pip:
+        name: docker-py
+        version: 1.9.0
+- include: ../setup-kong.yml

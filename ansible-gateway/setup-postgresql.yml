@@ -1,5 +1,5 @@
 ---
-- hosts: db
+- hosts: postgresql
   roles:
     - role: postgresql
       postgresql_version: 9.5

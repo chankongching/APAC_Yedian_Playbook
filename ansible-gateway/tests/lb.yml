@@ -1,6 +1,6 @@
 ---
-- hosts: all
+- hosts: lb
   tasks:
     - name: ping
       ping: {}
-- include: ../setup-docker.yml
+- include: ../setup-lb.yml

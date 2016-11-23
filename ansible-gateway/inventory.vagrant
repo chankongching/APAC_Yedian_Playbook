@@ -1,9 +1,15 @@
-[db]
-db.local ansible_ssh_host=192.168.233.10 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+[postgresql]
+postgresql.local ansible_ssh_host=192.168.233.10 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
 
-[docker]
-docker.local ansible_ssh_host=192.168.233.20 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+[kong]
+kong.local ansible_ssh_host=192.168.233.20 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+[lb]
+lb.local ansible_ssh_host=192.168.233.30 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
 
 [all-dev:children]
-docker
-db
+postgresql
+kong
+
+[docker:children]
+kong

@@ -1,0 +1,6 @@
+---
+- hosts: postgresql
+  tasks:
+    - name: ping
+      ping: {}
+- include: ../setup-postgresql.yml
