@@ -1,7 +1,7 @@
 ---
-ansible_ssh_host:
+ansible_ssh_host: 172.17.0.3
 
-docker_kong_pg_host:
+docker_kong_pg_host: 172.17.0.4
 docker_kong_pg_port: 5432
 docker_kong_pg_user: kong
 docker_kong_pg_password: "{{ vault_docker_kong_pg_password }}"

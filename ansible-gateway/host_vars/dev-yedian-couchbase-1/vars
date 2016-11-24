@@ -1,3 +1,5 @@
 ---
+ansible_ssh_host: 172.17.0.5
+
 couchbase_server_node_role: primary
 couchbase_inc: eth0

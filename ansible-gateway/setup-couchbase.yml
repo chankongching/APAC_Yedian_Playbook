@@ -15,7 +15,7 @@
     - role: wcl-couchbase
       couchbase_cluster_install: true
       couchbase_server_edition: community
-      couchbase_server_centos_ce_url: "http://packages.couchbase.com/releases/4.1.1/couchbase-server-community-4.1.1-centos7.x86_64.rpm"
+      couchbase_server_centos_ce_url: "http://172.17.0.2/couchbase-server-community-4.1.1-centos7.x86_64.rpm"
 
 - hosts: couchbase
   roles:
