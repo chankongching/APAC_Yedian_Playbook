@@ -21,8 +21,9 @@ ansible-galaxy install -r requirements.yml -p roles
 - A to Z setup
 
 ```
-# run setup-base first
+# run setup-base & setup-docker first
 ansible-playbook -i inventory.dev -e @vars.dev --vault-password-file ~/vault-password setup-base.yml
+ansible-playbook -i inventory.dev -e @vars.dev --vault-password-file ~/vault-password setup-docker.yml
 ```
 
 ```
