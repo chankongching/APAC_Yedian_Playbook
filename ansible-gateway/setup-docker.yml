@@ -1,4 +1,6 @@
 ---
+# /usr/lib/systemd/system/docker.service
+# ExecStart=/usr/bin/dockerd --registry-mirror=
 - hosts: docker
   tasks:
     - name: Add docker-engine repo
@@ -8,6 +10,20 @@
         name: docker
         state: started
         enabled: true
+    - name: Add registry mirror to docker
+      replace:
+        dest: /usr/lib/systemd/system/docker.service
+        regexp: "ExecStart=/usr/bin/dockerd"
+        replace: "ExecStart=/usr/bin/dockerd --registry-mirror={{ docker_mirror_url }}"
+      tags:
+        - mirror
+    - name: Run systemd daemon-reload & Restart docker
+      systemd:
+        daemon_reload: true
+        name: docker
+        state: restarted
+      tags:
+        - mirror
     - name: Install pip
       raw: "curl -fsSL https://bootstrap.pypa.io/get-pip.py | python"
     - name: Install docker-py

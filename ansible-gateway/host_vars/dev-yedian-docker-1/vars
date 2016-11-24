@@ -6,3 +6,5 @@ docker_kong_pg_port: 5432
 docker_kong_pg_user: kong
 docker_kong_pg_password: "{{ vault_psql_password }}"
 docker_kong_pg_database: kong
+
+docker_mirror_url: https://docker.mirrors.ustc.edu.cn
