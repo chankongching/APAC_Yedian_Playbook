@@ -14,4 +14,3 @@
       pip:
         name: docker-py
         version: 1.9.0
-- include: ../setup-kong.yml

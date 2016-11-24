@@ -7,7 +7,6 @@ This `README` file is meant to provide relevant information to whomever is gonna
 Need:
 
 - Ansible 2.1.0
-- docker-py (`pip install 'docker-py==1.9.0'` on target machine)  
 
 ## Installation
 
@@ -22,17 +21,18 @@ ansible-galaxy install -r requirements.yml -p roles
 - A to Z setup
 
 ```
+ansible-playbook -i inventory.dev -e @vars.dev --vault-password-file ~/vault-password main.yml
 ansible-playbook -i inventory.staging -e @vars.staging --ask-vault-pass main.yml
 ```
 
-- Install only the db components
+- Install only the postgresql components
 
 ```
-ansible-playbook -i inventory.staging -e @vars.staging --ask-vault-pass setup-db.yml
+ansible-playbook -i inventory.staging -e @vars.staging --ask-vault-pass setup-postgresql.yml
 ```
 
 - Deploy only the app (considering the setup is done already)
 
 ```
-ansible-playbook -i inventory.staging -e @vars.staging --ask-vault-pass deploy-app.yml
+ansible-playbook -i inventory.staging -e @vars.staging --ask-vault-pass deplo.yml
 ```

@@ -1,0 +1,23 @@
+---
+# Base setup
+- hosts: all
+  roles:
+    - role: wcl-common
+      common_users:
+        - name: wcladmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ wcladmin_ssh_pub_keys }}"
+        - name: ydadmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ ydadmin_ssh_pub_keys }}"
+        - name: ylytadmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ ylytadmin_ssh_pub_keys }}"
+
+      disable_firewall: yes
+      handle_firewall: false
+
+- include: setup-docker.yml

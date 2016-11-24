@@ -1,9 +1,7 @@
 ---
 # FIXME: 16/11/23 cluster advertise (KONG_CLUSTER_ADVERTISE)
-- hosts: kong
+- hosts: docker
   tasks:
-    - name: ping
-      ping: {}
     - name: Start kong-1 container
       docker_container:
         name: kong-1
@@ -11,22 +9,7 @@
         state: started
         restart: true
         ports:
-          - "8010:8000"
-        env:
-          KONG_DATABASE: postgres
-          KONG_PG_HOST: "{{ docker_kong_pg_host }}"
-          KONG_PG_PORT: "{{ docker_kong_pg_port }}"
-          KONG_PG_USER: "{{ docker_kong_pg_user }}"
-          KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
-          KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
-    - name: Start kong-2 container
-      docker_container:
-        name: kong-2
-        image: kong
-        state: started
-        restart: true
-        ports:
-          - "8020:8000"
+          - "8000:8000"
         env:
           KONG_DATABASE: postgres
           KONG_PG_HOST: "{{ docker_kong_pg_host }}"

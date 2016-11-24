@@ -30,13 +30,7 @@
           servers:
             - name: kong-1
               ip: 127.0.0.1
-              port: 8001
-              params:
-                - check
-                - maxconn 2000
-            - name: kong-2
-              ip: 127.0.0.1
-              port: 8002
+              port: 8010
               params:
                 - check
                 - maxconn 2000

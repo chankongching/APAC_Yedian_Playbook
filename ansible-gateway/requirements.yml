@@ -18,6 +18,10 @@
   name: wcl-haproxy
   version: master
 
+- src: https://github.com/wiredcraft-ops/role-wcl-couchbase.git
+  name: wcl-couchbase
+  version: master
+
 # Public roles (from galaxy.ansible.com)
 - src: ANXS.postgresql
   name: postgresql

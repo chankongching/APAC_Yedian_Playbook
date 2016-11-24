@@ -1,0 +1,3 @@
+---
+couchbase_server_node_role: primary
+couchbase_inc: eth0

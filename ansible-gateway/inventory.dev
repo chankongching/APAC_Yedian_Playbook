@@ -1,9 +1,13 @@
 [docker]
 dev-yedian-docker-1
 
-[db]
+[postgresql]
 dev-yedian-postgresql-1
+
+[couchbase]
+dev-yedian-couchbase-1
 
 [all-dev:children]
 docker
-db
+postgresql
+couchbase
