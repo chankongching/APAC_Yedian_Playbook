@@ -29,8 +29,8 @@
           balance: roundrobin
           servers:
             - name: kong-1
-              ip: 127.0.0.1
-              port: 8010
+              ip: 172.17.0.3
+              port: 8000
               params:
                 - check
                 - maxconn 2000

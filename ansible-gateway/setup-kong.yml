@@ -17,6 +17,7 @@
           KONG_PG_USER: "{{ docker_kong_pg_user }}"
           KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
           KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
+
     - name: Start kong-admin container
       docker_container:
         name: kong-admin

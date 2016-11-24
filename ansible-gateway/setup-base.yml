@@ -8,10 +8,12 @@
           sudo: yes
           ssh: yes
           authorized: "{{ wcladmin_ssh_pub_keys }}"
+
         - name: ydadmin
           sudo: yes
           ssh: yes
           authorized: "{{ ydadmin_ssh_pub_keys }}"
+
         - name: ylytadmin
           sudo: yes
           ssh: yes
@@ -20,4 +22,4 @@
       disable_firewall: yes
       handle_firewall: false
 
-#- include: setup-docker.yml
+- include: setup-docker.yml
