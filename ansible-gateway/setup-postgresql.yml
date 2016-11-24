@@ -13,7 +13,7 @@
 
       postgresql_users:
         - name: kong
-          pass: "{{ db_kong_password }}"
+          pass: "{{ vault_psql_password }}"
 
       postgresql_pg_hba_default:
         - type: local

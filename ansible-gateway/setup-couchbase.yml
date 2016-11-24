@@ -10,6 +10,9 @@
     - name: Create cluster grouping
       group_by: key={{ couchbase_server_node_role }}
 
+#
+# Install couchbase on all the nodes
+#
 - hosts: couchbase
   roles:
     - role: wcl-couchbase
@@ -17,13 +20,19 @@
       couchbase_server_edition: community
       couchbase_server_centos_ce_url: "http://172.17.0.2/couchbase-server-community-4.1.1-centos7.x86_64.rpm"
 
+#
+# Init cluster
+#
 - hosts: couchbase
   roles:
     - role: wcl-couchbase
       couchbase_cluster_init: true
       couchbase_server_node: "{{ hostvars[inventory_hostname]['ansible_' + couchbase_nic].ipv4.address }}"
 
-- hosts: couchbase
+#
+# Add/rebalance cluster
+#
+- hosts: primary
   roles:
     - role: wcl-couchbase
       couchbase_cluster_add_reblance: true
