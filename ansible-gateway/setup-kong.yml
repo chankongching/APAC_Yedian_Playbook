@@ -2,29 +2,14 @@
 # FIXME: 16/11/23 cluster advertise (KONG_CLUSTER_ADVERTISE)
 - hosts: docker
   tasks:
-    - name: Start kong-1 container
+    - name: Start kong container
       docker_container:
-        name: kong-1
+        name: kong
         image: kong
         state: started
         restart: true
         ports:
           - "8000:8000"
-        env:
-          KONG_DATABASE: postgres
-          KONG_PG_HOST: "{{ docker_kong_pg_host }}"
-          KONG_PG_PORT: "{{ docker_kong_pg_port }}"
-          KONG_PG_USER: "{{ docker_kong_pg_user }}"
-          KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
-          KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
-
-    - name: Start kong-admin container
-      docker_container:
-        name: kong-admin
-        image: kong
-        state: started
-        restart: true
-        ports:
           - "8001:8001"
           - "7946:7946"
           - "7946:7946/udp"
