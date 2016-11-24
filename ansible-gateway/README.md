@@ -22,7 +22,7 @@ ansible-galaxy install -r requirements.yml -p roles
 
 ```
 # run setup-base first
-ansible-playbook -i inventory.dev -e @vars.dev setup-base.yml
+ansible-playbook -i inventory.dev -e @vars.dev --vault-password-file ~/vault-password setup-base.yml
 ```
 
 ```

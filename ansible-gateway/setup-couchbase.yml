@@ -23,7 +23,7 @@
       couchbase_cluster_init: true
       couchbase_server_node: "{{ hostvars[inventory_hostname]['ansible_' + couchbase_nic].ipv4.address }}"
 
-- hosts:
+- hosts: couchbase
   roles:
     - role: wcl-couchbase
       couchbase_cluster_add_reblance: true
