@@ -5,27 +5,35 @@
   tasks:
     - name: Add docker-engine repo
       raw: "curl -fsSL https://get.docker.com/ | sh"
+      args:
+        creates: /etc/yum.repos.d/docker-main.repo
+
     - name: Start and Enable docker
       service:
         name: docker
         state: started
         enabled: true
+
     - name: Add registry mirror to docker
       replace:
         dest: /usr/lib/systemd/system/docker.service
         regexp: "ExecStart=/usr/bin/dockerd"
         replace: "ExecStart=/usr/bin/dockerd --registry-mirror={{ docker_mirror_url }}"
-      tags:
-        - mirror
+
     - name: Run systemd daemon-reload & Restart docker
       systemd:
         daemon_reload: true
         name: docker
         state: restarted
-      tags:
-        - mirror
+
+    - name: Check if pip is installed
+      command: which pip
+      register: which_pip
+
     - name: Install pip
       raw: "curl -fsSL https://bootstrap.pypa.io/get-pip.py | python"
+      when: which_pip.stdout.find('no') != -1
+
     - name: Install docker-py
       pip:
         name: docker-py
