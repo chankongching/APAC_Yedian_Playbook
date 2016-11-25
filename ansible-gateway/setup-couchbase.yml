@@ -18,7 +18,7 @@
     - role: wcl-couchbase
       couchbase_cluster_install: true
       couchbase_server_edition: community
-      couchbase_server_centos_ce_url: "{{ couchbase_server_centos_ce_url }}"
+      couchbase_server_centos_ce_url: "{{ couchbase_server_centos_ce_local_url }}"
 
 #
 # Init cluster
