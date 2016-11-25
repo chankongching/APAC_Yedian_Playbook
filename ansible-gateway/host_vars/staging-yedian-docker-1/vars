@@ -1,8 +1,10 @@
 ---
-ansible_ssh_host:
+ansible_ssh_host: 10.0.0.11
 
-docker_kong_pg_host:
+docker_kong_pg_host: 10.0.0.9
 docker_kong_pg_port: 5432
 docker_kong_pg_user: kong
-docker_kong_pg_password: "{{ vault_docker_kong_pg_password }}"
+docker_kong_pg_password: "{{ vault_psql_password }}"
 docker_kong_pg_database: kong
+
+docker_mirror_url: https://docker.mirrors.ustc.edu.cn

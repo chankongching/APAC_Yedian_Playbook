@@ -1,5 +1,5 @@
 ---
-# FIXME: 16/11/23 cluster advertise (KONG_CLUSTER_ADVERTISE)
+# FIXME: 16/11/23 cluster advertise (KONG_CLUSTER_ADVERTISE) https://getkong.org/docs/0.9.x/configuration/#cluster_advertise
 - hosts: docker
   tasks:
     - name: Start kong container

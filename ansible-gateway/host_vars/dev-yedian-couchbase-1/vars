@@ -5,3 +5,4 @@ couchbase_server_node_role: primary
 couchbase_inc: eth0
 couchbase_server_centos_ce_package: couchbase-server-community-4.1.1-centos7.x86_64.rpm
 couchbase_server_centos_ce_sha256: e75d10806574950bec2723ff9a8ec39612f8ef95c6c5441ad574516fcb9e0557
+couchbase_server_centos_ce_url: http://172.17.0.2/{{ couchbase_server_centos_ce_package }}
