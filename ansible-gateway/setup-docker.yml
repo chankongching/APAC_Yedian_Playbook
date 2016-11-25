@@ -29,10 +29,11 @@
     - name: Check if pip is installed
       command: which pip
       register: which_pip
+      ignore_errors: true
 
     - name: Install pip
       raw: "curl -fsSL https://bootstrap.pypa.io/get-pip.py | python"
-      when: which_pip.stdout.find('no') != -1
+      when: which_pip.stderr.find('no') != -1
 
     - name: Install docker-py
       pip:
