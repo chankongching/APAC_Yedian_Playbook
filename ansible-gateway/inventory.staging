@@ -1,11 +1,11 @@
 [docker]
-dev-yedian-docker-1
+staging-yedian-docker-1
 
 [postgresql]
-dev-yedian-postgresql-1
+staging-yedian-postgresql-1
 
 [couchbase]
-dev-yedian-couchbase-1
+staging-yedian-couchbase-1
 
 [all-staging:children]
 docker
