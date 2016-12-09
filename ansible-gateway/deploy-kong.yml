@@ -1,0 +1,75 @@
+---
+- hosts: all
+  tasks:
+    - name: Load inventory
+      ping: {}
+
+- hosts: builder
+  vars_prompt:
+    - name: repo_version_kong
+      prompt: 'Kong repo version'
+      default: "master"
+      private: false
+
+  tasks:
+    # TODO: rolify this into a docker container build role, including concerns around node version
+    - name: Update Kong component
+      git:
+        repo: "{{ hostvars[groups['kong'][0]]['repo_url'] }}"
+        dest: /opt/abinbev/kong
+        version: "{{ repo_version_kong }}"
+        accept_hostkey: true
+        force: true
+
+    - name: Build kong-setup container image
+      shell:
+        docker build -t staging-builder:5000/kong-setup --build-arg REGISTRY=https://registry.npm.taobao.org -f Dockerfile.kong-setup
+        chdir=/opt/abinbev/kong
+
+    - name: Push kong image to local registry
+      shell: docker push staging-builder:5000/kong
+
+    - name: Build kong container image
+      shell:
+        docker build -t staging-builder:5000/kong -f Dockerfile.kong
+        chdir=/opt/abinbev/kong
+
+    - name: Push kong image to local registry
+      shell: docker push staging-builder:5000/kong
+
+- hosts: kong
+  tasks:
+    - name: Start kong container
+      docker_container:
+        name: kong
+        image: staging-builder:5000/kong:latest
+        state: started
+        restart: true
+        hostname: kong-{{ ansible_hostname }}
+        ports:
+          - "8000:8000"
+          - "8001:8001"
+          - "7946:7946"
+          - "7946:7946/udp"
+        env:
+          KONG_DATABASE: postgres
+          KONG_PG_HOST: "{{ docker_kong_pg_host }}"
+          KONG_PG_PORT: "{{ docker_kong_pg_port }}"
+          KONG_PG_USER: "{{ docker_kong_pg_user }}"
+          KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
+          KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
+          KONG_CUSTOM_PLUGINS: gateway-auth
+        volumes:
+          - /dev/log:/dev/log
+        command: kong start
+
+    - name: Run Kong configuration via setup.js
+      docker_container:
+        name: kong-setup
+        image: staging-builder:5000/kong-setup:latest
+        state: started
+        cleanup: true
+        env: "{{ auth_kong_env_vars }}"
+        entrypoint: ''
+        command: cd svc/1/work/current && node bin/setup.js
+

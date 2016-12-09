@@ -1,0 +1,50 @@
+---
+- hosts: all
+  tasks:
+    - name: Load inventory
+      ping: {}
+
+- hosts: builder
+  vars_prompt:
+    - name: repo_version_auth
+      prompt: 'Auth repo version'
+      default: "master"
+      private: false
+
+  tasks:
+    # TODO: rolify this into a docker container build role, including concerns around node version
+    - name: Update auth component
+      git:
+        repo: "{{ hostvars[groups['auth'][0]]['repo_url'] }}"
+        dest: /opt/abinbev/auth
+        version: "{{ repo_version_auth }}"
+        accept_hostkey: true
+        force: true
+
+    - name: Build auth image
+      shell:
+        /opt/wcl/dockerfiles/builder-nodejs/build.sh 6.9 /opt/abinbev/auth/package.json china
+        chdir=/opt/wcl/dockerfiles/builder-nodejs
+
+    - name: Tag auth image
+      shell: docker tag auth staging-builder:5000/auth
+
+    - name: Push auth image to local registry
+      shell: docker push staging-builder:5000/auth
+
+- hosts: auth
+  tasks:
+    - name: Start auth gateway container
+      docker_container:
+        name: auth
+        image: staging-builder:5000/auth
+        state: started
+        restart: true
+        hostname: auth-{{ ansible_hostname }}
+        pull: true
+        volumes:
+          - /dev/log:/dev/log
+        ports:
+          - "3001:3001"
+          - "8701:8701"
+        env: "{{ auth_env_vars }}"

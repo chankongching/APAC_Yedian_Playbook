@@ -1,4 +1,7 @@
-[docker]
+[auth]
+dev-yedian-docker-1
+
+[kong]
 dev-yedian-docker-1
 
 [postgresql]
@@ -7,7 +10,20 @@ dev-yedian-postgresql-1
 [couchbase]
 dev-yedian-couchbase-1
 
+[builder]
+dev-builder
+
+#
+# Groups
+#
+
+[docker:children]
+auth
+kong
+builder
+
 [all-dev:children]
 docker
 postgresql
 couchbase
+

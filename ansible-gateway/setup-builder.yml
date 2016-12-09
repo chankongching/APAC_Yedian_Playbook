@@ -1,0 +1,47 @@
+---
+- hosts: builder
+  # this should be dne alrady if setup-docker was ran previously 
+  roles: 
+    - role: wcl-docker
+      docker_registry_mirror_url: https://docker.mirrors.ustc.edu.cn
+
+  tasks:
+    - name: Ensure the data folders exist
+      file:
+        name: {{ item }}
+        state: directory
+        owner: root
+        mode: 0755
+      with_items:
+        - /data/registry
+        - /data/web
+
+    - name: Start a docker registry to store the container's images
+      docker_container:
+        name: registry
+        image: registry
+        state: started
+        restart_policy: always
+        volumes: 
+          - /data/registry:/var/lib/registry
+          - /dev/log:/dev/log
+        ports:
+          - "5000:5000"
+        env: 
+          SEARCH_BACKEND: sqlalchemy
+          STANDALONE: false
+          MIRROR_SOURCE: https://docker.mirrors.ustc.edu.cn
+          MIRROR_SOURCE_INDEX: https://index.docker.io 
+
+    # Add a container to serve the artifact (later)
+    # - name: Start a web service to serve the artifacts
+    #   docker_container:
+    #     name: web
+    #     image: nginx
+    #     state: started
+    #     volumes: 
+    #       - /data/web:/data
+    #       - /dev/log:/dev/log
+    #     ports:
+    #       - "80:80"
+

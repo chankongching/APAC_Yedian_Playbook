@@ -1,4 +1,7 @@
-[docker]
+[auth]
+staging-yedian-docker-1
+
+[kong]
 staging-yedian-docker-1
 
 [postgresql]
@@ -6,6 +9,18 @@ staging-yedian-postgresql-1
 
 [couchbase]
 staging-yedian-couchbase-1
+
+[builder]
+staging-builder
+
+#
+# Groups
+#
+
+[docker:children]
+auth
+kong
+builder
 
 [all-staging:children]
 docker

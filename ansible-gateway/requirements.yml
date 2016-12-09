@@ -22,6 +22,10 @@
   name: wcl-couchbase
   version: master
 
+- src: https://github.com/wiredcraft-ops/role-wcl-docker.git
+  name: wcl-docker
+  version: master
+
 # Public roles (from galaxy.ansible.com)
 - src: ANXS.postgresql
   name: postgresql

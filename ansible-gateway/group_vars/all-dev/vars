@@ -1,2 +1,7 @@
 ---
-ansible_ssh_port: 22
+node_env: development
+
+user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
+session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
+
+kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_fqdn'] }}:8001

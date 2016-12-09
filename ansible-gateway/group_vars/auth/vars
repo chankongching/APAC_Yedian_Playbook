@@ -1,0 +1,19 @@
+---
+#repo_url: https://{{ github_token }}:x-oauth-basic@github.com/ab-inbev/APAC_Yedian_Auth.git
+repo_url: git@github.com:ab-inbev/APAC_Yedian_Auth.git
+
+auth_env_vars:
+    # Security
+    NODE_ENV: "{{ node_env }}"
+    LOG_STREAM: syslog
+    GW_LOG_HOST: "{{ ansible_docker0.ipv4.address | default('127.0.0.1') }}"
+    COUCHBASE_URL: "couchbase://{{ hostvars[groups['couchbase'][0]]['ipv4']['address'] }}"
+    USER_BUCKET_PASS: "{{ user_bucket_pass }}"
+    SESSION_BUCKET_PASS: "{{ session_bucket_pass }}"
+    AUTH_BASEURL: "http://{{ auth_domain }}"
+
+
+auth_kong_env_vars:
+    NODE_ENV: "{{ node_env }}"
+    ADMIN_API: "{{ kong_admin_api }}"
+    AUTH_API: "{{ auth_api }}"
