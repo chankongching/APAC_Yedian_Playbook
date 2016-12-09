@@ -8,7 +8,7 @@
   tasks:
     - name: Ensure the data folders exist
       file:
-        name: {{ item }}
+        name: "{{ item }}"
         state: directory
         owner: root
         mode: 0755
