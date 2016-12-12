@@ -23,7 +23,7 @@
 
     - name: Build kong-setup container image
       shell:
-        docker build -t staging-builder:5000/kong-setup --build-arg REGISTRY=https://registry.npm.taobao.org -f Dockerfile.kong-setup
+        docker build -t staging-builder:5000/kong-setup --build-arg REGISTRY=https://registry.npm.taobao.org -f Dockerfile.kong-setup .
         chdir=/opt/abinbev/kong
 
     - name: Push kong image to local registry
@@ -31,7 +31,7 @@
 
     - name: Build kong container image
       shell:
-        docker build -t staging-builder:5000/kong -f Dockerfile.kong
+        docker build -t staging-builder:5000/kong -f Dockerfile.kong .
         chdir=/opt/abinbev/kong
 
     - name: Push kong image to local registry
