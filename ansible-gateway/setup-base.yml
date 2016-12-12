@@ -22,4 +22,3 @@
       disable_firewall: yes
       handle_firewall: false
 
-# - include: setup-docker.yml
