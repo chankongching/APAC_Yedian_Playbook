@@ -1,6 +1,7 @@
 ---
 node_env: staging
 
+auth_domain: auth-staging-yedian.wiredcraft.net
 auth_internal_domain: staging-yedian-docker-1
 
 user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
@@ -8,3 +9,4 @@ session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
 
 kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_fqdn'] }}:8001
 auth_api: http://{{ auth_internal_domain }}:3001
+
