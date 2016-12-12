@@ -70,5 +70,6 @@
         state: started
         cleanup: true
         env: "{{ auth_kong_env_vars }}"
-        command: cd svc/1/work/current && node bin/setup.js
+        entrypoint: bash
+        command: -c 'cd svc/1/work/current && node bin/setup.js'
 
