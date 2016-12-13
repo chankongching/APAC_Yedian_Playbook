@@ -15,7 +15,8 @@
     # TODO: rolify this into a docker container build role, including concerns around node version
     - name: Update auth component
       git:
-        repo: "{{ hostvars[groups['auth'][0]]['repo_url'] }}"
+        # repo: {{ hostvars[groups['auth'][0]]['repo_url'] }}
+        repo: "git@github.com:ab-inbev/APAC_Yedian_Auth.git"
         dest: /opt/abinbev/auth
         version: "{{ repo_version_auth }}"
         accept_hostkey: true

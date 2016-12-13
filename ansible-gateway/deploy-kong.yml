@@ -15,7 +15,8 @@
     # TODO: rolify this into a docker container build role, including concerns around node version
     - name: Update Kong component
       git:
-        repo: "{{ hostvars[groups['kong'][0]]['repo_url'] }}"
+        # repo: "{{ hostvars[groups['kong'][0]]['repo_url'] }}"
+        repo: "git@github.com:ab-inbev/APAC_Yedian_Gateway.git"
         dest: /opt/abinbev/kong
         version: "{{ repo_version_kong }}"
         accept_hostkey: true
