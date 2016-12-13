@@ -10,10 +10,12 @@ auth_env_vars:
     COUCHBASE_URL: "couchbase://{{ hostvars[groups['couchbase'][0]]['ansible_eth0']['ipv4']['address'] }}"
 #    USER_BUCKET_PASS: "{{ user_bucket_pass }}"
 #    SESSION_BUCKET_PASS: "{{ session_bucket_pass }}"
-    AUTH_BASEURL: "http://{{ auth_domain }}"
+    AUTH_BASEURL: "http://{{ auth_domain }}:8000"
+    AUTH_DOMAIN: "{{ auth_domain }}"
 
 
 auth_kong_env_vars:
     NODE_ENV: "{{ node_env }}"
     ADMIN_API: "{{ kong_admin_api }}"
     AUTH_API: "{{ auth_api }}"
+    AUTH_DOMAIN: "{{ auth_domain }}"

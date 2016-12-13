@@ -1,7 +1,7 @@
 ---
 node_env: staging
 
-auth_domain: auth-staging-yedian.wiredcraft.net
+auth_domain: staging-yedian.chinacloudapp.cn
 auth_internal_domain: staging-yedian-docker-1
 
 user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
