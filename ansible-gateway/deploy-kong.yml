@@ -60,6 +60,7 @@
           KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
           KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
           KONG_CUSTOM_PLUGINS: gateway-auth
+          KONG_CLUSTER_ADVERTISE: "{{ ansible_default_ipv4.address }}:7946"
         volumes:
           - /dev/log:/dev/log
         command: kong start
