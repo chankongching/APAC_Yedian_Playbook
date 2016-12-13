@@ -40,9 +40,9 @@
         name: auth
         image: staging-builder:5000/auth
         state: started
+        pull: true
         restart: true
         hostname: auth-{{ ansible_hostname }}
-        pull: true
         volumes:
           - /dev/log:/dev/log
         ports:

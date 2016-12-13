@@ -45,6 +45,7 @@
         name: kong
         image: staging-builder:5000/kong:latest
         state: started
+        pull: true
         restart: true
         hostname: kong-{{ ansible_hostname }}
         ports:
@@ -70,6 +71,7 @@
         name: kong-setup
         image: staging-builder:5000/kong-setup:latest
         state: started
+        pull: true
         cleanup: true
         env: "{{ auth_kong_env_vars }}"
         entrypoint: bash
