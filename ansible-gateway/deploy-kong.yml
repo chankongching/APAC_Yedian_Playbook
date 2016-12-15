@@ -38,6 +38,8 @@
       shell: docker push staging-builder:5000/kong
 
 - hosts: kong
+  # Deploy 1 host at the time
+  serial: 1
   tasks:
     - name: Start kong container
       docker_container:
@@ -46,6 +48,7 @@
         state: started
         pull: true
         restart: true
+        restart_policy: always
         hostname: kong-{{ ansible_hostname }}
         ports:
           - "8000:8000"
@@ -65,7 +68,14 @@
           - /dev/log:/dev/log
         command: kong start
 
+    - name: Wait for the kong container (admin API) to be listening
+      wait_for:
+        port: 8001
+        timeout: 60
+
     - name: Run Kong configuration via setup.js
+      # Only run once the setup - not on every instance
+      run_once: true
       docker_container:
         name: kong-setup
         image: staging-builder:5000/kong-setup:latest
@@ -75,4 +85,5 @@
         env: "{{ auth_kong_env_vars }}"
         entrypoint: bash
         command: -c 'cd /app/src && node bin/setup.js'
+      when: inventory_hostname == ansible_play_hosts[0]
 

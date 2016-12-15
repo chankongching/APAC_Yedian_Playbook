@@ -33,6 +33,7 @@
       shell: docker push staging-builder:5000/auth
 
 - hosts: auth
+  serial: 1
   tasks:
     - name: Start auth gateway container
       docker_container:
@@ -41,6 +42,7 @@
         state: started
         pull: true
         restart: true
+        restart_policy: always
         hostname: auth-{{ ansible_hostname }}
         volumes:
           - /dev/log:/dev/log
@@ -48,3 +50,8 @@
           - "3001:3001"
           - "8701:8701"
         env: "{{ auth_env_vars }}"
+  
+    - name: Ensure the auth component is listening
+      wait_for:
+        port: 3001
+        timeout: 60
