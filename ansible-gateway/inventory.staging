@@ -4,6 +4,9 @@ staging-yedian-docker-1
 [kong]
 staging-yedian-docker-1
 
+[elasticsearch]
+staging-yedian-docker-1
+
 [postgresql]
 staging-yedian-postgresql-1
 
@@ -21,6 +24,7 @@ staging-builder
 auth
 kong
 builder
+elasticsearch
 
 [all-staging:children]
 docker

@@ -1,0 +1,67 @@
+---
+- hosts: all
+  tasks:
+    - name: Load inventory
+      ping: {}
+
+- hosts: builder
+  vars_prompt:
+    - name: repo_version_auth
+      prompt: 'Auth repo version'
+      default: "master"
+      private: false
+
+  tasks:
+    # TODO: rolify this into a docker container build role, including concerns around node version
+    - name: Update auth component
+      git:
+        repo: "https://{{ github_token }}:x-oauth-basic@github.com/ab-inbev/APAC_Yedian_Auth.git"
+        dest: /opt/abinbev/auth
+        version: "{{ repo_version_auth }}"
+        accept_hostkey: true
+        force: true
+
+    - name: Build elasticsearch image
+      shell:
+        docker build -t elasticsearch .
+        chdir=/opt/abinbev/auth/dockers/elasticsearch
+
+    - name: Tag elasticsearch image
+      shell: docker tag elasticsearch staging-builder:5000/elasticsearch
+
+    - name: Push elasticsearch image to local registry
+      shell: docker push staging-builder:5000/elasticsearch
+
+- hosts: elasticsearch
+  serial: 1
+  tasks:
+    - name: Start elasticsearch container
+      docker_container:
+        name: elasticsearch
+        image: staging-builder:5000/elasticsearch
+        state: started
+        pull: true
+        restart: true
+        restart_policy: always
+        hostname: elasticsearch-{{ ansible_hostname }}
+        volumes:
+          - /dev/log:/dev/log
+        ports:
+          - "9200:9200"
+        # env: "{{ elasticsearch_env_vars }}"
+  
+    - name: Ensure the elasticsearch component is listening
+      wait_for:
+        port: 9200
+        timeout: 60
+
+    - name: Add couchbase template to elasticsearch
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase
+        data: '@plugins/transport-couchbase/couchbase_template.json'
+        method: PUT
+
+    - name: Create index elasticsearch
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}:9200/yedian_user
+        method: PUT
