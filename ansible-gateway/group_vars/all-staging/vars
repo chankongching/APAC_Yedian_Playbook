@@ -10,3 +10,13 @@ session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
 kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['address'] }}:8001
 auth_api: http://{{ auth_internal_domain }}:3001
 
+#
+# MySQL config
+#
+legacy_users_host: staging-db-1
+legacy_users_username: website
+legacy_users_password: "{{ vault_legacy_users_password }}"
+legacy_users_database: abicloud
+
+# SMS provider
+sms_api: http://dev-api.chinacloudapp.cn

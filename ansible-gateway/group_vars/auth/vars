@@ -13,6 +13,18 @@ auth_env_vars:
     AUTH_BASEURL: "http://{{ auth_domain }}:8000"
     AUTH_DOMAIN: "{{ auth_domain }}"
 
+    # Mysql Config
+    LEGACY_USERS_HOST: "{{ legacy_users_host }}"
+    LEGACY_USERS_USERNAME: "{{ legacy_users_username }}"
+    LEGACY_USERS_PASSWORD: "{{ legacy_users_password }}"
+    LEGACY_USERS_DATABASE: "{{ legacy_users_database }}"
+
+    # ElasticSearch
+    ELASTICSEARCH_URL: "{{ hostvars[groups['elasticsearch'][0]]['ansible_eth0']['ipv4']['address'] }}:9200"
+
+    # SMS
+    SMS_API: "{{ sms_api }}"
+
 
 auth_kong_env_vars:
     NODE_ENV: "{{ node_env }}"
