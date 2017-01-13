@@ -70,7 +70,7 @@
         method: GET
         return_content: yes
       register: statusCode_output
-      until: statusCode_output.json.cluster_name == "elasticsearch"
+      until: statusCode_output.failed == False
       retries: 30
       delay: 60
 
