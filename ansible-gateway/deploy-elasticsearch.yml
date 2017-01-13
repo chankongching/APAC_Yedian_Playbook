@@ -70,7 +70,7 @@
         method: GET
         return_content: yes
       register: statusCode_output
-      until: "failed" not in statusCode_output
+      until: statusCode_output.status == 200
       retries: 30
       delay: 10
 
