@@ -55,10 +55,14 @@
         port: 9200
         timeout: 60
 
+    # NOTE:
+    #   - this need to be ran from a location where the json file is available (e.g. within the container)
+    #   - full path vs. relative 
     - name: Add couchbase template to elasticsearch
       uri:
         url: http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase
-        data: '@plugins/transport-couchbase/couchbase_template.json'
+        data: '@/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json'
+        # data: '@plugins/transport-couchbase/couchbase_template.json'
         method: PUT
 
     - name: Create index elasticsearch
