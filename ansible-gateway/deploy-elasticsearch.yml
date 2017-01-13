@@ -35,6 +35,11 @@
 - hosts: elasticsearch
   serial: 1
   tasks:
+    - name: Prepare data folder for elasticsearch
+      file:
+        state: directory
+        path: /data/elasticsearch/data
+        
     - name: Start elasticsearch container
       docker_container:
         name: elasticsearch
@@ -46,8 +51,10 @@
         hostname: elasticsearch-{{ ansible_hostname }}
         volumes:
           - /dev/log:/dev/log
+          - /data/elasticsearch/data:/usr/share/elasticsearch/data
         ports:
           - "9200:9200"
+          - "9300:9300"
           - "9091:9091"
         # env: "{{ elasticsearch_env_vars }}"
   
@@ -60,11 +67,19 @@
     #   - this need to be ran from a location where the json file is available (e.g. within the container)
     #   - full path vs. relative 
     - name: Add couchbase template to elasticsearch
-      uri:
-        url: http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase
-        data: '@/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json'
-        # data: '@plugins/transport-couchbase/couchbase_template.json'
-        method: PUT
+      docker_container:
+        name: elasticsearch-tpl
+        image: staging-builder:5000/elasticsearch
+        state: started
+        recreate: yes
+        pull: true
+        command: curl -X PUT http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase -d @plugins/transport-couchbase/couchbase_template.json
+      
+      # uri:
+      #   url: http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase
+      #   data: '@/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json'
+      #   # data: '@plugins/transport-couchbase/couchbase_template.json'
+      #   method: PUT
 
     - name: Create index elasticsearch
       uri:
