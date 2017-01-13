@@ -11,7 +11,7 @@ auth_env_vars:
 #    USER_BUCKET_PASS: "{{ user_bucket_pass }}"
 #    SESSION_BUCKET_PASS: "{{ session_bucket_pass }}"
     AUTH_BASEURL: "http://{{ auth_domain }}:8000"
-    AUTH_DOMAIN: "{{ auth_domain }}"
+    AUTH_DOMAIN: "{{ auth_domain }}:8000"
 
     # Mysql Config
     LEGACY_USERS_HOST: "{{ legacy_users_host }}"
@@ -30,4 +30,4 @@ auth_kong_env_vars:
     NODE_ENV: "{{ node_env }}"
     ADMIN_API: "{{ kong_admin_api }}"
     AUTH_API: "{{ auth_api }}"
-    AUTH_DOMAIN: "{{ auth_domain }}"
+    AUTH_DOMAIN: "{{ auth_domain }}:8000"
