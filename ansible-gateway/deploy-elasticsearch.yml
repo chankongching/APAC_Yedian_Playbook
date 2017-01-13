@@ -58,10 +58,22 @@
           - "9091:9091"
         # env: "{{ elasticsearch_env_vars }}"
   
-    - name: Ensure the elasticsearch component is listening
-      wait_for:
-        port: 9200
-        timeout: 60
+    # - name: Ensure the elasticsearch component is listening
+    #   wait_for:
+    #     port: 9200
+    #     timeout: 60
+
+
+    - name: wait until the resource responds with a status of ON
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}:9200
+        method: GET
+        return_content: yes
+      register: statusCode_output
+      until: statusCode_output.json.cluster_name == "elasticsearch"
+      retries: 30
+      delay: 60
+
 
     # NOTE:
     #   - this need to be ran from a location where the json file is available (e.g. within the container)
