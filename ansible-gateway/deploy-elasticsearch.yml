@@ -48,6 +48,7 @@
           - /dev/log:/dev/log
         ports:
           - "9200:9200"
+          - "9091:9091"
         # env: "{{ elasticsearch_env_vars }}"
   
     - name: Ensure the elasticsearch component is listening
