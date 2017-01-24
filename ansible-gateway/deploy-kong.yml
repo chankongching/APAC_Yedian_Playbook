@@ -62,16 +62,27 @@
           KONG_PG_USER: "{{ docker_kong_pg_user }}"
           KONG_PG_PASSWORD: "{{ docker_kong_pg_password }}"
           KONG_PG_DATABASE: "{{ docker_kong_pg_database }}"
-          KONG_CUSTOM_PLUGINS: gateway-auth
+          KONG_CUSTOM_PLUGINS: gateway-transaction-id,gateway-trust-proxy,gateway-auth,gateway-auth-remote
           KONG_CLUSTER_ADVERTISE: "{{ ansible_default_ipv4.address }}:7946"
         volumes:
           - /dev/log:/dev/log
-        command: kong start
+        command: kong start --nginx-config /templates/server_full.template
 
-    - name: Wait for the kong container (admin API) to be listening
-      wait_for:
-        port: 8001
-        timeout: 60
+    - name: Wait until the resource responds with a valid answer
+      uri:
+        url: "{{ item.scheme | default('http') }}://{{ ansible_default_ipv4.address }}:{{ item.port }}"
+        method: GET
+        return_content: yes
+        status_code: "{{ item.status }}"
+      register: statusCode_output
+      until: statusCode_output.status == {{ item.status }}
+      retries: 10
+      delay: 5
+      with_items:
+        - port: 8000
+          status: 404
+        - port: 8001
+          status: 200
 
     - name: Run Kong configuration via setup.js
       # Only run once the setup - not on every instance
