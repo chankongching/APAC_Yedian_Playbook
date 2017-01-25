@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+    - name: ping all
+      ping: {}
+
+# Perform the Setup of the components
+- include: setup-base.yml
+- include: setup-postgresql.yml
+- include: setup-couchbase.yml
+- include: setup-kong.yml
+
+# Do the code / app deployment
+- include: deploy.yml

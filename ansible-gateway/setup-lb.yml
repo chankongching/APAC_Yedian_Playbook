@@ -1,0 +1,36 @@
+---
+- hosts: lb
+  roles:
+    - role: wcl-haproxy
+      haproxy_global:
+        log:
+          - bind: 127.0.0.1
+            facility: local0
+            level: info
+        description: "{{ ansible_hostname }}"
+        maxconn: 65536
+        user: haproxy
+        group: haproxy
+        daemon: true
+        spread_checks: 3
+        stats:
+          - maxconn 20
+
+      haproxy_frontends:
+        - name: default_http
+          # selinux :/
+          bind: 0.0.0.0:80
+          extras:
+            - maxconn 20000
+          default_backend: kong
+
+      haproxy_backends:
+        - name: kong
+          balance: roundrobin
+          servers:
+            - name: kong-1
+              ip: 172.17.0.3
+              port: 8000
+              params:
+                - check
+                - maxconn 2000

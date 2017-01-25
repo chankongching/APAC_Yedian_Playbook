@@ -1,0 +1,66 @@
+---
+#repo_url: https://{{ github_token }}:x-oauth-basic@github.com/ab-inbev/APAC_Yedian_Auth.git
+repo_url: git@github.com:ab-inbev/APAC_Yedian_Auth.git
+
+auth_user_env_vars:
+    # Security
+    NODE_ENV: "{{ node_env }}"
+    LOG_STREAM: syslog
+
+    DEPLOYMENT_TYPE: user
+
+    COUCHBASE_URL: "couchbase://{{ hostvars[groups['couchbase'][0]]['ansible_eth0']['ipv4']['address'] }}"
+
+    # AUTH_BASEURL: "http://{{ auth_user_host }}:8000"
+    # AUTH_DOMAIN: "{{ auth_user_host }}"
+
+    # Mysql Config
+    LEGACY_USERS_HOST: "{{ legacy_users_host }}"
+    LEGACY_USERS_USERNAME: "{{ legacy_users_username }}"
+    LEGACY_USERS_PASSWORD: "{{ legacy_users_password }}"
+    LEGACY_USERS_DATABASE: "{{ legacy_users_database }}"
+
+    # ElasticSearch
+    ELASTICSEARCH_URL: "{{ hostvars[groups['elasticsearch'][0]]['ansible_eth0']['ipv4']['address'] }}:9200"
+
+    # SMS
+    SMS_API: "{{ sms_api }}"
+
+
+auth_manager_env_vars:
+    # Security
+    NODE_ENV: "{{ node_env }}"
+    LOG_STREAM: syslog
+
+    DEPLOYMENT_TYPE: venues_manager
+
+    COUCHBASE_URL: "couchbase://{{ hostvars[groups['couchbase'][0]]['ansible_eth0']['ipv4']['address'] }}"
+
+    # AUTH_BASEURL: "http://{{ auth_manager_host }}:8000"
+    # AUTH_DOMAIN: "{{ auth_manager_host }}"
+
+    # Mysql Config
+    LEGACY_USERS_HOST: "{{ legacy_users_host }}"
+    LEGACY_USERS_USERNAME: "{{ legacy_users_username }}"
+    LEGACY_USERS_PASSWORD: "{{ legacy_users_password }}"
+    LEGACY_USERS_DATABASE: "{{ legacy_users_database }}"
+
+    # ElasticSearch
+    ELASTICSEARCH_URL: "{{ hostvars[groups['elasticsearch'][0]]['ansible_eth0']['ipv4']['address'] }}:9200"
+
+    # SMS
+    SMS_API: "{{ sms_api }}"
+
+
+auth_kong_env_vars:
+    NODE_ENV: "{{ node_env }}"
+    ADMIN_API: "{{ kong_admin_api }}"
+
+    AUTH_USER_API: "{{ auth_user_api }}"
+    AUTH_USER_HOST: "{{ auth_user_host }}"
+    
+    AUTH_MANAGER_API: "{{ auth_manager_api }}"
+    AUTH_MANAGER_HOST: "{{ auth_manager_host }}"
+    
+    KTV_CORE_API: "{{ ktv_core_api }}"
+    KTV_CORE_HOST: "{{ ktv_core_host }}"

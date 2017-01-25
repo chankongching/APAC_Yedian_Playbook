@@ -1,0 +1,36 @@
+---
+node_env: staging
+
+auth_domain: staging-yedian.chinacloudapp.cn
+auth_internal_domain: staging-yedian-docker-1
+
+user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
+session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
+
+kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['address'] }}:8001
+
+#
+# Eventually will need to use a load balancer, either
+# from Azure or HaProxy.
+#
+auth_user_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3001
+auth_user_host: staging-yedian.chinacloudapp.cn
+
+auth_manager_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3002
+auth_manager_host: staging-yedian.chinacloudapp.cn
+
+ktv_core_api: http://1.1.1.1
+ktv_core_host: staging-yedian.chinacloudapp.cn
+
+
+
+#
+# MySQL config
+#
+legacy_users_host: staging-db-1
+legacy_users_username: website
+legacy_users_password: "{{ vault_legacy_users_password }}"
+legacy_users_database: abicloud
+
+# SMS provider
+sms_api: http://dev-api.chinacloudapp.cn

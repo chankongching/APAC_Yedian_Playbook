@@ -1,0 +1,45 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "centos/7"
+  config.vm.box_check_update = false
+
+  config.ssh.insert_key = false
+  config.ssh.private_key_path = '~/.vagrant.d/insecure_private_key'
+
+  config.vm.define 'postgresql' do |machine|
+    machine.vm.network 'private_network', ip: '192.168.233.10'
+    machine.vm.hostname = 'postgresql.local'
+    machine.vm.provision 'ansible' do |ansible|
+      ansible.playbook = 'tests/postgresql.yml'
+      ansible.sudo = true
+      ansible.inventory_path = 'inventory.vagrant'
+      ansible.limit = 'all'
+      ansible.host_key_checking = false
+    end
+  end
+
+  config.vm.define 'kong' do |machine|
+    machine.vm.network 'private_network', ip: '192.168.233.20'
+    machine.vm.hostname = 'kong.local'
+    machine.vm.provision 'ansible' do |ansible|
+      ansible.playbook = 'tests/kong.yml'
+      ansible.sudo = true
+      ansible.inventory_path = 'inventory.vagrant'
+      ansible.limit = 'all'
+      ansible.host_key_checking = false
+    end
+  end
+
+  config.vm.define 'lb' do |machine|
+    machine.vm.network 'private_network', ip: '192.168.233.30'
+    machine.vm.hostname = 'lb.local'
+    machine.vm.provision 'ansible' do |ansible|
+      ansible.playbook = 'tests/lb.yml'
+      ansible.sudo = true
+      ansible.inventory_path = 'inventory.vagrant'
+      ansible.limit = 'all'
+      ansible.host_key_checking = false
+    end
+  end
+
+end

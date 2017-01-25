@@ -1,0 +1,46 @@
+#
+# This file is the mapper about how the network
+# packages to router been redirected to each machine.
+#
+# The following is a brief list explaining those machines.
+#
+# 172.17.0.1    router (192.168.1.56)
+# 172.17.0.2    admin
+# 172.17.0.3    docker
+# 172.17.0.4    postgresql
+# 172.17.0.5    couchbase
+
+---
+gateway: true
+portforwards:
+  # Direct Kong Access
+  - from: 8000
+    to: 172.17.0.3:8000
+  # Direct Kong Admin Access
+  - from: 8001
+    to: 172.17.0.3:8001
+
+  # SLC Access
+  - from: 18701
+    to: 172.17.0.3:8701
+
+  # PSQL Access
+  - from: 5432
+    to: 172.17.0.4:5432
+
+  # Couchbase Access
+  - from: 8091
+    to: 172.17.0.5:8091
+  - from: 8092
+    to: 172.17.0.5:8092
+
+  # SSH Access
+  - from: 40002
+    to: 172.17.0.2:22
+  - from: 40003
+    to: 172.17.0.3:22
+  - from: 40004
+    to: 172.17.0.4:22
+  - from: 40005
+    to: 172.17.0.5:22
+  

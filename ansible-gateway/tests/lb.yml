@@ -1,0 +1,6 @@
+---
+- hosts: lb
+  tasks:
+    - name: ping
+      ping: {}
+- include: ../setup-lb.yml

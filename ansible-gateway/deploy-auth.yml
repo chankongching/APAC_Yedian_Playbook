@@ -1,0 +1,99 @@
+---
+- hosts: all
+  tasks:
+    - name: Load inventory
+      ping: {}
+
+- hosts: builder
+  vars_prompt:
+    - name: repo_version_auth
+      prompt: 'Auth repo version'
+      default: "master"
+      private: false
+
+  tasks:
+    # TODO: rolify this into a docker container build role, including concerns around node version
+    - name: Update auth component
+      git:
+        repo: "https://{{ github_token }}:x-oauth-basic@github.com/ab-inbev/APAC_Yedian_Auth.git"
+        dest: /opt/abinbev/auth
+        version: "{{ repo_version_auth }}"
+        accept_hostkey: true
+        force: true
+
+    - name: Build auth image
+      shell:
+        /opt/wcl/dockerfiles/builder-nodejs/build.sh 6.9 /opt/abinbev/auth/package.json china
+        chdir=/opt/wcl/dockerfiles/builder-nodejs
+
+    - name: Tag auth image
+      shell: docker tag auth staging-builder:5000/auth
+
+    - name: Push auth image to local registry
+      shell: docker push staging-builder:5000/auth
+
+# Deploy the auth-user API
+- hosts: auth
+  serial: 1
+  tasks:
+    - name: Start auth-user gateway container
+      docker_container:
+        name: auth-user
+        image: staging-builder:5000/auth
+        state: started
+        pull: true
+        restart: true
+        restart_policy: always
+        hostname: auth-user-{{ ansible_hostname }}
+        volumes:
+          - /dev/log:/dev/log
+        ports:
+          - "3001:3001"
+        env: "{{ auth_user_env_vars }}"
+  
+    - name: Wait until the resource responds with a valid answer
+      uri:
+        url: "{{ item.scheme | default('http') }}://{{ ansible_default_ipv4.address }}:{{ item.port }}"
+        method: GET
+        return_content: yes
+        status_code: "{{ item.status }}"
+      register: statusCode_output
+      until: statusCode_output.status == {{ item.status }}
+      retries: 10
+      delay: 5
+      with_items:
+        - port: 3001
+          status: 200
+
+# Deploy the auth-manager API
+- hosts: auth
+  serial: 1
+  tasks:
+    - name: Start auth-manager gateway container
+      docker_container:
+        name: auth-manager
+        image: staging-builder:5000/auth
+        state: started
+        pull: true
+        restart: true
+        restart_policy: always
+        hostname: auth-manager-{{ ansible_hostname }}
+        volumes:
+          - /dev/log:/dev/log
+        ports:
+          - "3002:3001"
+        env: "{{ auth_manager_env_vars }}"
+  
+    - name: Wait until the resource responds with a valid answer
+      uri:
+        url: "{{ item.scheme | default('http') }}://{{ ansible_default_ipv4.address }}:{{ item.port }}"
+        method: GET
+        return_content: yes
+        status_code: "{{ item.status }}"
+      register: statusCode_output
+      until: statusCode_output.status == {{ item.status }}
+      retries: 10
+      delay: 5
+      with_items:
+        - port: 3002
+          status: 200

@@ -1,0 +1,15 @@
+---
+- hosts: docker
+  roles:
+    - role: wcl-docker
+      docker_registry_mirror_url: "http://{{ hostvars[groups['builder'][0]]['ansible_fqdn'] }}:5000"
+      docker_insecure_registry_url: "{{ hostvars[groups['builder'][0]]['ansible_fqdn'] }}:5000"
+
+  tasks:
+    - name: Update dockerfiles
+      git:
+        repo: https://github.com/wiredcraft-ops/dockerfiles.git
+        dest: /opt/wcl/dockerfiles
+        version: master
+        accept_hostkey: true
+        force: true

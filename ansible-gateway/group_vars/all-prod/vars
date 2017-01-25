@@ -1,0 +1,7 @@
+---
+node_env: production
+
+user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
+session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
+
+kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['address'] }}:8001

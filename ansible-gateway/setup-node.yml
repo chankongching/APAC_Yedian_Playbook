@@ -1,0 +1,6 @@
+---
+# TODO: 16/11/24
+- hosts: docker
+  tasks:
+    - name: ping docker
+      ping: {}

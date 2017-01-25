@@ -105,6 +105,11 @@ server/abicloud/wechatshangjia/Public/qrcode/
 # For Ansible
 *.retry
 ansible/roles/*
+ansible-gateway/roles/*
 !ansible/roles/yedian-*
+!ansible-gateway/roles/yedian-*
 !.gitignore
 !.placeholder
+
+# For vagrant
+.vagrant

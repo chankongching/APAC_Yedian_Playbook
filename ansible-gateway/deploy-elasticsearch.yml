@@ -1,0 +1,99 @@
+---
+- hosts: all
+  tasks:
+    - name: Load inventory
+      ping: {}
+
+- hosts: builder
+  vars_prompt:
+    - name: repo_version_auth
+      prompt: 'Auth repo version'
+      default: "master"
+      private: false
+
+  tasks:
+    # TODO: rolify this into a docker container build role, including concerns around node version
+    - name: Update auth component
+      git:
+        repo: "https://{{ github_token }}:x-oauth-basic@github.com/ab-inbev/APAC_Yedian_Auth.git"
+        dest: /opt/abinbev/auth
+        version: "{{ repo_version_auth }}"
+        accept_hostkey: true
+        force: true
+
+    - name: Build elasticsearch image
+      shell:
+        docker build -t elasticsearch .
+        chdir=/opt/abinbev/auth/dockers/elasticsearch
+
+    - name: Tag elasticsearch image
+      shell: docker tag elasticsearch staging-builder:5000/elasticsearch
+
+    - name: Push elasticsearch image to local registry
+      shell: docker push staging-builder:5000/elasticsearch
+
+- hosts: elasticsearch
+  serial: 1
+  tasks:
+    - name: Prepare data folder for elasticsearch
+      file:
+        state: directory
+        path: /data/elasticsearch/data
+        
+    - name: Start elasticsearch container
+      docker_container:
+        name: elasticsearch
+        image: staging-builder:5000/elasticsearch
+        state: started
+        pull: true
+        restart: true
+        restart_policy: always
+        hostname: elasticsearch-{{ ansible_hostname }}
+        volumes:
+          - /dev/log:/dev/log
+          - /data/elasticsearch/data:/usr/share/elasticsearch/data
+        ports:
+          - "9200:9200"
+          - "9300:9300"
+          - "9091:9091"
+        # env: "{{ elasticsearch_env_vars }}"
+  
+    # - name: Ensure the elasticsearch component is listening
+    #   wait_for:
+    #     port: 9200
+    #     timeout: 60
+
+
+    - name: wait until the resource responds with a status of ON
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}:9200
+        method: GET
+        return_content: yes
+      register: statusCode_output
+      until: statusCode_output.status == 200
+      retries: 30
+      delay: 10
+
+
+    # NOTE:
+    #   - this need to be ran from a location where the json file is available (e.g. within the container)
+    #   - full path vs. relative 
+    - name: Add couchbase template to elasticsearch
+      docker_container:
+        name: elasticsearch-tpl
+        image: staging-builder:5000/elasticsearch
+        state: started
+        recreate: yes
+        pull: true
+        command: curl -X PUT http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase -d @plugins/transport-couchbase/couchbase_template.json
+      
+      # uri:
+      #   url: http://{{ ansible_default_ipv4.address }}:9200/_template/couchbase
+      #   data: '@/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json'
+      #   # data: '@plugins/transport-couchbase/couchbase_template.json'
+      #   method: PUT
+
+    - name: Create index elasticsearch
+      uri:
+        url: http://{{ ansible_default_ipv4.address }}:9200/yedian_user
+        method: PUT
