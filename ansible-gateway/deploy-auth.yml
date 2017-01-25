@@ -38,7 +38,7 @@
   tasks:
     - name: Start auth-user gateway container
       docker_container:
-        name: auth
+        name: auth-user
         image: staging-builder:5000/auth
         state: started
         pull: true
@@ -71,7 +71,7 @@
   tasks:
     - name: Start auth-manager gateway container
       docker_container:
-        name: auth
+        name: auth-manager
         image: staging-builder:5000/auth
         state: started
         pull: true
