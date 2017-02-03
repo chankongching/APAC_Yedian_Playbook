@@ -13,6 +13,7 @@ auth_user_env_vars:
 
     # AUTH_BASEURL: "http://{{ auth_user_host }}:8000"
     # AUTH_DOMAIN: "{{ auth_user_host }}"
+    WECHAT_CALLBACK_HOST: "{{ auth_user_wx_callback_host }}"
 
     # Mysql Config
     LEGACY_USERS_HOST: "{{ legacy_users_host }}"
