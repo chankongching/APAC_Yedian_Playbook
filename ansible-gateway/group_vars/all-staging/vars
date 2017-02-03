@@ -15,9 +15,12 @@ kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['a
 #
 auth_user_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3001
 auth_user_host: staging-yedian.chinacloudapp.cn
+auth_user_wx_callback_host: http://{{ auth_domain }}:8000
 
 auth_manager_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3002
 auth_manager_host: staging-yedian-mgr.chinacloudapp.cn
+auth_manager_wx_callback_host: http://{{ auth_domain }}:8000
+
 
 ktv_core_api: http://1.1.1.1
 ktv_core_host: staging-yedian.chinacloudapp.cn
