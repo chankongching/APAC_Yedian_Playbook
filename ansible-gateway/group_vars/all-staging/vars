@@ -17,7 +17,7 @@ auth_user_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['ad
 auth_user_host: staging-yedian.chinacloudapp.cn
 
 #
-# wechat related config
+# user - wechat related config
 #
 auth_user_wx_appid: wx668efc6f66f4f21f
 auth_user_wx_appsecret: 405000fd389d602f14729e0ad53d2ac3
@@ -25,13 +25,15 @@ auth_user_wx_callback_host: http://{{ auth_domain }}:8000
 
 auth_manager_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3002
 auth_manager_host: staging-yedian-mgr.chinacloudapp.cn
+
+#
+# manager - wechat related config
+#
 auth_manager_wx_callback_host: http://{{ auth_domain }}:8000
 
 
 ktv_core_api: http://1.1.1.1
 ktv_core_host: staging-yedian.chinacloudapp.cn
-
-
 
 #
 # MySQL config

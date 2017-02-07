@@ -17,6 +17,8 @@ auth_user_env_vars:
     WECHAT_APP_SECRET: "{{ auth_user_wx_appsecret }}"
     WECHAT_CALLBACK_HOST: "{{ auth_user_wx_callback_host }}"
 
+    AUTH_DOMAIN: "{{ auth_user_host }}"
+
     # Mysql Config
     LEGACY_USERS_HOST: "{{ legacy_users_host }}"
     LEGACY_USERS_USERNAME: "{{ legacy_users_username }}"
@@ -38,6 +40,8 @@ auth_manager_env_vars:
     DEPLOYMENT_TYPE: venues_manager
 
     COUCHBASE_URL: "couchbase://{{ hostvars[groups['couchbase'][0]]['ansible_eth0']['ipv4']['address'] }}"
+
+    AUTH_DOMAIN: "{{ auth_manager_host }}"
 
     # AUTH_BASEURL: "http://{{ auth_manager_host }}:8000"
     # AUTH_DOMAIN: "{{ auth_manager_host }}"
