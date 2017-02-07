@@ -42,4 +42,4 @@ legacy_users_password: "{{ vault_legacy_users_password }}"
 legacy_users_database: abicloud
 
 # SMS provider
-sms_api: http://dev-api.chinacloudapp.cn
+sms_api: http://staging-api.chinacloudapp.cn
