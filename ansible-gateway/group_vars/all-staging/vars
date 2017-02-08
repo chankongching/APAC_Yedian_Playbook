@@ -1,6 +1,7 @@
 ---
 node_env: staging
 
+safe_domain: chinacloudapp.cn
 auth_domain: staging-yedian.chinacloudapp.cn
 auth_internal_domain: staging-yedian-docker-1
 
@@ -32,8 +33,8 @@ auth_manager_host: staging-yedian-mgr.chinacloudapp.cn
 auth_manager_wx_callback_host: http://{{ auth_domain }}:8000
 
 
-ktv_core_api: http://1.1.1.1
-ktv_core_host: staging-yedian.chinacloudapp.cn
+ktv_core_api: http://10.0.0.14:3000
+ktv_core_host: staging-api.chinacloudapp.cn
 
 #
 # MySQL config

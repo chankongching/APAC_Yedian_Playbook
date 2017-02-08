@@ -6,6 +6,7 @@ auth_user_env_vars:
     # Security
     NODE_ENV: "{{ node_env }}"
     LOG_STREAM: syslog
+    SAFE_DOMAIN:  "{{ safe_domain }}"
 
     DEPLOYMENT_TYPE: user
 
@@ -36,6 +37,7 @@ auth_manager_env_vars:
     # Security
     NODE_ENV: "{{ node_env }}"
     LOG_STREAM: syslog
+    SAFE_DOMAIN:  "{{ safe_domain }}"
 
     DEPLOYMENT_TYPE: venues_manager
 
