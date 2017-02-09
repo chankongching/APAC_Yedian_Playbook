@@ -2,8 +2,12 @@
 - hosts: docker
   roles:
     - role: wcl-docker
-      docker_registry_mirror_url: "http://{{ hostvars[groups['builder'][0]]['ansible_fqdn'] }}:5000"
-      docker_insecure_registry_url: "{{ hostvars[groups['builder'][0]]['ansible_fqdn'] }}:5000"
+      docker_china_mirror: true
+      docker_pip_mirror_enable: true
+      docker_users:
+        - wcladmin
+        - ydadmin
+        - ylytadmin
 
   tasks:
     - name: Update dockerfiles

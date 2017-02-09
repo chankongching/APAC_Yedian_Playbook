@@ -1,6 +1,8 @@
 ---
 node_env: staging
 
+docker_insecure_registry_url: "staging-builder:5000"
+
 safe_domain: chinacloudapp.cn
 auth_domain: staging-yedian.chinacloudapp.cn
 auth_internal_domain: staging-yedian-docker-1
