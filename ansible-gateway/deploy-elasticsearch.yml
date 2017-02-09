@@ -56,7 +56,7 @@
           - "9200:9200"
           - "9300:9300"
           - "9091:9091"
-        # env: "{{ elasticsearch_env_vars }}"
+        env: "{{ elasticsearch_env_vars }}"
   
     # - name: Ensure the elasticsearch component is listening
     #   wait_for:
@@ -95,5 +95,9 @@
 
     - name: Create index elasticsearch
       uri:
-        url: http://{{ ansible_default_ipv4.address }}:9200/yedian_user
+        url: http://{{ ansible_default_ipv4.address }}:9200/{{ item }}
         method: PUT
+      with_items:
+        - yedian_user
+        - yedian_venues_manager
+        
