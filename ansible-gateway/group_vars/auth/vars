@@ -43,7 +43,7 @@ auth_manager_env_vars:
 
     WECHAT_APP_ID: "{{ auth_wx_appid }}"
     WECHAT_APP_SECRET: "{{ auth_wx_appsecret }}"
-    WECHAT_CALLBACK_HOST: "{{ auth_manger_wx_callback_host }}"
+    WECHAT_CALLBACK_HOST: "{{ auth_manager_wx_callback_host }}"
 
     AUTH_DOMAIN: "{{ auth_manager_host }}"
 
