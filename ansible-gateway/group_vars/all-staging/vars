@@ -16,7 +16,7 @@ kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['a
 elasticsearch_env_vars:
     ES_COUCHBASE_USER: Administrator
     ES_COUCHBASE_PASS: "{{ vault_couchbase_admin_pass | default('couchbase') }}"
-    ES_COUCHBASE_PUBLISH_PORT: "{{ ansible_eth0.ipv4.address }}"
+    ES_COUCHBASE_PUBLISH_HOST: "{{ ansible_eth0.ipv4.address }}"
 
 #
 # Eventually will need to use a load balancer, either
