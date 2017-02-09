@@ -3,8 +3,7 @@ node_env: staging
 
 docker_insecure_registry_url: "staging-builder:5000"
 
-safe_domain: chinacloudapp.cn
-auth_domain: staging-yedian.chinacloudapp.cn
+safe_domain: .ye-dian.com
 auth_internal_domain: staging-yedian-docker-1
 
 user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"
@@ -25,26 +24,21 @@ elasticsearch_env_vars:
 # from Azure or HaProxy.
 #
 auth_user_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3001
-auth_user_host: staging-yedian.chinacloudapp.cn
+auth_user_host: user.staging.ye-dian.com
 
 #
 # user - wechat related config
 #
-auth_user_wx_appid: wx668efc6f66f4f21f
-auth_user_wx_appsecret: 405000fd389d602f14729e0ad53d2ac3
-auth_user_wx_callback_host: http://{{ auth_domain }}:8000
+auth_wx_appid: wx668efc6f66f4f21f
+auth_wx_appsecret: 405000fd389d602f14729e0ad53d2ac3
+auth_user_wx_callback_host: http://{{ auth_user_host }}
+auth_manager_wx_callback_host: http://{{ auth_manager_host }}
 
 auth_manager_api: http://{{ hostvars[groups['auth'][0]]['ansible_eth0']['ipv4']['address'] }}:3002
-auth_manager_host: staging-yedian-mgr.chinacloudapp.cn
-
-#
-# manager - wechat related config
-#
-auth_manager_wx_callback_host: http://{{ auth_domain }}:8000
-
+auth_manager_host: venues.staging.ye-dian.com
 
 ktv_core_api: http://10.0.0.14:3000
-ktv_core_host: staging-api.chinacloudapp.cn
+ktv_core_host: ktvcore.staging.ye-dian.com
 
 #
 # MySQL config
@@ -55,4 +49,4 @@ legacy_users_password: "{{ vault_legacy_users_password }}"
 legacy_users_database: abicloud
 
 # SMS provider
-sms_api: http://staging-api.chinacloudapp.cn
+sms_api: http://10.0.0.14:3001
