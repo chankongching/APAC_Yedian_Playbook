@@ -11,6 +11,14 @@ session_bucket_pass: "{{ vault_session_bucket_pass | default('') }}"
 kong_admin_api: http://{{ hostvars[groups['kong'][0]]['ansible_eth0']['ipv4']['address'] }}:8001
 
 #
+# Variables used for the configuration of the Couchbase plugin for ElasticSearch
+# 
+elasticsearch_env_vars:
+    ES_COUCHBASE_USER: Administrator
+    ES_COUCHBASE_PASS: {{ vault_couchbase_admin_pass | 'couchbase' }}
+
+
+#
 # Eventually will need to use a load balancer, either
 # from Azure or HaProxy.
 #
