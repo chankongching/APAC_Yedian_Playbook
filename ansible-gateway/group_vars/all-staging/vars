@@ -4,6 +4,7 @@ node_env: staging
 docker_insecure_registry_url: "staging-builder:5000"
 
 safe_domain: .ye-dian.com
+kong_cors_origin: http://staging-web.ye-dian.com
 auth_internal_domain: staging-yedian-docker-1
 
 user_bucket_pass: "{{ vault_user_bucket_pass | default('') }}"

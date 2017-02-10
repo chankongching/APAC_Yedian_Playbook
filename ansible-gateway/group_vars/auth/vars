@@ -64,6 +64,8 @@ auth_kong_env_vars:
     NODE_ENV: "{{ node_env }}"
     ADMIN_API: "{{ kong_admin_api }}"
 
+    CORS_ORIGIN: "{{ kong_cors_origin }}"
+
     AUTH_USER_API: "{{ auth_user_api }}"
     AUTH_USER_HOST: "{{ auth_user_host }}"
     
