@@ -1,0 +1,12 @@
+---
+name: Sync SSH users from playbook definition
+
+actions:
+  - name: Sync SSH users defined in playbooks
+    type: bash
+    cmd: |
+      cd /opt/yedian/APAC-Yedian/ansible-gateway && 
+      ansible-playbook -i inventory.staging sync-users.yml \
+        --vault-password-file /var/lib/pipelines/secure/yedian.key \
+        -u wcladmin -s \
+        -e @vars.staging

@@ -5,4 +5,12 @@ prompt:
   branch: master
 
 actions:
-  - cd /opt/yedian/APAC-Yedian/ansible-gateway && ansible-playbook -i inventory.staging deploy-auth.yml --vault-password-file /var/lib/pipelines/secure/yedian.key -u wcladmin -s -e @vars.staging -e "repo_version_auth={{ branch }}"
+  - name: Deploy auth components (user + mgr)
+    type: bash
+    cmd: |
+      cd /opt/yedian/APAC-Yedian/ansible-gateway && 
+      ansible-playbook -i inventory.staging deploy-auth.yml \
+        --vault-password-file /var/lib/pipelines/secure/yedian.key \
+        -u wcladmin -s \
+        -e @vars.staging \
+        -e "repo_version_auth={{ branch }}"

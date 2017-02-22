@@ -5,4 +5,12 @@ prompt:
   branch: master
 
 actions:
-  - cd /opt/yedian/APAC-Yedian/ansible-gateway && ansible-playbook -i inventory.staging deploy-kong.yml --vault-password-file /var/lib/pipelines/secure/yedian.key -u wcladmin -s -e @vars.staging -e "repo_version_kong={{ branch }}"
+  - name: Deploy Kong (user + mgr)
+    type: bash
+    cmd: |
+      cd /opt/yedian/APAC-Yedian/ansible-gateway && 
+      ansible-playbook -i inventory.staging deploy-kong.yml \
+        --vault-password-file /var/lib/pipelines/secure/yedian.key \
+        -u wcladmin -s \
+        -e @vars.staging \
+        -e "repo_version_kong={{ branch }}"

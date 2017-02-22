@@ -1,0 +1,29 @@
+---
+- hosts: all
+  roles:
+    - role: wcl-common
+      # Cheat - we only want to handle users, ignore the rest
+      enable_hostname: no
+      enable_packages: no
+      enable_users: yes
+      enable_kernel: no
+      enable_git: no
+      enable_ssh: no
+      enable_misc: no
+      enable_swapfile: no
+
+      common_users:
+        - name: wcladmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ wcladmin_ssh_pub_keys }}"
+
+        - name: ydadmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ ydadmin_ssh_pub_keys }}"
+
+        - name: ylytadmin
+          sudo: yes
+          ssh: yes
+          authorized: "{{ ylytadmin_ssh_pub_keys }}"
