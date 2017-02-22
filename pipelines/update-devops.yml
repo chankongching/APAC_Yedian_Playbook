@@ -1,0 +1,19 @@
+---
+name: Update DevOps playbooks from GitHub
+
+prompt:
+  branch: master
+
+actions:
+  - name: Fetch code from GitHub
+    cmd: cd /opt/yedian/APAC-Yedian/ansible-gateway && git fetch origin
+    type: bash
+  - name: Reset all changes from local repo
+    cmd: cd /opt/yedian/APAC-Yedian/ansible-gateway && git reset --hard
+    type: bash
+  - name: Move the the right local branch
+    cmd: cd /opt/yedian/APAC-Yedian/ansible-gateway && git checkout "{{ branch }}"
+    type: bash
+  - name: Merge remote code base locally
+    cmd: cd /opt/yedian/APAC-Yedian/ansible-gateway && git merge origin "{{ branch }}"
+    type: bash
