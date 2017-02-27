@@ -27,10 +27,10 @@
         chdir=/opt/wcl/dockerfiles/builder-nodejs
 
     - name: Tag auth image
-      shell: docker tag auth staging-builder:5000/auth
+      shell: docker tag auth {{ local_docker_registry }}/auth
 
     - name: Push auth image to local registry
-      shell: docker push staging-builder:5000/auth
+      shell: docker push {{ local_docker_registry }}/auth
 
 # Deploy the auth-user API
 - hosts: auth
@@ -39,7 +39,7 @@
     - name: Start auth-user gateway container
       docker_container:
         name: auth-user
-        image: staging-builder:5000/auth
+        image: "{{ local_docker_registry }}/auth"
         state: started
         pull: true
         restart: true
@@ -72,7 +72,7 @@
     - name: Start auth-manager gateway container
       docker_container:
         name: auth-manager
-        image: staging-builder:5000/auth
+        image: "{{ local_docker_registry }}/auth"
         state: started
         pull: true
         restart: true

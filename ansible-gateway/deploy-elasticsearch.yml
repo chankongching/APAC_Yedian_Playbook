@@ -27,10 +27,10 @@
         chdir=/opt/abinbev/auth/dockers/elasticsearch
 
     - name: Tag elasticsearch image
-      shell: docker tag elasticsearch staging-builder:5000/elasticsearch
+      shell: docker tag elasticsearch {{ local_docker_registry }}/elasticsearch
 
     - name: Push elasticsearch image to local registry
-      shell: docker push staging-builder:5000/elasticsearch
+      shell: docker push {{ local_docker_registry }}/elasticsearch
 
 - hosts: elasticsearch
   serial: 1
@@ -43,7 +43,7 @@
     - name: Start elasticsearch container
       docker_container:
         name: elasticsearch
-        image: staging-builder:5000/elasticsearch
+        image: "{{ local_docker_registry }}/elasticsearch"
         state: started
         pull: true
         restart: true
@@ -81,7 +81,7 @@
     - name: Add couchbase template to elasticsearch
       docker_container:
         name: elasticsearch-tpl
-        image: staging-builder:5000/elasticsearch
+        image: "{{ local_docker_registry }}/elasticsearch"
         state: started
         recreate: yes
         pull: true

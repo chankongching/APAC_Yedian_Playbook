@@ -2,6 +2,7 @@
 node_env: staging
 
 docker_insecure_registry_url: "staging-builder:5000"
+local_docker_registry: "{{ docker_insecure_registry_url }}"
 
 safe_domain: .ye-dian.com
 kong_cors_origin: http://staging-web.ye-dian.com
